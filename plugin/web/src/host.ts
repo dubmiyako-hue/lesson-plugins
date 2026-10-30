@@ -61,7 +61,7 @@ function connect() {
   return {
     ready: () => invoke<Ready>('ready'),
     setParam: (id: string, value: number, phase: Phase) => send('setParam', id, value, phase),
-    // the typed text as the plug-in reads it (its getValueForText), or null when it cannot be read
+    // the typed text as the plug-in reads it (the core's parseValue, as the host's reading does), or null when it cannot be read
     parseValue: (id: string, text: string) => invoke<number | null>('parseValue', id, text),
     setScale: (scale: number) => invoke<Scales>('setScale', scale),
     scales: () => invoke<Scales>('scales'),
