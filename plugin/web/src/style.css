@@ -1,0 +1,338 @@
+/* The web app's src/style.css, the parts the plug-in's screen uses (copied as they are: the page's base, .unit and the
+   plugins section), then the plug-in's own: the window, the settings panel and the typed value's field. */
+
+/* The page's own layout. Colours, spacing, radii and shadows come from
+   prayroom/tokens.css; the controls are PRAYROOM components (bundle.css). */
+
+:root {
+  color-scheme: light;
+}
+:root[data-theme='dark'],
+:root[data-theme='studio'] {
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--surface-000);
+}
+h1,
+h2,
+p,
+ul {
+  margin: 0;
+}
+button,
+select,
+input {
+  font: inherit;
+  color: inherit;
+}
+.muted {
+  color: var(--ink-muted);
+}
+/* a box the component draws itself into */
+.pr-host {
+  display: contents;
+}
+
+/* frame: transport, then timeline | splitter | plugin rack */
+.daw {
+  position: relative;
+  height: 100vh;
+  min-width: 1100px;
+  display: grid;
+  grid-template-rows: var(--header-h) minmax(0, 1fr);
+}
+.main {
+  display: grid;
+  min-height: 0;
+}
+/* the timeline, and the steps under it while they are open */
+.tlcol {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-width: 0;
+  min-height: 0;
+}
+.steps {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  height: 188px;
+  box-sizing: border-box;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-100);
+  border-top: 1px solid var(--line-strong);
+  color: var(--ink);
+}
+.steps__head,
+.steps__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.steps__head .pr-select {
+  flex: 1;
+  min-width: 0;
+}
+/* three lines are kept for a step, so the keys under it never move */
+.steps__now {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: var(--space-2);
+  align-content: start;
+  overflow: auto;
+  font: 500 15px/24px var(--font-sans);
+}
+.steps__n {
+  font: 500 12px/24px var(--font-mono);
+  color: var(--ink-muted);
+  text-align: right;
+}
+.steps__nav {
+  justify-content: flex-end;
+}
+.steps__count {
+  margin-right: auto;
+  font: 500 12px/16px var(--font-mono);
+  color: var(--ink-muted);
+}
+.steps__ring {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+  border: 2px solid var(--focus);
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+}
+/* the shade around the ring, lighter than the popup's scrim so the page stays readable; it is
+   clipped to --hole, set with the ring's position, while the ring's own line is not */
+.steps__ring::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--ink) 18%, transparent);
+  clip-path: var(--hole);
+}
+.split {
+  /* a 1px line, grabbed anywhere in its 9px column */
+  --split-line: var(--line);
+  cursor: col-resize;
+  background: linear-gradient(90deg, transparent 4px, var(--split-line) 4px 5px, transparent 5px);
+  touch-action: none;
+}
+.split:hover {
+  --split-line: var(--line-strong);
+}
+
+/* ---------- transport ---------- */
+.transport {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-4);
+  background: var(--surface-100);
+  border-bottom: 1px solid var(--line);
+}
+.unit {
+  color: var(--ink-muted);
+  margin-left: 0.25em;
+}
+/* ---------- plugins ---------- */
+.rack {
+  display: grid;
+  grid-template-rows: minmax(min-content, 1.35fr) minmax(min-content, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-4);
+  overflow-x: hidden;
+  overflow-y: auto; /* on a short window the graphs keep their height and the rack scrolls */
+}
+/* the least a graph needs to be read: the EQ's two label rows and its curve, the
+   compressor's scale, its Threshold and GR chips */
+.rack .eq .screen {
+  min-height: 150px;
+}
+.rack .comp .screen-row {
+  min-height: 110px;
+}
+/* a canvas is sized by its box, never the other way round (fitCanvas sets its pixels
+   from its size, which would otherwise feed back into the rack's min-content) */
+.screen,
+.screen-row {
+  contain: size;
+}
+/* Auto Gain's column: its key centred where a knob would be, its gain where a knob's value is */
+.ag .agkey {
+  display: flex;
+  align-items: center;
+  height: var(--knob-sm);
+}
+.big .ag .agkey {
+  height: var(--knob-md);
+}
+.ag .pr-ctl__value {
+  color: var(--ink-muted);
+}
+.ag.on .pr-ctl__value {
+  color: var(--ink);
+}
+.ag.busy .pr-ctl__value {
+  opacity: 0.45;
+}
+/* graphs: the inset screen of PRAYROOM's Graph */
+.screen {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  border-radius: var(--radius-lg);
+  background: var(--surface-200);
+  box-shadow: var(--shadow-inset);
+  overflow: hidden;
+}
+.eqgraph {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+.eqknobs,
+.cknobs {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.cknobs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  justify-items: center;
+}
+/* a graph, taking the height the plugin leaves it */
+.graph {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+/* as wide as the widest band switch, so the columns do not shift between bands */
+.eqlead {
+  flex: none;
+  width: 72px;
+}
+/* the band's switch leads the row; its controls keep four fixed columns, so Freq
+   stays put across bands, Slope takes the two columns of Gain and Q, and Auto Gain
+   the last */
+.eqslots {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  justify-items: center;
+  align-items: start;
+}
+/* Auto Gain keeps the last column whichever controls the band has */
+.eqslots .ag {
+  grid-column: 4;
+}
+.eqslots .slope {
+  grid-column: span 2;
+  display: flex; /* not a line box, whose baseline would set the segments lower than Freq */
+}
+.pr-ctl .unit {
+  margin-left: var(--space-1);
+  font-family: var(--font-mono);
+  color: var(--ink-muted);
+}
+.screen-row {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: var(--space-3);
+}
+.compgraph,
+.transfer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* the compressor's input → output curve: a square as tall as the history beside it */
+.screen.transfer {
+  flex: none;
+  aspect-ratio: 1;
+  height: 100%;
+}
+/* the words under the compressor's knobs (PRAYROOM's Tag and Bracket): Ratio, Attack and
+   Release in the row under their knobs, and the word for Attack and Release together under
+   a bracket from one to the other */
+.cknobs {
+  row-gap: var(--space-1);
+}
+.cknobs > .pr-tag {
+  grid-row: 2;
+}
+.cknobs > .pr-bracket {
+  grid-row: 3;
+  grid-column: 3 / 5;
+  justify-self: stretch;
+  padding: 0 var(--space-3); /* the bracket as wide as the widest word, at the narrowest rack */
+}
+.grmeter {
+  display: flex;
+}
+
+
+/* ---------- the plug-in's own ---------- */
+#app {
+  width: 960px;
+  height: 560px;
+}
+.pr-window {
+  position: relative;
+}
+/* the device fills the window's body; its own head is the window's header */
+.pr-window__body > .pr-device {
+  flex: 1;
+}
+/* the settings, under the 設定 key at the header's right */
+.settings {
+  position: absolute;
+  z-index: 30;
+  top: calc(var(--header-h) - var(--space-1));
+  right: var(--space-4);
+}
+.settings[hidden] {
+  display: none;
+}
+.settings > .pr-panel {
+  box-shadow: var(--shadow-float);
+}
+.settings .pr-panel__body {
+  flex-direction: column;
+  align-items: stretch;
+}
+/* a scale the screen has no room for; PRAYROOM draws a disabled key, lamp or switch so */
+.settings .pr-seg__opt:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+/* a typed value: the value's own place, size and style, with the focus ring */
+.value-input {
+  box-sizing: border-box;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--surface-000);
+  color: var(--ink);
+  text-align: center;
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}

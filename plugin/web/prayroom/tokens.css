@@ -1,0 +1,221 @@
+/* PRAYROOM — generated from tokens.json */
+
+:root, [data-theme="light"] {
+  --surface-000: oklch(0.985 0.003 255);
+  --surface-100: oklch(0.96 0.004 255);
+  --surface-200: oklch(0.928 0.005 255);
+  --line: oklch(0.885 0.006 255);
+  --line-strong: oklch(0.6 0.012 255);
+  --ink: oklch(0.27 0.012 255);
+  --ink-muted: oklch(0.48 0.014 255);
+  --ink-faint: oklch(0.62 0.012 255);
+  --brand-red: oklch(0.585 0.205 33);
+  --brand-red-soft: oklch(0.905 0.004 255);
+  --active: var(--brand-red);
+  --active-ink: oklch(0.54 0.19 33);
+  --tab-selected: var(--ink);
+  --tab-selected-ink: var(--surface-000);
+  --viz-primary: oklch(0.34 0.012 255);
+  --viz-primary-fill: oklch(0.34 0.012 255 / 0.12);
+  --viz-gr: oklch(0.58 0.01 255);
+  --meter-ok: oklch(0.36 0.012 255);
+  --meter-hot: var(--brand-red);
+  --clip: oklch(0.65 0.235 28);
+  --focus: var(--viz-primary);
+  --video-surround: oklch(0.289 0 0);
+  --video-ink: oklch(0.885 0 0);
+  --hint-surface: oklch(0.17 0.006 255 / 0.72);
+  --hint-ink: oklch(0.97 0.004 255);
+  --hint-line: oklch(1 0 0 / 0.12);
+  --lane-a: oklch(0.491 0.056 246.4);
+  --on-lane-a: oklch(1 0 0);
+  --lane-b: oklch(0.747 0.099 74.9);
+  --on-lane-b: oklch(0.27 0.012 255);
+  --playhead: var(--ink);
+  --knob-skirt: oklch(0.228 0.004 255);
+  --knob-pointer: oklch(0.97 0.003 255);
+  --knob-shadow: oklch(0.27 0.012 255 / 0.36);
+  --bevel-hi: oklch(1 0 0 / 0.65);
+  --bevel-lo: oklch(0.27 0.012 255 / 0.12);
+  --led-off: oklch(0.85 0.007 255);
+  --led-lit: oklch(0.66 0.215 35);
+  --led-edge: oklch(0.48 0.18 31);
+  --led-glow: oklch(0.585 0.205 33 / 0.55);
+  --panel-warm: var(--surface-100);
+  --panel-cool: var(--surface-100);
+  --knob-head-ink: oklch(0.3 0.01 255);
+  --knob-head-paper: oklch(0.9 0.006 255);
+  --knob-head-indigo: oklch(0.43 0.042 247.6);
+  --knob-head-ochre: oklch(0.612 0.102 74.3);
+  --knob-plate-ink: var(--ink);
+  --knob-shadow-ink: oklch(0.22 0.012 255);
+  --print-paper: oklch(0.929 0.025 86.9);
+  --print-ink: oklch(0.222 0.014 72.1);
+  --index-ink: oklch(0.57 0.2 32);
+  --dial-bezel: oklch(0.233 0.016 62.5);
+  --dial-rim: oklch(0.823 0.034 85.5);
+  --dial-grip: oklch(0.62 0.029 82.3);
+  --window-frame: oklch(0.22 0.007 67.4);
+  --encoder-well: oklch(0.192 0.002 286.2);
+  --encoder-rubber: oklch(0.298 0.005 286.1);
+  --encoder-dish: oklch(0.282 0.005 286);
+  --encoder-led: oklch(0.803 0.146 64.6);
+  --encoder-led-off: oklch(0.3 0.034 62.2);
+  --shadow-raised: inset 0 1px 0 oklch(1 0 0 / 0.702), 0 1px 2px oklch(0.27 0.012 255 / 0.12), 0 2px 6px oklch(0.27 0.012 255 / 0.08);
+  --shadow-inset: inset 0 1px 2px oklch(0.27 0.012 255 / 0.12);
+  --shadow-float: 0 4px 16px oklch(0.27 0.012 255 / 0.16);
+  --led-spill: blur(3px);
+}
+
+[data-theme="dark"] {
+  --surface-000: oklch(0.215 0.006 255);
+  --surface-100: oklch(0.25 0.007 255);
+  --surface-200: oklch(0.288 0.008 255);
+  --line: oklch(0.324 0.009 255);
+  --line-strong: oklch(0.565 0.012 255);
+  --ink: oklch(0.927 0.008 255);
+  --ink-muted: oklch(0.707 0.012 255);
+  --ink-faint: oklch(0.567 0.012 255);
+  --brand-red: oklch(0.67 0.18 33);
+  --brand-red-soft: oklch(0.31 0.008 255);
+  --active: var(--brand-red);
+  --active-ink: oklch(0.67 0.18 33);
+  --tab-selected: oklch(0 0 0);
+  --tab-selected-ink: var(--ink);
+  --viz-primary: oklch(0.86 0.008 255);
+  --viz-primary-fill: oklch(0.86 0.008 255 / 0.16);
+  --viz-gr: oklch(0.66 0.008 255);
+  --meter-ok: oklch(0.78 0.01 255);
+  --meter-hot: var(--brand-red);
+  --clip: oklch(0.7 0.19 28);
+  --focus: var(--viz-primary);
+  --video-surround: oklch(0.182 0 0);
+  --video-ink: oklch(0.82 0 0);
+  --hint-surface: oklch(0.17 0.006 255 / 0.72);
+  --hint-ink: oklch(0.97 0.004 255);
+  --hint-line: oklch(1 0 0 / 0.12);
+  --lane-a: oklch(0.466 0.057 246.5);
+  --on-lane-a: oklch(0.962 0.004 255);
+  --lane-b: oklch(0.714 0.098 73.2);
+  --on-lane-b: oklch(0.215 0.006 255);
+  --playhead: var(--ink);
+  --knob-shadow: oklch(0 0 0 / 0.65);
+  --bevel-hi: oklch(1 0 0 / 0.08);
+  --bevel-lo: oklch(0 0 0 / 0.35);
+  --led-off: oklch(0.332 0.009 255);
+  --led-lit: oklch(0.78 0.13 40);
+  --led-edge: oklch(0.56 0.18 32);
+  --led-glow: oklch(0.67 0.18 33 / 0.6);
+  --panel-warm: var(--surface-100);
+  --panel-cool: var(--surface-100);
+  --knob-plate-ink: var(--ink);
+  --knob-shadow-ink: oklch(0 0 0);
+  --shadow-raised: inset 0 1px 0 oklch(1 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.4), 0 2px 6px oklch(0 0 0 / 0.302);
+  --shadow-inset: inset 0 1px 2px oklch(0 0 0 / 0.5);
+  --shadow-float: 0 4px 16px oklch(0 0 0 / 0.5);
+  --led-spill: blur(5px);
+}
+
+[data-theme="studio"] {
+  --surface-000: oklch(0.209 0 0);
+  --surface-100: oklch(0.248 0 0);
+  --surface-200: oklch(0.285 0 0);
+  --line: oklch(0.321 0 0);
+  --line-strong: oklch(0.566 0 0);
+  --ink: oklch(0.925 0 0);
+  --ink-muted: oklch(0.725 0 0);
+  --ink-faint: oklch(0.586 0 0);
+  --brand-red: oklch(0.67 0.18 33);
+  --brand-red-soft: oklch(0.31 0 0);
+  --active: var(--brand-red);
+  --active-ink: oklch(0.67 0.18 33);
+  --tab-selected: oklch(0 0 0);
+  --tab-selected-ink: var(--ink);
+  --viz-primary: oklch(0.86 0 0);
+  --viz-primary-fill: oklch(0.86 0 0 / 0.16);
+  --viz-gr: oklch(0.66 0 0);
+  --meter-ok: oklch(0.78 0 0);
+  --meter-hot: var(--brand-red);
+  --clip: oklch(0.7 0.19 28);
+  --focus: var(--viz-primary);
+  --video-surround: oklch(0.182 0 0);
+  --video-ink: oklch(0.82 0 0);
+  --hint-surface: oklch(0.17 0.006 255 / 0.72);
+  --hint-ink: oklch(0.97 0.004 255);
+  --hint-line: oklch(1 0 0 / 0.12);
+  --lane-a: oklch(0.466 0.057 246.5);
+  --on-lane-a: oklch(0.97 0 0);
+  --lane-b: oklch(0.714 0.098 73.2);
+  --on-lane-b: oklch(0.209 0 0);
+  --playhead: var(--ink);
+  --knob-shadow: oklch(0 0 0 / 0.65);
+  --bevel-hi: oklch(1 0 0 / 0.07);
+  --bevel-lo: oklch(0 0 0 / 0.35);
+  --led-off: oklch(0.348 0 0);
+  --led-lit: oklch(0.78 0.13 40);
+  --led-edge: oklch(0.56 0.18 32);
+  --led-glow: oklch(0.67 0.18 33 / 0.6);
+  --panel-warm: var(--surface-100);
+  --panel-cool: var(--surface-100);
+  --knob-plate-ink: var(--ink);
+  --knob-shadow-ink: oklch(0 0 0);
+  --led-spill: blur(5px);
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-sm: 2px;
+  --radius-md: 6px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  --knob-lg: 112px;
+  --knob-md: 80px;
+  --knob-sm: 56px;
+  --knob-xs: 40px;
+  --lamp-md: 40px;
+  --lamp-lg: 52px;
+  --hit-min: 24px;
+  --meter-w: 8px;
+  --header-h: 40px;
+  --footer-h: 40px;
+  --hint-w: 320px;
+  --hint-blur: 12px;
+  --track-h: 24px;
+  --track-head-w: 64px;
+  --ruler-h: 20px;
+  --track-h-lg: 72px;
+  --track-head-w-lg: 230px;
+  --ruler-h-lg: 24px;
+  --dial: 220px;
+  --encoder-md: 120px;
+  --encoder-lg: 160px;
+  --font-sans: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
+}
+
+.wordmark { font-family: var(--font-sans); font-size: 56px; line-height: 0.95; font-weight: 700; letter-spacing: 0.06em; }
+
+.title { font-family: var(--font-sans); font-size: 18px; line-height: 24px; font-weight: 700; letter-spacing: 0.04em; }
+
+.section { font-family: var(--font-sans); font-size: 11px; line-height: 14px; font-weight: 700; letter-spacing: 0.12em; }
+
+.label { font-family: var(--font-sans); font-size: 11px; line-height: 16px; font-weight: 500; letter-spacing: 0.02em; }
+
+.body { font-family: var(--font-sans); font-size: 13px; line-height: 20px; font-weight: 400; }
+
+.body-strong { font-family: var(--font-sans); font-size: 13px; line-height: 20px; font-weight: 700; }
+
+.body-lg { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 400; }
+
+.body-lg-strong { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 700; }
+
+.value { font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; }
+
+.value-lg { font-family: var(--font-mono); font-size: 20px; line-height: 24px; font-weight: 500; }
+
+.scale { font-family: var(--font-mono); font-size: 10px; line-height: 12px; font-weight: 400; }

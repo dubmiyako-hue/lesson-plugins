@@ -4,7 +4,11 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "golden:params": "node tests/golden/gen-params.mjs"
+    "golden:params": "node tests/golden/gen-params.mjs",
+    "web:check": "tsc -p plugin/web",
+    "web:build": "tsc -p plugin/web && vite build --config plugin/web/vite.config.ts",
+    "web:dev": "vite --config plugin/web/vite.config.ts",
+    "web:test": "vitest run --config plugin/web/vite.config.ts"
   },
   "devDependencies": {
     "esbuild": "0.25.12",

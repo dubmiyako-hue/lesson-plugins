@@ -1,0 +1,7 @@
+Copied by tools/sync-prayroom.py from D:/work/Claude/mix-course/prayroom (the web app's copy of PRAYROOM).
+bundle.css has its Google Fonts @import replaced by @font-face rules for ../fonts/.
+
+9a2f2b8289903ade6e9a10e5e724fe0d76d517a50c00311ee03b0cc5bae77e64  tokens.css (source)
+2381f52a3c04e58470f4f7d9b2a891ad286b438c1cee1cd9d6c6f2dd3b9d0a3d  bundle.css (source)
+2395d72448979976a4397f1005056b0257ef2c867e3a24c7cf885b329b6e39ee  bundle.js (source)
+4c0e07b5fc38e03615d0c52bd9b61c760f5dcd35c86d424d81e3bf813f7fa8c0  index.d.ts (source)

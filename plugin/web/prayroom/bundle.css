@@ -1,0 +1,362 @@
+/* PRAYROOM components — every value comes from tokens.css (generated from tokens.json).
+   Fonts: previews load Zen Kaku Gothic New / IBM Plex Mono from Google Fonts below.
+   In a plugin or app build, replace this @import with @font-face rules pointing at embedded woff2 files. */
+@font-face { font-family: "Zen Kaku Gothic New"; font-style: normal; font-weight: 400; font-display: block; src: url("../fonts/ZenKakuGothicNew-400.woff") format("woff"); }
+@font-face { font-family: "Zen Kaku Gothic New"; font-style: normal; font-weight: 500; font-display: block; src: url("../fonts/ZenKakuGothicNew-500.woff") format("woff"); }
+@font-face { font-family: "Zen Kaku Gothic New"; font-style: normal; font-weight: 700; font-display: block; src: url("../fonts/ZenKakuGothicNew-700.woff") format("woff"); }
+@font-face { font-family: "IBM Plex Mono"; font-style: normal; font-weight: 400; font-display: block; src: url("../fonts/IBMPlexMono-400.woff") format("woff"); }
+@font-face { font-family: "IBM Plex Mono"; font-style: normal; font-weight: 500; font-display: block; src: url("../fonts/IBMPlexMono-500.woff") format("woff"); }
+
+.pr-root, .pr-root * { box-sizing: border-box; }
+.pr-root { font-family: var(--font-sans); color: var(--ink); background: var(--grain), var(--surface-000); }
+:root { --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 0 .07'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>"); }
+
+/* ---------- shared control column: label / control / value ---------- */
+.pr-ctl { display: inline-flex; flex-direction: column; align-items: center; gap: var(--space-1); user-select: none; -webkit-user-select: none; }
+.pr-ctl__label { font-family: var(--font-sans); font-size: 11px; line-height: 16px; font-weight: 500; letter-spacing: .02em; color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 9em; }
+.pr-ctl__value { font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; min-width: 5.5em; text-align: center; }
+.pr-ctl__value .pr-unit { color: var(--ink-muted); margin-left: .25em; }
+.pr-ctl--disabled { opacity: .45; pointer-events: none; }
+/* a disabled control is see-through as a group, so the soft-light layer's grey would show as a disc: drop it */
+.pr-ctl--disabled .pr-light { display: none; }
+.pr-focusable:focus { outline: none; }
+.pr-focusable:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* ---------- Rotary controls (Knob, Dial, Encoder) ---------- */
+.pr-rotary { position: relative; cursor: ns-resize; touch-action: none; border-radius: var(--radius-full); }
+.pr-rotary svg { display: block; overflow: hidden; }
+
+.pr-knob__shadow { fill: var(--knob-shadow-ink); }
+
+/* Knob: printed plate + matte chickenhead */
+.pr-knob__print line, .pr-knob__print circle { stroke: var(--knob-plate-ink); fill: none; }
+.pr-knob__num { font: 600 10px/1 var(--font-sans); fill: var(--knob-plate-ink); }
+.pr-knob__print .pr-knob__mark { fill: var(--index-ink); stroke: none; }
+.pr-knob__skirt { fill: var(--knob-skirt); }
+.pr-knob__knurl { stroke: oklch(0 0 0); stroke-opacity: .55; }
+.pr-knob__inlay { fill: var(--knob-pointer); }
+.pr-knob__inlay--dark { fill: var(--knob-head-ink); }
+
+/* Dial: the hero */
+.pr-dial { cursor: ns-resize; }
+.pr-dial__bezel { fill: var(--dial-bezel); }
+.pr-dial__rim { fill: var(--dial-rim); }
+.pr-dial__grip { stroke: var(--dial-grip); stroke-width: 1.1; }
+.pr-dial__face { fill: var(--print-paper); }
+.pr-dial__print line, .pr-dial__print circle { stroke: var(--print-ink); fill: none; }
+.pr-dial__num { font: 500 11px/1 var(--font-mono); fill: var(--print-ink); }
+.pr-dial__brand { font: 700 10px/1 var(--font-sans); letter-spacing: 2px; fill: var(--print-ink); fill-opacity: .55; }
+.pr-dial__zone { fill: none; stroke: var(--index-ink) !important; stroke-width: 3; }
+.pr-dial__axle { fill: var(--dial-bezel); }
+.pr-dial__index { stroke: var(--index-ink); stroke-width: 1.2; }
+.pr-dial__loupe { fill: none; stroke: var(--dial-bezel); stroke-width: 3.5; }
+
+/* Drum and Tape: scales that move behind a fixed index */
+.pr-drum { position: relative; border-radius: var(--radius-md); background: var(--window-frame); box-shadow: inset 0 3px 6px oklch(0 0 0 / 0.702), 0 1px 0 var(--bevel-hi); overflow: hidden; cursor: ns-resize; touch-action: none; user-select: none; -webkit-user-select: none; }
+.pr-drum__skin { position: absolute; left: 6px; right: 6px; top: 18px; bottom: 18px; background: var(--print-paper); overflow: hidden; }
+.pr-drum__row { position: absolute; left: 0; right: 0; top: 50%; height: 16px; margin-top: -8px; will-change: transform; }
+.pr-drum__tick { position: absolute; left: 10px; top: 50%; width: 10px; height: 1px; margin-top: -0.5px; background: var(--print-ink); }
+.pr-drum__tick.is-mid { width: 18px; }
+.pr-drum__tick.is-major { width: 26px; height: 1.6px; }
+.pr-drum__num { position: absolute; left: 44px; top: 0; font: 500 11px/16px var(--font-mono); color: var(--print-ink); white-space: nowrap; }
+.pr-drum__num.is-major { font-size: 15px; font-weight: 600; }
+.pr-drum__shade { position: absolute; inset: 0; background: linear-gradient(to bottom, oklch(0.174 0.01 52.8 / 0.95) 0%, oklch(0.174 0.01 52.8 / 0.5) 20%, oklch(0.174 0.01 52.8 / 0.06) 44%, oklch(0.174 0.01 52.8 / 0) 50%, oklch(0.174 0.01 52.8 / 0.16) 68%, oklch(0.174 0.01 52.8 / 0.92) 100%); pointer-events: none; }
+.pr-drum__frame { position: absolute; inset: 0; border-radius: var(--radius-md); box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.6), inset 0 4px 8px oklch(0 0 0 / 0.55); pointer-events: none; }
+.pr-index { position: absolute; background: var(--index-ink); pointer-events: none; }
+.pr-index--h { left: 0; right: 0; top: 50%; height: 1.5px; margin-top: -0.75px; }
+.pr-index--v { top: 0; bottom: 0; left: 50%; width: 1.5px; margin-left: -0.75px; }
+.pr-index__arrow { position: absolute; left: 0; top: 50%; width: 0; height: 0; margin-top: -5px; border-style: solid; border-width: 5px 0 5px 7px; border-color: transparent transparent transparent var(--index-ink); pointer-events: none; }
+.pr-tape { position: relative; height: 72px; border-radius: var(--radius-sm); overflow: hidden; background: var(--window-frame); box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.702), 0 1px 0 var(--bevel-hi); cursor: ew-resize; touch-action: none; }
+.pr-tape__strip { position: absolute; top: 0; left: 0; will-change: transform; }
+.pr-tape__strip svg { display: block; }
+.pr-tape__paper { fill: var(--print-paper); }
+.pr-tape__print line { stroke: var(--print-ink); }
+.pr-tape__num { font: 500 12px/1 var(--font-mono); fill: var(--print-ink); }
+.pr-tape__zone { fill: var(--index-ink); }
+.pr-tape__shade { position: absolute; inset: 0; background: linear-gradient(to right, oklch(0.167 0.011 67 / 0.95) 0%, oklch(0.167 0.011 67 / 0.35) 12%, oklch(0.167 0.011 67 / 0) 26%, oklch(0.167 0.011 67 / 0) 74%, oklch(0.167 0.011 67 / 0.35) 88%, oklch(0.167 0.011 67 / 0.95) 100%), linear-gradient(to bottom, oklch(0 0 0 / 0.55) 0, oklch(0 0 0 / 0) 10px, oklch(0 0 0 / 0) 64px, oklch(0 0 0 / 0.35) 72px); pointer-events: none; }
+
+/* Encoder: rubber knob in a well, LED ring */
+.pr-encoder__well { fill: var(--encoder-well); }
+.pr-encoder__led { fill: var(--encoder-led-off); }
+.pr-encoder__led.is-on { fill: var(--encoder-led); }
+.pr-encoder__rubber { fill: var(--encoder-rubber); }
+.pr-encoder__dish { fill: var(--encoder-dish); }
+.pr-encoder__grip { stroke: oklch(0 0 0); stroke-opacity: .45; stroke-width: 1.4; }
+.pr-encoder__dot { fill: var(--knob-pointer); }
+
+/* ---------- Fader ---------- */
+.pr-fader { position: relative; width: 32px; cursor: ns-resize; touch-action: none; }
+.pr-fader__track { position: absolute; left: 50%; top: 10px; bottom: 10px; width: 6px; margin-left: -3px; border-radius: var(--radius-sm); background: var(--surface-200); box-shadow: var(--shadow-inset); overflow: hidden; }
+.pr-fader__fill { position: absolute; left: 50%; width: 2px; margin-left: -1px; bottom: 0; border-radius: 1px; background: var(--active); }
+.pr-fader__thumb { position: absolute; left: 0; right: 0; height: 20px; margin-top: -10px; border-radius: var(--radius-sm); background: linear-gradient(oklch(1 0 0 / 0.22), oklch(1 0 0 / 0) 45%, oklch(0 0 0 / 0.35)), var(--knob-skirt); box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.25), 0 1px 1px oklch(0 0 0 / 0.302), 0 3px 6px var(--knob-shadow); }
+.pr-fader__thumb::before { content: ""; position: absolute; left: 5px; right: 5px; top: 4px; bottom: 4px; background: repeating-linear-gradient(to bottom, oklch(0 0 0 / 0.45) 0 1px, oklch(1 0 0 / 0.12) 1px 2px, transparent 2px 4px); border-radius: 1px; }
+/* laid on its side, for a track's volume in a timeline head: a short groove, the 0 dB line,
+   and a small thumb (no ridges at this size); the value at the right */
+.pr-hfader { display: grid; grid-template-columns: 1fr 64px; align-items: center; gap: var(--space-2); min-width: 0; }
+.pr-hfader > .pr-ctl__value { min-width: 0; text-align: right; }
+.pr-fader--h { width: auto; height: 16px; cursor: ew-resize; }
+.pr-fader--h .pr-fader__track { left: 0; right: 0; top: 5px; bottom: auto; width: auto; height: 6px; margin-left: 0; }
+.pr-fader--h .pr-fader__fill { left: 0; top: 2px; bottom: auto; width: auto; height: 2px; margin-left: 0; }
+.pr-fader__mark { position: absolute; top: 1px; width: 1px; height: 14px; background: var(--line-strong); }
+.pr-fader--h .pr-fader__thumb { left: auto; right: auto; top: 0; width: 12px; height: 16px; margin: 0 0 0 -6px; background: var(--knob-skirt); box-shadow: 0 1px 1px var(--knob-shadow), 0 2px 4px var(--knob-shadow); }
+.pr-fader--h .pr-fader__thumb::before { content: none; }
+.pr-fader--h .pr-fader__thumb::after { left: 5px; right: auto; top: 3px; bottom: 3px; width: 2px; height: auto; margin-top: 0; }
+/* small sliders answer in a hit-min-tall box around what they draw */
+.pr-fader--h::before { content: ""; position: absolute; left: 0; right: 0; top: calc((100% - var(--hit-min)) / 2); bottom: calc((100% - var(--hit-min)) / 2); }
+.pr-fader__thumb::after { content: ""; position: absolute; left: 3px; right: 3px; top: 50%; height: 2px; margin-top: -1px; background: var(--knob-pointer); border-radius: 1px; }
+
+/* ---------- Toggle ---------- */
+.pr-toggle { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--hit-min); padding: 0 var(--space-3) 0 var(--space-2); border-radius: var(--radius-md); border: 1px solid var(--line-strong); background: linear-gradient(var(--bevel-hi), transparent 55%), var(--surface-100); box-shadow: var(--shadow-raised); color: var(--ink); font: 500 11px/16px var(--font-sans); letter-spacing: .02em; cursor: pointer; transition: background-color 120ms ease-out, box-shadow 120ms ease-out; white-space: nowrap; }
+/* an LED: the lens in ::before; behind it in ::after a copy of its shape in the LED's colour, blurred once, which is the light it spills */
+.pr-toggle__led { position: relative; width: 9px; height: 9px; flex: none; }
+.pr-toggle__led::before, .pr-toggle__led::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-full); }
+.pr-toggle__led::before { z-index: 1; background: var(--led-off); box-shadow: inset 0 1px 1px oklch(0 0 0 / 0.45), 0 1px 0 var(--bevel-hi); }
+.pr-toggle__led::after { background: var(--led-glow); filter: var(--led-spill); opacity: 0; transition: opacity 120ms ease-out; }
+.pr-toggle[aria-pressed="true"] { background: linear-gradient(var(--bevel-lo), transparent 40%), var(--toggle-face, var(--brand-red-soft)); border-color: var(--active); box-shadow: inset 0 1px 2px var(--bevel-lo); }
+.pr-toggle[aria-pressed="true"] .pr-toggle__led::before { background: radial-gradient(closest-side, var(--led-lit), var(--active)); box-shadow: none; }
+.pr-toggle[aria-pressed="true"] .pr-toggle__led::after { opacity: 1; }
+/* lit in a colour of its own (color): the LED, the rim and a face tinted with it */
+.pr-toggle--tinted { --toggle-face: oklch(from var(--active) 0.912 0.03 h); }
+[data-theme="dark"] .pr-toggle--tinted, [data-theme="studio"] .pr-toggle--tinted { --toggle-face: oklch(from var(--active) 0.294 0.04 h); }
+/* the shape of a filter, drawn in the text colour */
+.pr-glyph { width: 16px; height: 11px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Key ---------- */
+/* a key without an LED: the raised face and the pressed state of the Toggle */
+.pr-key { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: var(--hit-min); min-width: var(--hit-min); padding: 0 var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--line-strong); background: linear-gradient(var(--bevel-hi), transparent 55%), var(--surface-100); box-shadow: var(--shadow-raised); color: var(--ink); font: 500 11px/16px var(--font-sans); letter-spacing: .02em; white-space: nowrap; cursor: pointer; transition: background-color 120ms ease-out, box-shadow 120ms ease-out; }
+.pr-key[aria-pressed="true"] { background: linear-gradient(var(--bevel-lo), transparent 40%), var(--brand-red-soft); border-color: var(--active); box-shadow: inset 0 1px 2px var(--bevel-lo); }
+.pr-key:disabled { opacity: .45; cursor: default; }
+.pr-key--icon { padding: 0; width: var(--hit-min); color: var(--ink-muted); }
+.pr-key--primary { font-weight: 700; }
+/* the marks a key may carry, drawn in its text colour */
+.pr-icon { flex: none; width: 12px; height: 12px; background: currentColor; -webkit-mask: var(--icon) center / contain no-repeat; mask: var(--icon) center / contain no-repeat; }
+.pr-icon--play { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 0 11 6 2 12z'/%3E%3C/svg%3E"); }
+.pr-icon--stop { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M1.5 1.5h9v9h-9z'/%3E%3C/svg%3E"); }
+.pr-icon--expand { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M8 1h5v5M6 13H1V8M13 1 8.5 5.5M1 13l4.5-4.5' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E"); width: 13px; height: 13px; }
+.pr-icon--close { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M1.5 1.5l9 9M10.5 1.5l-9 9' stroke='black' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E"); }
+
+/* ---------- Device: one device in a rack, and the same device opened large ---------- */
+.pr-device { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-3); min-width: 0; min-height: 0; border-radius: var(--radius-lg); background: var(--grain), var(--surface-100); border: 1px solid var(--line); box-shadow: inset 0 1px 0 var(--bevel-hi); }
+.pr-device__head { display: flex; align-items: center; gap: var(--space-3); height: var(--hit-min); }
+/* the name takes the room between the power switch and the key, which it keeps at the right */
+.pr-device__name { flex: 1; font: 700 13px/20px var(--font-sans); color: var(--ink); white-space: nowrap; }
+.pr-device__body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+/* the scrim a device opens large over: ink at 35% over the page, the device floating on it */
+.pr-scrim { position: fixed; inset: 0; z-index: 20; display: grid; padding: var(--space-8) 48px; background: color-mix(in srgb, var(--ink) 35%, transparent); }
+.pr-scrim > .pr-device { box-shadow: var(--shadow-float); }
+
+/* ---------- Badge ---------- */
+/* a mode named on a graph (Limiter at ∞:1): ink, not 朱, for it names a state, not an "on" */
+.pr-badge { display: inline-block; height: 18px; padding: 0 6px; border-radius: var(--radius-sm); background: var(--ink); color: var(--surface-000); font: 700 11px/18px var(--font-sans); letter-spacing: .12em; white-space: nowrap; }
+.pr-badge[hidden] { display: none; }
+
+/* ---------- Tag / Bracket ---------- */
+/* what a knob's value is for, framed and not filled (filled, it would read as a state: Badge) */
+.pr-tag { display: inline-block; padding: 0 var(--space-1); border: 1px solid var(--line-strong); border-radius: var(--radius-md); color: var(--ink); font: 500 11px/16px var(--font-sans); letter-spacing: .02em; white-space: nowrap; }
+/* the tag for neighbouring knobs together, under a bracket as wide as the caller makes it */
+.pr-bracket { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); }
+.pr-bracket::before { content: ""; align-self: stretch; height: 6px; border: 1px solid var(--line-strong); border-top: 0; border-radius: 0 0 var(--radius-sm) var(--radius-sm); }
+/* off keeps its room: both sit in the knobs' flow */
+.pr-tag.is-off, .pr-bracket.is-off { visibility: hidden; }
+
+/* ---------- Lamp ---------- */
+/* a square key lit from inside: a cap in a sunk well; lit, the cap glows evenly and darkens toward its rim, and spills its light round the well */
+.pr-lamp { position: relative; flex: none; width: var(--lamp-md); height: var(--lamp-md); padding: 0; border: 0; border-radius: var(--radius-md); background: var(--surface-200); box-shadow: var(--shadow-inset); cursor: pointer; }
+.pr-lamp--lg { width: var(--lamp-lg); height: var(--lamp-lg); }
+.pr-lamp__cap { position: absolute; z-index: 1; inset: var(--space-1); border-radius: var(--radius-sm); background: linear-gradient(var(--bevel-hi), transparent 55%), var(--led-off); box-shadow: inset 0 0 0 1px var(--bevel-lo), 0 1px 1px var(--bevel-lo), 0 2px 3px var(--bevel-lo); }
+.pr-lamp::after { content: ""; position: absolute; inset: var(--space-1); border-radius: var(--radius-sm); background: var(--led-glow); filter: var(--led-spill); opacity: 0; pointer-events: none; transition: opacity 120ms ease-out; }
+.pr-lamp[aria-pressed="true"] .pr-lamp__cap { background: var(--led-lit); box-shadow: inset 0 0 0 1px var(--led-edge), inset 0 0 8px 2px var(--active); }
+.pr-lamp[aria-pressed="true"]::after { opacity: 1; }
+.pr-lamp:disabled { opacity: .45; cursor: default; }
+.pr-switch { position: relative; flex: none; width: 38px; height: var(--hit-min); padding: 0; border: 0; border-radius: var(--radius-sm); background: transparent; cursor: pointer; }
+.pr-switch__slot { position: absolute; left: 2px; right: 2px; top: 9px; height: 6px; border-radius: var(--radius-full); background: var(--surface-200); box-shadow: var(--shadow-inset); transition: background-color 120ms ease-out; }
+.pr-switch__block { position: absolute; top: 3px; left: 0; width: 16px; height: 18px; border-radius: var(--radius-sm); background: repeating-linear-gradient(90deg, transparent 0 3px, oklch(0 0 0 / 0.35) 3px 4px, oklch(1 0 0 / 0.08) 4px 5px) 3px 4px / 10px 10px no-repeat, var(--knob-skirt); box-shadow: 0 1px 1px var(--knob-shadow), 0 2px 4px var(--knob-shadow); transition: left 120ms ease-out; }
+.pr-switch[aria-checked="true"] .pr-switch__slot { background: var(--active); }
+.pr-switch[aria-checked="true"] .pr-switch__block { left: 22px; }
+.pr-switch:disabled { opacity: .45; cursor: default; }
+.pr-hint { position: fixed; z-index: 1000; left: 0; top: 0; width: var(--hint-w); padding: var(--space-3) var(--space-4); border: 1px solid var(--hint-line); border-radius: var(--radius-md); background: var(--hint-surface); -webkit-backdrop-filter: blur(var(--hint-blur)); backdrop-filter: blur(var(--hint-blur)); box-shadow: var(--shadow-float); color: var(--hint-ink); pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 120ms ease-out, visibility 0s linear 120ms; }
+.pr-hint.is-shown { opacity: 1; visibility: visible; transition: opacity 120ms ease-out; }
+.pr-hint__title { font: 700 16px/24px var(--font-sans); }
+.pr-hint__aside { font: 500 12px/16px var(--font-mono); }
+.pr-hint__text { margin-top: var(--space-1); font: 400 16px/24px var(--font-sans); }
+
+/* ---------- Segmented / Select ---------- */
+.pr-seg { display: inline-flex; padding: 2px; gap: 2px; border-radius: var(--radius-md); background: var(--surface-200); box-shadow: var(--shadow-inset); }
+.pr-seg__opt { position: relative; min-height: 22px; min-width: 32px; padding: 0 var(--space-2); border: 0; border-radius: calc(var(--radius-md) - 2px); background: transparent; color: var(--ink-muted); font: 500 11px/16px var(--font-sans); letter-spacing: .02em; cursor: pointer; white-space: nowrap; transition: background-color 120ms ease-out, color 120ms ease-out; }
+.pr-seg__opt[aria-checked="true"] { background: linear-gradient(var(--bevel-hi), transparent 60%), var(--surface-000); color: var(--ink); font-weight: 700; box-shadow: var(--shadow-raised); }
+/* a small key answers in a hit-min-tall box around what it draws */
+.pr-seg__opt::before { content: ""; position: absolute; inset: calc((100% - var(--hit-min)) / 2) 0; }
+/* across the whole width (the bands of an EQ): every option the same width */
+.pr-seg--fill { display: flex; }
+.pr-seg--fill > .pr-seg__opt { flex: 1; min-width: 0; }
+/* an option drawn with an LED and the shape of a filter beside its label */
+.pr-seg__opt:has(.pr-seg__led, .pr-glyph) { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-1); }
+/* the LED of what the option stands for (a band on or off), lit in its colour (tint) */
+.pr-seg__led { position: relative; width: 7px; height: 7px; flex: none; }
+.pr-seg__led::before, .pr-seg__led::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-full); }
+.pr-seg__led::before { z-index: 1; background: var(--led-off); box-shadow: inset 0 1px 1px oklch(0 0 0 / 0.45), 0 1px 0 var(--bevel-hi); }
+.pr-seg__led::after { background: var(--led-glow); filter: var(--led-spill); opacity: 0; }
+.pr-seg__led.is-lit::before { background: radial-gradient(closest-side, var(--led-lit), var(--active)); box-shadow: none; }
+.pr-seg__led.is-lit::after { opacity: 1; }
+.pr-seg__opt[aria-checked="true"]::after { content: ""; position: absolute; left: 50%; bottom: 2px; width: 12px; height: 2px; margin-left: -6px; border-radius: 1px; background: var(--active); }
+.pr-select { appearance: none; -webkit-appearance: none; min-height: var(--hit-min); padding: 0 calc(var(--space-6) + 4px) 0 var(--space-2); border-radius: var(--radius-md); border: 1px solid var(--line-strong); background-color: var(--surface-100); box-shadow: var(--shadow-raised), inset 0 1px 0 var(--bevel-hi); color: var(--ink); font: 500 11px/16px var(--font-sans); cursor: pointer; max-width: 100%; text-overflow: ellipsis;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-muted) 50%), linear-gradient(135deg, var(--ink-muted) 50%, transparent 50%);
+  background-position: calc(100% - 13px) 50%, calc(100% - 9px) 50%; background-size: 4px 4px; background-repeat: no-repeat; }
+
+/* ---------- VSlide ---------- */
+/* a vertical slide switch one knob column wide (knob-sm + space-2 each side): the body runs from the knob's top edge
+   to the bottom of the value line (knob-sm + space-1 + 16), for the step names stand in for the value */
+.pr-vslide__body { position: relative; width: calc(var(--knob-col, var(--knob-sm)) + 2 * var(--space-2)); height: calc(var(--knob-col, var(--knob-sm)) + var(--space-1) + 16px); border-radius: var(--radius-sm); }
+/* the slot at space-3, the block (18 wide) centred on it, the names from space-8: the content spans 6..70 of 72;
+   the slot gets a 1 px rim of `line` inside its inset shadow, so it reads on surface-100 */
+.pr-vslide__slot { position: absolute; left: var(--space-2); top: 0; bottom: 0; width: 6px; border-radius: var(--radius-full); background: var(--surface-200); box-shadow: var(--shadow-inset), inset 0 0 0 1px var(--line); }
+/* the block is the Switch's, turned to ride a vertical slot: the ridges run across, in the same raw oklch */
+.pr-vslide__block { position: absolute; left: calc(var(--space-2) - 6px); width: 18px; height: 16px; margin-top: -8px; border-radius: var(--radius-sm); background: repeating-linear-gradient(180deg, transparent 0 3px, oklch(0 0 0 / 0.35) 3px 4px, oklch(1 0 0 / 0.08) 4px 5px) 4px 3px / 10px 10px no-repeat, var(--knob-skirt); box-shadow: 0 1px 1px var(--knob-shadow), 0 2px 4px var(--knob-shadow); transition: top 120ms ease-out; pointer-events: none; }
+.pr-vslide__opt { position: absolute; left: 0; right: 0; display: flex; align-items: center; padding: 0 0 0 var(--space-6); border: 0; background: none; color: var(--ink-muted); font: 500 11px/16px var(--font-sans); letter-spacing: .02em; white-space: nowrap; cursor: pointer; text-align: left; }
+.pr-vslide__opt[aria-checked="true"] { color: var(--ink); font-weight: 700; }
+
+/* ---------- Stepper ---------- */
+/* a chooser one knob column wide: the well is knob-sm tall, so its centre is the knob's centre; the current name is
+   the value, with its neighbours faint above and below */
+.pr-step__box { position: relative; width: calc(var(--knob-col, var(--knob-sm)) + 2 * var(--space-2)); height: calc(var(--knob-col, var(--knob-sm)) + var(--space-1) + 16px); border-radius: var(--radius-md); background: var(--surface-200); box-shadow: var(--shadow-inset); overflow: hidden; cursor: pointer; touch-action: none; }
+.pr-step__opt { position: absolute; left: var(--space-1); right: var(--space-1); height: 16px; font: 500 11px/16px var(--font-sans); letter-spacing: .02em; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; pointer-events: none; }
+.pr-step__opt--prev { top: var(--space-1); }
+.pr-step__opt--cur { top: calc(50% - 8px); color: var(--ink); font-weight: 700; }
+.pr-step__opt--next { bottom: var(--space-1); }
+.pr-step__index { position: absolute; left: 0; top: calc(50% - 6px); width: 2px; height: 12px; background: var(--index-ink); }
+/* the list: the look of the select (raised surface-100, line-strong border, radius-md), one hit-min row per option;
+   the chosen one bold with the index mark */
+.pr-step__list { position: fixed; z-index: 10; margin: 0; padding: var(--space-1) 0; background: var(--surface-100); border: 1px solid var(--line-strong); border-radius: var(--radius-md); box-shadow: var(--shadow-raised); }
+.pr-step__item { position: relative; display: block; width: 100%; min-height: var(--hit-min); padding: 0 var(--space-2); border: 0; background: none; text-align: center; font: 500 11px/var(--hit-min) var(--font-sans); letter-spacing: .02em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.pr-step__item:hover { background: var(--surface-200); }
+.pr-step__item[aria-selected="true"] { font-weight: 700; }
+.pr-step__item[aria-selected="true"]::before { content: ""; position: absolute; left: 0; top: calc(50% - 6px); width: 2px; height: 12px; background: var(--index-ink); }
+
+/* ---------- Meter ---------- */
+.pr-meter { display: inline-flex; gap: var(--space-1); align-items: stretch; }
+.pr-meter__scale { position: relative; width: 22px; font: 400 10px/12px var(--font-mono); color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+.pr-meter__scale span { position: absolute; right: 0; transform: translateY(-50%); }
+.pr-meter__chans { display: flex; gap: var(--space-1); }
+.pr-meter__ch { display: flex; flex-direction: column; gap: var(--space-1); width: var(--meter-w); }
+.pr-meter__lamp { position: relative; height: 8px; cursor: pointer; }
+.pr-meter__lamp::before, .pr-meter__lamp::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-full); }
+.pr-meter__lamp::before { z-index: 1; background: var(--led-off); box-shadow: inset 0 1px 1px oklch(0 0 0 / 0.45); }
+.pr-meter__lamp::after { background: var(--clip); filter: var(--led-spill); opacity: 0; }
+.pr-meter__lamp.is-lit::before { background: var(--clip); box-shadow: none; }
+.pr-meter__lamp.is-lit::after { opacity: .65; }
+.pr-meter__well { position: relative; flex: 1; border-radius: var(--radius-sm); background: repeating-linear-gradient(to top, var(--led-off) 0 3px, transparent 3px 4px), var(--surface-200); box-shadow: var(--shadow-inset); overflow: hidden; }
+.pr-meter__bar { position: absolute; inset: 0; will-change: clip-path; -webkit-mask: repeating-linear-gradient(to top, oklch(0 0 0) 0 3px, transparent 3px 4px); mask: repeating-linear-gradient(to top, oklch(0 0 0) 0 3px, transparent 3px 4px); }
+.pr-meter--gr .pr-meter__bar { -webkit-mask: repeating-linear-gradient(to bottom, oklch(0 0 0) 0 3px, transparent 3px 4px); mask: repeating-linear-gradient(to bottom, oklch(0 0 0) 0 3px, transparent 3px 4px); }
+.pr-meter--gr .pr-meter__well { background: repeating-linear-gradient(to bottom, var(--led-off) 0 3px, transparent 3px 4px), var(--surface-200); }
+.pr-meter__peak { position: absolute; left: 0; right: 0; height: 2px; margin-top: -1px; background: var(--ink); }
+.pr-meter--gr .pr-meter__bar { background: var(--viz-gr); }
+
+/* ---------- Graph ---------- */
+.pr-graph { position: relative; border-radius: var(--radius-lg); background: var(--surface-200); box-shadow: var(--shadow-inset); overflow: hidden; touch-action: none; }
+.pr-graph canvas { display: block; width: 100%; height: 100%; }
+
+/* ---------- OverviewTabs ---------- */
+/* each tab is a column: the name (section style), then its main controls; a line in the gap between two tabs */
+.pr-ovtabs { display: flex; gap: var(--space-3); align-items: stretch; }
+/* a whole section is the tab's target: it takes half the gap on each side, so its line sits on its own edge */
+.pr-ovtabs__sec { position: relative; box-sizing: content-box; display: flex; flex-direction: column; align-items: center; gap: var(--space-3); min-width: calc(var(--knob-col, var(--knob-sm)) + 2 * var(--space-2)); padding: 0 calc(var(--space-3) / 2); margin: 0 calc(var(--space-3) / -2); cursor: pointer; }
+.pr-ovtabs__sec:first-child { padding-left: 0; margin-left: 0; }
+.pr-ovtabs__sec:last-child { padding-right: 0; margin-right: 0; }
+.pr-ovtabs__sec + .pr-ovtabs__sec::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--line); }
+.pr-ovtabs__name { position: relative; background: none; border: 0; padding: 3px var(--space-3); margin: -3px calc(var(--space-3) * -1); border-radius: var(--radius-sm); font: 700 11px/14px var(--font-sans); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-muted); cursor: pointer; transition: color 120ms ease-out; }
+/* the name is 14 px tall; the press area grows to hit-min */
+.pr-ovtabs__name::before { content: ""; position: absolute; inset: calc((100% - var(--hit-min)) / 2) 0; }
+.pr-ovtabs__sec:hover .pr-ovtabs__name:not([aria-selected="true"]) { color: var(--ink); }
+/* the selected name: white on a dark fill, the fill wider than the name and 3 px over it */
+.pr-ovtabs__name[aria-selected="true"] { color: var(--tab-selected-ink); background: var(--tab-selected); }
+.pr-ovtabs__body { display: flex; gap: var(--space-3); align-items: flex-start; }
+
+/* ---------- Envelope and PitchPath (a display over the knobs it shows) ---------- */
+/* as wide as the place it is given; the box has the look of Graph and runs from the knob's top edge to the bottom
+   of the value line, as a VSlide's body does */
+.pr-disp { align-self: stretch; }
+.pr-disp__box { position: relative; width: 100%; height: calc(var(--knob-col, var(--knob-sm)) + var(--space-1) + 16px); border-radius: var(--radius-lg); background: var(--surface-200); box-shadow: var(--shadow-inset); overflow: hidden; touch-action: none; }
+.pr-disp__box canvas { display: block; width: 100%; height: 100%; }
+
+/* ---------- Panel (section) ---------- */
+.pr-panel { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-3); border-radius: var(--radius-lg); background: var(--grain), var(--surface-100); border: 1px solid var(--line); box-shadow: inset 0 1px 0 var(--bevel-hi); }
+.pr-panel--warm { background: var(--grain), var(--panel-warm); }
+.pr-panel--cool { background: var(--grain), var(--panel-cool); }
+.pr-panel__title { margin: 0; font: 700 11px/14px var(--font-sans); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-muted); }
+.pr-panel__body { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-3); }
+
+/* ---------- PluginWindow ---------- */
+.pr-window { display: flex; flex-direction: column; background: var(--grain), var(--surface-000); color: var(--ink); font-family: var(--font-sans); overflow: hidden; }
+.pr-window__header { flex: none; height: var(--header-h); display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-4); border-bottom: 1px solid var(--line); }
+.pr-window__title { margin: 0; font: 700 18px/24px var(--font-sans); letter-spacing: .04em; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pr-window__brand { flex: none; font: 700 10px/12px var(--font-sans); letter-spacing: .12em; color: var(--brand-red); }
+.pr-window__spacer { flex: 1; }
+.pr-window__preset { flex: none; width: 160px; }
+.pr-window__preset .pr-select { width: 100%; }
+.pr-window__header > .pr-seg, .pr-window__header > .pr-toggle, .pr-window__header > .pr-switch { flex: none; }
+.pr-window__body { flex: 1; display: flex; gap: var(--space-4); padding: var(--space-4); min-height: 0; }
+.pr-window__footer { flex: none; height: var(--footer-h); display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-4); border-top: 1px solid var(--line); font: 400 10px/16px var(--font-mono); color: var(--ink-muted); }
+.pr-window__readout { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); font-size: 12px; line-height: 16px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.pr-window__version { flex: none; white-space: nowrap; }
+
+/* ---------- Viewer (video preview) ---------- */
+.pr-viewer { position: relative; display: flex; align-items: center; justify-content: center; background: var(--video-surround); overflow: hidden; min-width: 0; min-height: 0; }
+.pr-viewer__frame { position: relative; max-width: 100%; max-height: 100%; background: oklch(0 0 0); }
+.pr-viewer__frame > canvas, .pr-viewer__frame > video, .pr-viewer__frame > img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.pr-viewer__info { position: absolute; left: var(--space-3); right: var(--space-3); bottom: var(--space-2); display: flex; justify-content: space-between; gap: var(--space-3); font: 400 10px/16px var(--font-mono); color: var(--video-ink); font-variant-numeric: tabular-nums; pointer-events: none; }
+
+/* ---------- Timeline ---------- */
+.pr-tl { display: grid; grid-template-columns: var(--track-head-w) minmax(0, 1fr); background: var(--surface-100); border-top: 1px solid var(--line); font-family: var(--font-mono); user-select: none; -webkit-user-select: none; min-width: 0; }
+.pr-tl__heads { display: flex; flex-direction: column; border-right: 1px solid var(--line); }
+.pr-tl__corner { height: var(--ruler-h); flex: none; display: flex; align-items: center; padding: 0 var(--space-2); font: 400 10px/16px var(--font-mono); color: var(--ink-muted); border-bottom: 1px solid var(--line); }
+.pr-tl__head { height: var(--track-h); flex: none; display: flex; align-items: center; gap: var(--space-2); padding: 0 var(--space-2); font: 500 11px/16px var(--font-sans); color: var(--ink); border-bottom: 1px solid var(--line); white-space: nowrap; overflow: hidden; }
+.pr-tl__tag { font: 500 10px/16px var(--font-mono); color: var(--ink-muted); }
+.pr-tl__scroll { position: relative; overflow-x: auto; overflow-y: hidden; min-width: 0; cursor: text; }
+.pr-tl__canvas { position: relative; }
+.pr-tl__ruler { position: relative; height: var(--ruler-h); border-bottom: 1px solid var(--line); background: var(--surface-200); }
+.pr-tl__bar { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--line-strong); padding-left: 4px; font: 400 10px/20px var(--font-mono); color: var(--ink-muted); white-space: nowrap; }
+.pr-tl__beat { position: absolute; bottom: 0; height: 6px; border-left: 1px solid var(--line); }
+.pr-tl__track { position: relative; height: var(--track-h); border-bottom: 1px solid var(--line); }
+.pr-tl__clip { position: absolute; top: 2px; bottom: 2px; border-radius: var(--radius-sm); padding: 0 var(--space-2); font: 500 11px/20px var(--font-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.pr-tl__clip--a { background: var(--lane-a); color: var(--on-lane-a); }
+.pr-tl__clip--b { background: var(--lane-b); color: var(--on-lane-b); }
+.pr-tl__clip.is-selected { outline: 2px solid var(--focus); outline-offset: 1px; }
+.pr-tl__wave { display: block; }
+.pr-tl__playhead { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--playhead); pointer-events: none; }
+/* the mix variant: a mixing app's tracks, fitted to the width, scrolling up and down under a ruler that stays put */
+.pr-tl--mix { display: block; position: relative; overflow-x: hidden; overflow-y: auto; background: transparent; border-top: 0; font-family: var(--font-sans); }
+.pr-tl__grid { position: relative; display: grid; grid-template-columns: var(--track-head-w-lg) minmax(0, 1fr); grid-template-rows: var(--ruler-h-lg); grid-auto-rows: var(--track-h-lg); }
+.pr-tl--mix .pr-tl__corner, .pr-tl--mix .pr-tl__ruler { position: sticky; top: 0; z-index: 5; height: auto; padding: 0; background: var(--surface-100); border-bottom: 1px solid var(--line); }
+.pr-tl--mix .pr-tl__corner { border-right: 1px solid var(--line); }
+.pr-tl--mix .pr-tl__ruler { cursor: pointer; }
+.pr-tl__barno { position: absolute; bottom: 2px; padding-left: var(--space-1); border-left: 1px solid var(--line-strong); font: 400 10px/12px var(--font-mono); color: var(--ink-muted); pointer-events: none; }
+/* the loop on the ruler: a grey wash between two ink lines; each end grabbed hit-min wide about its line */
+.pr-tl__loop { position: absolute; top: 0; bottom: 0; background: color-mix(in oklch, var(--line-strong) 22%, transparent); border-left: 2px solid var(--ink); border-right: 2px solid var(--ink); cursor: grab; }
+.pr-tl__loop-edge { position: absolute; top: 0; bottom: 0; width: var(--hit-min); cursor: ew-resize; }
+.pr-tl__loop-edge--start { left: calc(var(--hit-min) / -2 - 1px); }
+.pr-tl__loop-edge--end { right: calc(var(--hit-min) / -2 - 1px); }
+/* a track's head: its colour as a strip at the left (the selected track's fills the edge), its name, M and S, its volume */
+.pr-tl__thead { position: relative; display: flex; flex-direction: column; justify-content: center; gap: var(--space-2); padding: var(--space-3) var(--space-3) var(--space-3) var(--space-6); background: var(--surface-100); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); scroll-margin-top: var(--ruler-h-lg); cursor: pointer; }
+.pr-tl__thead::before { content: ""; position: absolute; left: var(--space-2); top: var(--space-3); bottom: var(--space-3); width: 4px; border-radius: var(--radius-sm); background: var(--tc); }
+.pr-tl__thead.is-selected { background: var(--surface-200); }
+.pr-tl__thead.is-selected::before { left: 0; top: 0; bottom: 0; width: 6px; border-radius: 0; }
+.pr-tl__trow { display: flex; align-items: center; gap: var(--space-1); }
+.pr-tl__tname { flex: 1; min-width: 0; font: 700 13px/20px var(--font-sans); color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pr-tl__ms { padding: 0; font-weight: 700; }
+/* a track's lane: the bar lines, and one region of its waveform in its colour */
+.pr-tl__lane { position: relative; padding: var(--space-2) 0; border-bottom: 1px solid var(--line); }
+.pr-tl__lane.is-silent .pr-tl__region { opacity: .45; }
+.pr-tl__gridline { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
+.pr-tl__region { position: relative; height: 100%; overflow: hidden; background: var(--surface-100); border: 1px solid var(--line); border-radius: var(--radius-md); }
+.pr-tl__region.is-selected { background: color-mix(in oklch, var(--tc) 14%, var(--surface-100)); border-color: var(--tc); }
+.pr-tl__region canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* over the lanes: the loop's two lines, and the playhead (no triangle: the ruler holds the loop) */
+.pr-tl__layer { position: absolute; left: var(--track-head-w-lg); right: 0; top: 0; bottom: 0; pointer-events: none; }
+.pr-tl__loopshade { position: absolute; top: var(--ruler-h-lg); bottom: 0; border-left: 1px solid var(--line-strong); border-right: 1px solid var(--line-strong); }
+.pr-tl--mix .pr-tl__playhead { z-index: 6; }
+.pr-tl--mix .pr-tl__playhead::before { content: none; }
+.pr-tl__playhead::before { content: ""; position: absolute; top: 0; left: -4px; border: 5px solid transparent; border-top: 6px solid var(--playhead); border-bottom: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pr-toggle, .pr-seg__opt, .pr-switch__slot, .pr-switch__block, .pr-vslide__block, .pr-ovtabs__name { transition: none; }
+}
