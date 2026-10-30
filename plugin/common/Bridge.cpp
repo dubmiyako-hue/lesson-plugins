@@ -39,12 +39,13 @@ juce::String base64(const float* data, std::size_t count) {
 Bridge::Bridge(LessonProcessor& processor, UiSettings& settings)
     : processor_(processor), settings_(settings),
       changed_(std::make_unique<std::atomic<bool>[]>(processor.specs().size())),
-      inGesture_(processor.specs().size(), false),
+      inGesture_(processor.specs().size(), false), sent_(processor.specs().size()),
       samples_(SpectrumAnalyser::kFftSize), db_(SpectrumAnalyser::kBins),
       points_(CompPoints::kCapacity), pointFloats_(3 * CompPoints::kCapacity) {
     specOfParameter_.assign(static_cast<std::size_t>(processor.getParameters().size()), -1);
     for (std::size_t i = 0; i < processor.specs().size(); ++i) {
         changed_[i].store(false, std::memory_order_relaxed);
+        sent_[i] = processor.plainValue(i);
         auto& parameter = processor.parameter(i);
         const auto at = static_cast<std::size_t>(parameter.getParameterIndex());
         if (at < specOfParameter_.size()) specOfParameter_[at] = static_cast<int>(i);
@@ -123,7 +124,8 @@ var Bridge::ready() {
     for (std::size_t i = 0; i < processor_.specs().size(); ++i) {
         const auto& spec = processor_.specs()[i];
         const juce::Identifier id(asJuce(spec.id));
-        values->setProperty(id, num(processor_.plainValue(i)));
+        sent_[i] = processor_.plainValue(i);
+        values->setProperty(id, num(sent_[i]));
         names->setProperty(id, asJuce(spec.name));
     }
     const auto scale = scales();
@@ -221,7 +223,7 @@ void Bridge::parameterValueChanged(int parameterIndex, float) {
     // Any thread, the audio thread included: an atomic mark and nothing else.
     if (parameterIndex < 0 || static_cast<std::size_t>(parameterIndex) >= specOfParameter_.size()) return;
     const auto i = specOfParameter_[static_cast<std::size_t>(parameterIndex)];
-    if (i >= 0) changed_[static_cast<std::size_t>(i)].store(true, std::memory_order_relaxed);
+    if (i >= 0) changed_[static_cast<std::size_t>(i)].store(true, std::memory_order_release);
 }
 
 void Bridge::emit(const char* event, const var& payload) {
@@ -229,12 +231,17 @@ void Bridge::emit(const char* event, const var& payload) {
 }
 
 void Bridge::tick() {
-    // The parameters that changed since the last tick, in one event, with the values they have now.
+    // The parameters that changed since the last tick, in one event, with the values they have now. A mark comes from the
+    // parameter's listener, which JUCE calls before the APVTS's own listener writes the plain value; a tick that falls in
+    // between reads the old value, so a value that differs from the one last sent goes too (on the next tick at the latest).
     juce::DynamicObject::Ptr changed;
     for (std::size_t i = 0; i < processor_.specs().size(); ++i) {
-        if (!changed_[i].exchange(false, std::memory_order_relaxed)) continue;
+        const bool marked = changed_[i].exchange(false, std::memory_order_acquire);
+        const auto value = processor_.plainValue(i);
+        if (!marked && value == sent_[i]) continue;
+        sent_[i] = value;
         if (changed == nullptr) changed = new juce::DynamicObject();
-        changed->setProperty(juce::Identifier(asJuce(processor_.specs()[i].id)), num(processor_.plainValue(i)));
+        changed->setProperty(juce::Identifier(asJuce(processor_.specs()[i].id)), num(value));
     }
     if (changed != nullptr) emit("params", var(changed.get()));
 

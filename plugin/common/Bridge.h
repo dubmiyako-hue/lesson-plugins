@@ -89,6 +89,7 @@ private:
     std::vector<int> specOfParameter_; // JUCE parameter index -> table index (-1: not ours); read on any thread, never changed
     std::unique_ptr<std::atomic<bool>[]> changed_;
     std::vector<bool> inGesture_;
+    std::vector<float> sent_; // the plain values the page has last been sent (ready or params)
     ScaleHooks scaleHooks_;
     bool started_ = false;
     std::uint64_t lastBlocks_ = 0;
