@@ -1,6 +1,6 @@
 juce_add_console_app(plugin_tests PRODUCT_NAME "Lesson plugin tests" NEEDS_WEB_BROWSER TRUE NEEDS_WEBVIEW2 TRUE)
 set(lesson_plugin_dir "${CMAKE_CURRENT_SOURCE_DIR}/../../plugin")
-target_sources(plugin_tests PRIVATE main.cpp params_tests.cpp state_tests.cpp bus_tests.cpp
+target_sources(plugin_tests PRIVATE main.cpp params_tests.cpp state_tests.cpp bus_tests.cpp mapping_tests.cpp
     "${lesson_plugin_dir}/common/LessonParameters.cpp" "${lesson_plugin_dir}/common/LessonProcessor.cpp"
     "${lesson_plugin_dir}/common/PlaceholderEditor.cpp"
     "${lesson_plugin_dir}/eq/EqProcessor.cpp" "${lesson_plugin_dir}/comp/CompProcessor.cpp")

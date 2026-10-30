@@ -421,3 +421,165 @@ TEST_CASE("[smooth] the comp's Threshold and Ratio move by the formula but Attac
     CHECK(comp.threshold() == -24.0f);
     CHECK(comp.inverseRatio() == 0.0f);
 }
+
+TEST_CASE("[smooth] a Slope change moves the Freq of the outgoing lane too") {
+    const NoDenormals noDenormals;
+    for (const double fs : { 44100.0, 96000.0 }) {
+        CAPTURE(fs);
+        const int n = static_cast<int>(std::lround(0.01 * fs));
+        const int frames = 8 * n; // the HP freq takes up to 10 tau = 5 n
+        const int change = n / 2;
+        EqBands from = defaults();
+        from[0] = { true, 200, 0, 1, 24 };
+        EqBands to = from;
+        to[0].slope = 48; // 24 -> 48 dB/oct and 200 -> 400 Hz at the same time
+        to[0].freq = 400;
+
+        Eq eq;
+        eq.prepare(fs, from);
+        // The old lane (24 dB/oct) has run since the start; the new one (48 dB/oct) starts at the change with state 0.
+        Chain oldLane;
+        Chain newLane;
+        Chain staleLane; // an old lane whose Freq stays at 200 Hz: what the test must tell apart from the right one
+        Chain rest;      // LS, bells, HS and LP: the same settings all along
+        eqCoefficients(from, fs, staleLane.c);
+        eqCoefficients(from, fs, rest.c);
+        Formula hpFreq(fs, from[0].freq);
+        const std::vector<float> x = noise(frames, 13);
+        double diff = 0;
+        double weightDiff = 0;
+        double fromStale = 0;
+        for (int i = 0; i < frames; ++i) {
+            if (i == change) {
+                eq.setTarget(to);
+                hpFreq.target(to[0].freq);
+            }
+            const float freq = hpFreq.next();
+            EqBands oldNow = from;
+            EqBands newNow = to;
+            oldNow[0].freq = newNow[0].freq = freq;
+            eqCoefficients(oldNow, fs, oldLane.c);
+            eqCoefficients(newNow, fs, newLane.c);
+            eq.beginSample();
+            const float y = eq.process(0, x[static_cast<size_t>(i)]);
+
+            const float a = oldLane.run(x[static_cast<size_t>(i)], 0, kEqPassStages);
+            const float stale = staleLane.run(x[static_cast<size_t>(i)], 0, kEqPassStages);
+            float v = a;
+            if (i >= change) {
+                const float b = newLane.run(x[static_cast<size_t>(i)], 0, kEqPassStages);
+                const int k = std::min(i - change + 1, n);
+                const double w = fadeWeight(k, n);
+                const bool fading = i - change < n;
+                weightDiff = std::max(weightDiff, std::fabs(eq.fadeWeight(0) - (fading ? w : 1.0)));
+                v = fading ? static_cast<float>((1.0 - w) * a + w * b) : b;
+                if (fading) fromStale = std::max(fromStale, std::fabs(static_cast<double>(v) - static_cast<float>((1.0 - w) * stale + w * b)));
+            } else {
+                CHECK(eq.fadeWeight(0) == 1.0);
+            }
+            const float expected = rest.run(v, kEqPassStages, kEqStages);
+            diff = std::max(diff, std::fabs(static_cast<double>(y) - expected));
+            CHECK(eq.fadeWeight(1) == 1.0); // the LP does not change
+        }
+        CHECK(diff <= 1e-6);
+        CHECK(weightDiff <= 1e-6);
+        CHECK(eq.settled());
+        // The test is not blind to the old lane's Freq: a lane left at 200 Hz would have made a different mix.
+        CHECK(fromStale > 1e-6);
+    }
+}
+
+TEST_CASE("[smooth] the second of two changes fades from the lane the first made") {
+    const NoDenormals noDenormals;
+    const double fs = 48000;
+    const int n = 480;
+    const int frames = 3 * n;
+    EqBands off = defaults(); // HP off
+    EqBands on = off;
+    on[0].on = true; // 24 dB/oct at 80 Hz
+    Eq eq;
+    eq.prepare(fs, off);
+    // Fade 1 (samples 0..n-1): the off lane, which has run since the start, to the 24 dB/oct lane (state 0 at sample 0).
+    // Fade 2 (samples n..2n-1): that 24 dB/oct lane (state kept) to a new off lane (state 0 at sample n). The change back is
+    // made 100 samples into fade 1 and waits for it to end.
+    Chain offBefore;
+    Chain onLane;
+    Chain offAfter;
+    Chain rest;
+    eqCoefficients(off, fs, offBefore.c);
+    eqCoefficients(on, fs, onLane.c);
+    eqCoefficients(off, fs, offAfter.c);
+    eqCoefficients(off, fs, rest.c);
+    const std::vector<float> x = noise(frames, 17);
+    eq.setTarget(on);
+    double diff = 0;
+    double weightDiff = 0;
+    double offLaneUsed = 0; // how far the off lane's output is from the 24 dB/oct lane's: the fades have something to mix
+    for (int i = 0; i < frames; ++i) {
+        if (i == 100) eq.setTarget(off);
+        eq.beginSample();
+        const float y = eq.process(0, x[static_cast<size_t>(i)]);
+        const float in = x[static_cast<size_t>(i)];
+        float v;
+        double expectedWeight;
+        if (i < n) {
+            const double w = fadeWeight(i + 1, n);
+            const float a = offBefore.run(in, 0, kEqPassStages);
+            const float b = onLane.run(in, 0, kEqPassStages);
+            v = static_cast<float>((1.0 - w) * a + w * b);
+            expectedWeight = w;
+            offLaneUsed = std::max(offLaneUsed, std::fabs(static_cast<double>(a) - b));
+        } else if (i < 2 * n) {
+            const double w = fadeWeight(i - n + 1, n);
+            const float a = onLane.run(in, 0, kEqPassStages);
+            const float b = offAfter.run(in, 0, kEqPassStages);
+            v = static_cast<float>((1.0 - w) * a + w * b);
+            expectedWeight = w;
+        } else {
+            v = offAfter.run(in, 0, kEqPassStages);
+            expectedWeight = 1.0;
+        }
+        const float expected = rest.run(v, kEqPassStages, kEqStages);
+        diff = std::max(diff, std::fabs(static_cast<double>(y) - expected));
+        weightDiff = std::max(weightDiff, std::fabs(eq.fadeWeight(0) - expectedWeight));
+    }
+    CHECK(diff <= 1e-6);
+    CHECK(weightDiff <= 1e-6);
+    CHECK(offLaneUsed > 1e-6);
+    CHECK(eq.settled());
+}
+
+TEST_CASE("[smooth] a Slope change of an off pass band starts no fade") {
+    const NoDenormals noDenormals;
+    const double fs = 48000;
+    const int frames = 2000;
+    const int change = 700;
+    for (const int pass : { 0, 1 }) { // HP, LP
+        CAPTURE(pass);
+        EqBands from = defaults();
+        from[0] = { false, 200, 0, 1, 24 };
+        from[6] = { false, 5000, 0, 1, 12 };
+        EqBands to = from;
+        const size_t band = pass == 0 ? 0 : 6;
+        to[band].slope = 48;
+        Eq eq;
+        eq.prepare(fs, from);
+        Chain ref; // the off settings all along
+        eqCoefficients(from, fs, ref.c);
+        const std::vector<float> x = noise(frames, 19);
+        double diff = 0;
+        for (int i = 0; i < frames; ++i) {
+            if (i == change) {
+                eq.setTarget(to);
+                CHECK(eq.settled());
+            }
+            eq.beginSample();
+            const float y = eq.process(0, x[static_cast<size_t>(i)]);
+            diff = std::max(diff, std::fabs(static_cast<double>(y) - ref.run(x[static_cast<size_t>(i)])));
+            CHECK(eq.fadeWeight(pass) == 1.0);
+            CHECK(eq.fadeWeight(1 - pass) == 1.0);
+        }
+        CHECK(diff <= 1e-6);
+        CHECK(eq.settled());
+    }
+}
