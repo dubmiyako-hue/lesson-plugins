@@ -2,8 +2,11 @@
 // only inside processBlock. Between blocks the parameters move (as a host's automation would), so that the blocks run
 // the smoothing, the HP and LP fades, the EQ's Auto Gain computation and the bypass's fade.
 // Only this thread counts: JUCE's timer thread posts messages (and allocates) whenever it likes.
-// Each plug-in runs mono and stereo at 44.1, 48 and 192 kHz. Only operator new and delete are counted (the core calls
-// nothing else that allocates and takes no lock: read in review 02). Exit code 0 when no block allocated or freed anything.
+// Each plug-in runs mono and stereo at 44.1, 48 and 192 kHz, with its window closed and open (the window's taps: the EQ's
+// spectrum rings, the compressor's points, which this thread drains between blocks as the window's timer would). With the
+// window open the taps must have been fed, so that the run says something about them.
+// Only operator new and delete are counted (the core calls nothing else that allocates and takes no lock: read in review
+// 02). Exit code 0 when no block allocated or freed anything.
 #include <comp/CompProcessor.h>
 #include <eq/EqProcessor.h>
 #include <juce_events/juce_events.h>
@@ -58,8 +61,10 @@ void operator delete(void* p, std::size_t, std::align_val_t align) noexcept { re
 void operator delete[](void* p, std::size_t, std::align_val_t align) noexcept { release(p, align); }
 
 namespace {
+lesson::CompPoint drained[lesson::CompPoints::kCapacity];
+
 template <typename Processor>
-bool run(const char* name, unsigned seed, double sampleRate, int channels) {
+bool run(const char* name, unsigned seed, double sampleRate, int channels, bool screenOpen) {
     Processor processor;
     const auto set = channels == 1 ? juce::AudioChannelSet::mono() : juce::AudioChannelSet::stereo();
     juce::AudioProcessor::BusesLayout layout;
@@ -68,6 +73,8 @@ bool run(const char* name, unsigned seed, double sampleRate, int channels) {
     if (!processor.setBusesLayout(layout)) return false;
     const int maxBlock = 1024;
     processor.prepareToPlay(sampleRate, maxBlock);
+    processor.setScreenOpen(screenOpen);
+    long long points = 0;
 
     std::mt19937 random(seed);
     std::uniform_real_distribution<float> unit(0.0f, 1.0f);
@@ -91,13 +98,26 @@ bool run(const char* name, unsigned seed, double sampleRate, int channels) {
         counting = false;
         ++blocks;
         samples += n;
+        if (auto* queue = processor.compPoints(); queue != nullptr && round % 8 == 0)
+            points += queue->take(drained, lesson::CompPoints::kCapacity);
     }
     processor.releaseResources();
+    if (auto* queue = processor.compPoints()) points += queue->take(drained, lesson::CompPoints::kCapacity);
+    // The taps' evidence: points taken (the compressor), or rings no longer silent (the EQ).
+    bool fed = points > 0;
+    if (auto* pre = processor.spectrumPre(); pre != nullptr) {
+        float latest[1024];
+        for (auto* ring : { pre, processor.spectrumPost() }) {
+            ring->latest(latest, 1024);
+            for (const float x : latest) fed = fed || x != 0.0f;
+        }
+    }
     const long long a = allocations.exchange(0);
     const long long f = frees.exchange(0);
-    std::printf("%s, %g Hz, %d ch: %lld blocks, %lld samples, %lld allocations, %lld frees in processBlock\n", name,
-        sampleRate, channels, blocks, samples, a, f);
-    return a == 0 && f == 0;
+    std::printf("%s, %g Hz, %d ch, window %s: %lld blocks, %lld samples, %lld allocations, %lld frees in processBlock, "
+                "taps %s (%lld points)\n",
+        name, sampleRate, channels, screenOpen ? "open" : "closed", blocks, samples, a, f, fed ? "fed" : "idle", points);
+    return a == 0 && f == 0 && fed == screenOpen;
 }
 }
 
@@ -110,12 +130,14 @@ int main() {
     const bool counts = allocations.exchange(0) == 1 && frees.exchange(0) == 1;
     std::printf("counter self-check: %s\n", counts ? "ok" : "FAILED");
     bool ok = counts;
-    ok &= run<lesson::plugin::EqProcessor>("Lesson EQ", 1, 48000.0, 2);
-    ok &= run<lesson::plugin::EqProcessor>("Lesson EQ", 3, 44100.0, 1);
-    ok &= run<lesson::plugin::EqProcessor>("Lesson EQ", 5, 192000.0, 2);
-    ok &= run<lesson::plugin::CompProcessor>("Lesson Comp", 2, 48000.0, 2);
-    ok &= run<lesson::plugin::CompProcessor>("Lesson Comp", 4, 44100.0, 1);
-    ok &= run<lesson::plugin::CompProcessor>("Lesson Comp", 6, 192000.0, 2);
+    for (const bool open : { false, true }) {
+        ok &= run<lesson::plugin::EqProcessor>("Lesson EQ", 1, 48000.0, 2, open);
+        ok &= run<lesson::plugin::EqProcessor>("Lesson EQ", 3, 44100.0, 1, open);
+        ok &= run<lesson::plugin::EqProcessor>("Lesson EQ", 5, 192000.0, 2, open);
+        ok &= run<lesson::plugin::CompProcessor>("Lesson Comp", 2, 48000.0, 2, open);
+        ok &= run<lesson::plugin::CompProcessor>("Lesson Comp", 4, 44100.0, 1, open);
+        ok &= run<lesson::plugin::CompProcessor>("Lesson Comp", 6, 192000.0, 2, open);
+    }
     std::printf("%s\n", ok ? "PASS" : "FAIL");
     return ok ? 0 : 1;
 }
