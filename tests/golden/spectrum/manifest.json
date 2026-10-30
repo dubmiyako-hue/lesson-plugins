@@ -1,0 +1,34 @@
+{
+  "generator": "tests/golden/gen-spectrum.mjs",
+  "source": "AnalyserNode.getFloatFrequencyData of an OfflineAudioContext (mono), fftSize 8192, smoothingTimeConstant 0, read after exactly 8192 frames",
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0",
+  "date": "2026-10-31",
+  "layout": "float32 little endian; .in.f32 8192 samples, .db.f32 4096 bins (dB)",
+  "signals": [
+    {
+      "name": "sine-noise-48000",
+      "fs": 48000,
+      "recipe": "x[i] = fround(0.5 sin(2 pi 1234.567 i / fs) + 0.01 * LCG noise (seed 7))"
+    },
+    {
+      "name": "sine-noise-44100",
+      "fs": 44100,
+      "recipe": "x[i] = fround(0.5 sin(2 pi 3210.123 i / fs) + 0.01 * LCG noise (seed 7))"
+    },
+    {
+      "name": "sine-noise-96000",
+      "fs": 96000,
+      "recipe": "x[i] = fround(0.5 sin(2 pi 7000.77 i / fs) + 0.01 * LCG noise (seed 7))"
+    },
+    {
+      "name": "noise-48000",
+      "fs": 48000,
+      "recipe": "x[i] = fround(0.25 * LCG noise (seed 11))"
+    },
+    {
+      "name": "two-tones-44100",
+      "fs": 44100,
+      "recipe": "x[i] = fround(0.3 sin(2 pi 440.7 i / fs) + 0.002 sin(2 pi 9000.3 i / fs))"
+    }
+  ]
+}

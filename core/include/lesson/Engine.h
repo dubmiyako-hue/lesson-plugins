@@ -6,6 +6,7 @@
 #include <lesson/Compressor.h>
 #include <lesson/Eq.h>
 #include <lesson/Smoother.h>
+#include <lesson/Taps.h>
 
 namespace lesson {
 
@@ -37,6 +38,13 @@ private:
 // 10^(db / 20) as the AudioParam holds it.
 float gainOfDb(double db) noexcept;
 
+// Where the EQ's spectrum taps write while the screen is open: the input (pre) and the 13 biquads' output before the
+// makeup and the bypass (post), each the channels' mean (Web Audio's down-mix to mono).
+struct EqTaps {
+    SignalRing* pre = nullptr;
+    SignalRing* post = nullptr;
+};
+
 struct EqEngineSettings {
     EqBands bands {};
     bool autoGain = true;
@@ -49,8 +57,10 @@ public:
 
     // Allocates the Auto Gain tables and starts afresh at `settings` (the Auto Gain computed at once).
     void prepare(double sampleRate, const EqEngineSettings& settings);
-    // In place. `settings` are this block's; the changes move from its first sample.
-    void process(float* const* channels, int numChannels, int numSamples, const EqEngineSettings& settings) noexcept;
+    // In place. `settings` are this block's; the changes move from its first sample. With `taps`, also writes them
+    // (the output is the same with or without).
+    void process(float* const* channels, int numChannels, int numSamples, const EqEngineSettings& settings,
+                 const EqTaps* taps = nullptr) noexcept;
     // The Auto Gain computed for the settings, also while the switch is off (the screen shows it).
     double makeupDb() const noexcept { return loudness_.makeupDb(); }
 
@@ -79,7 +89,9 @@ public:
 
     // Allocates the compressor's ring and starts afresh at `settings`.
     void prepare(double sampleRate, const CompEngineSettings& settings);
-    void process(float* const* channels, int numChannels, int numSamples, const CompEngineSettings& settings) noexcept;
+    // With `points`, also adds each sample to them (the output is the same with or without).
+    void process(float* const* channels, int numChannels, int numSamples, const CompEngineSettings& settings,
+                 CompPoints* points = nullptr) noexcept;
     // The Auto Gain for the settings, also while the switch is off.
     double makeupDb() const noexcept { return makeupDb_; }
     double gr() const noexcept { return comp_.gr(); }

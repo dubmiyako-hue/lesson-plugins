@@ -59,16 +59,27 @@ void EqEngine::setTargets(const EqEngineSettings& settings) noexcept {
     wetDry_.setBypass(settings.bypass);
 }
 
-void EqEngine::process(float* const* channels, int numChannels, int numSamples, const EqEngineSettings& settings) noexcept {
+void EqEngine::process(float* const* channels, int numChannels, int numSamples, const EqEngineSettings& settings,
+                       const EqTaps* taps) noexcept {
     numChannels = std::min(numChannels, kMaxChannels);
     setTargets(settings);
     for (int i = 0; i < numSamples; ++i) {
         if (loudness_.tick() && autoGain_) wetDry_.setMakeup(gainOfDb(loudness_.makeupDb()));
         eq_.beginSample();
         wetDry_.beginSample();
+        float in[kMaxChannels] {};
+        float biquads[kMaxChannels] {};
         for (int c = 0; c < numChannels; ++c) {
             const float x = channels[c][i];
-            channels[c][i] = wetDry_.mix(x, eq_.process(c, x));
+            const float y = eq_.process(c, x);
+            in[c] = x;
+            biquads[c] = y;
+            channels[c][i] = wetDry_.mix(x, y);
+        }
+        if (taps != nullptr && numChannels > 0) {
+            // Web Audio's down-mix to mono: the channel itself, or 0.5 (L + R) in float.
+            if (taps->pre != nullptr) taps->pre->push(numChannels == 1 ? in[0] : 0.5f * (in[0] + in[1]));
+            if (taps->post != nullptr) taps->post->push(numChannels == 1 ? biquads[0] : 0.5f * (biquads[0] + biquads[1]));
         }
     }
 }
@@ -86,7 +97,8 @@ void CompEngine::setTargets(const CompEngineSettings& settings) noexcept {
     wetDry_.setBypass(settings.bypass);
 }
 
-void CompEngine::process(float* const* channels, int numChannels, int numSamples, const CompEngineSettings& settings) noexcept {
+void CompEngine::process(float* const* channels, int numChannels, int numSamples, const CompEngineSettings& settings,
+                         CompPoints* points) noexcept {
     numChannels = std::min(numChannels, kMaxChannels);
     setTargets(settings);
     for (int i = 0; i < numSamples; ++i) {
@@ -96,6 +108,8 @@ void CompEngine::process(float* const* channels, int numChannels, int numSamples
             if (a > peak) peak = a;
         }
         const double g = comp_.gainFor(peak);
+        // The output before the makeup is float(x * g) per channel; rounding is monotonic, so its largest is float(peak * g).
+        if (points != nullptr) points->add(peak, static_cast<float>(peak * g), comp_.gr());
         wetDry_.beginSample();
         for (int c = 0; c < numChannels; ++c) {
             const float x = channels[c][i];

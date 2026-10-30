@@ -1,0 +1,5 @@
+sine-noise-48000	48000	0.5 sin(2 pi 1234.567 i / fs) + 0.01 * LCG noise (seed 7)
+sine-noise-44100	44100	0.5 sin(2 pi 3210.123 i / fs) + 0.01 * LCG noise (seed 7)
+sine-noise-96000	96000	0.5 sin(2 pi 7000.77 i / fs) + 0.01 * LCG noise (seed 7)
+noise-48000	48000	0.25 * LCG noise (seed 11)
+two-tones-44100	44100	0.3 sin(2 pi 440.7 i / fs) + 0.002 sin(2 pi 9000.3 i / fs)

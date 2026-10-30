@@ -1,5 +1,5 @@
 add_library(lesson_core STATIC src/Params.cpp src/Format.cpp src/Fdlibm.cpp src/WebBiquad.cpp src/Eq.cpp
-    src/Compressor.cpp src/AutoGain.cpp src/Engine.cpp)
+    src/Compressor.cpp src/AutoGain.cpp src/Engine.cpp src/Taps.cpp src/Spectrum.cpp)
 target_include_directories(lesson_core PUBLIC include)
 target_compile_features(lesson_core PUBLIC cxx_std_20)
 if(MSVC)
