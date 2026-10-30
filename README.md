@@ -66,7 +66,7 @@ DAW での確認の手順は `docs/dev-loop/manual-checks.md` にある。
 
 | 場所 | 中身 |
 | --- | --- |
-| `%APPDATA%\PRAYROOM\settings.json` | 窓の拡大率・テーマ（PRAYROOM のプラグインで共用）、説明の欄の表示（`lesson.hint`）。セッションには入らない。知らないキーは消さない |
+| `%APPDATA%\PRAYROOM\settings.json` | 窓の拡大率・テーマ（PRAYROOM のプラグインで共用）、説明の欄の表示（`lesson.hint`）。セッションには入らない。知らないキーは消さない。JSON のオブジェクトとして読めないファイルは上書きしない（既定の設定で開き、変えた設定は残らない）。消すと既定に戻る |
 | `%LOCALAPPDATA%\PRAYROOM\Lesson\WebView2` | WebView2 のデータ（2 本で共用） |
 
 つまみの値はセッション（DAW のソング）に入る。

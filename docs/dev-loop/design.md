@@ -13,6 +13,7 @@
 | 1 | 2026-10-31 | 正規化のゴールデンを `norm.json` から `params.tsv`（タブ区切り、値の文字と JS の丸めも入れる）に替えた | C++ の試験が JSON の読み取りなしで読める（DECISIONS.md） |
 | 2 | 2026-10-31 | `sin`・`cos` も fdlibm を写した。HP・LP の使わない段は 350 Hz に置く。平滑化の収束はサンプルごとに調べる。音の全部を core の `EqEngine`・`CompEngine` に置く。時定数の `exp` も fdlibm（レビュー 02） | ビットまで合わせるため、試験しやすくするため（DECISIONS.md、`reviews/02.md`） |
 | 3 | 2026-10-31 | 窓は L（960×560）、ページは 1 枚（`index.html`）。拡大率は CSS の `zoom` でなく web view の transform。スペクトルの計算と画面への取り出し口は core（`Spectrum`、`Taps`）に置き、取り出しは窓が開いているあいだだけ。FFT の尺度は `|X|/N` と測った。試験の置き場（AC-16・17・18）を実際のものに直した | DECISIONS.md の 2026-10-31 の周 3 の行 |
+| 3 | 2026-10-31 | 窓を開き直したときと準備し直したときに、スペクトルのリングとコンプの点の作りかけを空にする（`restart`）。スペクトルの計算で、NaN・Inf になったビンは 0 として読む。ページでは、1 つのパラメータを持つジェスチャーは 1 つだけ。右クリックのメニューを出さない | レビュー 03（`reviews/03.md`）、DECISIONS.md |
 
 ## 1. 信号の流れ
 
@@ -105,7 +106,7 @@ AnalyserNode と同じ計算をプラグインのメッセージのスレッド�
 - 30 Hz のタイマーで、最新の 8192 サンプルに Blackman 窓（α 0.16）をかけて FFT し、`|X|/8192` を前の値と平滑して、dB にして画面へ送る。Web アプリは画面の更新（60 Hz）ごとに平滑 0.8 をかけるので、30 Hz では 0.8² = 0.64 にして、1 秒あたりの減り方を同じにする。
 - 画面へ送るのは 20 kHz・1/24 オクターブ上までのビンの dB（48 kHz で約 3500 個、float の base64）。画面は Web アプリの `spectrum()` をそのまま使って、ピクセルの列ごとに直す。
 - FFT の大きさの尺度（Chrome の FFT の出力の倍率）は、Edge で 1 回測ってそろえる（AC-18）。`getFloatFrequencyData` は 0 から平滑を始めるので、比べるときは両方とも平滑を 0 にして、決まったサインとノイズの 8192 サンプルで比べる。測った結果は `|X|/N`（`2/N` にすると 6.02 dB ずれる）。
-- 計算は core の `lesson::SpectrumAnalyser`（FFT は double）。リングは `lesson::SignalRing`（`core/include/lesson/Taps.h`）。大きさが 0 のビンは −300 dB として送る（Chrome は −Infinity）。画面は Web アプリと同じく −130 dB で切る。
+- 計算は core の `lesson::SpectrumAnalyser`（FFT も平滑した値も double。Chrome の平滑の値は float なので、平滑を重ねると 1e-6 dB ほどずれうる）。入力に NaN・Inf があってそのビンが有限でなくなったら、そのビンは 0 として平滑する（平滑の値に NaN を残さない）。リングは `lesson::SignalRing`（`core/include/lesson/Taps.h`）。大きさが 0 のビンは −300 dB として送る（Chrome は −Infinity）。画面は Web アプリと同じく −130 dB で切る。
 
 ## 3. パラメータ表
 
@@ -131,11 +132,11 @@ ID・名前・範囲・既定値は要件のとおり。JUCE の型と受け渡�
 | WebView | 画面。Preact。`requestAnimationFrame` で描く |
 
 - オーディオスレッドでは、確保・解放・ロック・I/O・ログをしない。バッファは `prepareToPlay` で最大のブロックの長さに合わせて確保する。
-- 受け渡し: 数値は `std::atomic`（lock-free を `static_assert` で確かめる）。音量の流れは単一の書き手と単一の読み手の FIFO（`lesson::CompPoints`: 固定長の配列と atomic の head・tail。満杯なら新しい点を捨てる）。スペクトルのリングと音量の流れには、窓が開いているあいだだけ書く（`Bridge::start` で開き、`stop` で閉じる）。スペクトルのリングは書く位置を atomic で持つ（読み手はそこから 8192 サンプル前までを読む。上書きに追い越されることはあるが、表示だけなので許す）。
+- 受け渡し: 数値は `std::atomic`（lock-free を `static_assert` で確かめる）。音量の流れは単一の書き手と単一の読み手の FIFO（`lesson::CompPoints`: 固定長の配列と atomic の head・tail。満杯なら新しい点を捨てる）。スペクトルのリングと音量の流れには、窓が開いているあいだだけ書く（`Bridge::start` で開き、`stop` で閉じる）。窓が開いてから最初のブロックで、オーディオスレッドがリングと点の作りかけを空にしてから書く（前に開いていたときのものを見せない。開いた回数を atomic で数え、閉じているあいだにブロックが無くても空にする）。スペクトルのリングは書く位置を atomic で持つ（読み手はそこから 8192 サンプル前までを読む。上書きに追い越されることはあるが、表示だけなので許す）。
 
 ## 5. 準備とリセット
 
-- `prepareToPlay(fs, maxBlock)`: 係数、平滑化の係数、リングの長さ（`round(0.02·fs / 48)`）、Auto Gain の表（z、|K|²）、スペクトルのリングを作り直し、フィルターの状態と GR を 0 にする。平滑化はパラメータの今の値から始める（開いたときに初期値から動いて見せない）。
+- `prepareToPlay(fs, maxBlock)`: 係数、平滑化の係数、リングの長さ（`round(0.02·fs / 48)`）、Auto Gain の表（z、|K|²）を作り直し、スペクトルのリングとコンプの点の作りかけを空にし（`restart`。持っていたサンプルは前のサンプルレートのもの）、フィルターの状態と GR を 0 にする。平滑化はパラメータの今の値から始める（開いたときに初期値から動いて見せない）。
 - `releaseResources`: 何もしない。
 
 ## 6. 状態の形式
@@ -170,7 +171,7 @@ tests/
   unit/                        core の試験（doctest）
   plugin/                      殻の試験（パラメータ、値の文字、状態、Bridge）
   rt/                          確保を数える試験
-tools/                         build.cmd、msvc.cmd、install-vst3.cmd、sync-prayroom.py、validate.cmd
+tools/                         build.cmd、msvc.cmd、install-vst3.cmd、sync-prayroom.py、validate.cmd、make-fonts.py、web-shot.mjs
 docs/dev-loop/                 要件、設計、記録、レビュー
 ```
 
