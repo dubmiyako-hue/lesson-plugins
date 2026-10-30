@@ -129,9 +129,13 @@ setInterval(() => {
   }
 }, 1000 / 30)
 
-// ?band=N: the EQ band N chosen on the band selector once the page has drawn; ?click=selector: that element clicked
+// ?band=N: the EQ band N chosen on the band selector once the page has drawn; ?click=selector: that element clicked;
+// ?hover=selector: the pointer come onto that element (its Hint shown)
 const band = q.get('band')
 if (band !== null)
   setTimeout(() => document.querySelectorAll<HTMLButtonElement>('[role=radiogroup] > button')[Number(band)]?.click(), 300)
 const click = q.get('click')
 if (click !== null) setTimeout(() => document.querySelector<HTMLElement>(click)?.click(), 300)
+const hover = q.get('hover')
+if (hover !== null)
+  setTimeout(() => document.querySelector(hover)?.dispatchEvent(new PointerEvent('pointerover', { bubbles: true })), 400)
