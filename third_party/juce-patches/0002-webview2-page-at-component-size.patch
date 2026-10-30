@@ -1,0 +1,102 @@
+From 91eca8080a360612ed04980c23a140c4c5646deb Mon Sep 17 00:00:00 2001
+From: dubmiyako-hue <dubmiyako@gmail.com>
+Date: Sat, 31 Oct 2026 02:05:10 +0900
+Subject: [PATCH] WebBrowserComponent: lay the WebView2 page out at the
+ component's size (SubBass)
+
+withTextScaleIgnored now sets the rasterization scale to the physical
+pixels the component covers per pixel of its own, so a transform on the
+component (or a parent) scales the page, and turns off the page's own
+zoom.
+---
+ .../misc/juce_WebBrowserComponent.h           |  7 +++-
+ .../juce_WebBrowserComponent_windows.cpp      | 37 +++++++++++++++----
+ 2 files changed, 35 insertions(+), 9 deletions(-)
+
+diff --git a/modules/juce_gui_extra/misc/juce_WebBrowserComponent.h b/modules/juce_gui_extra/misc/juce_WebBrowserComponent.h
+index 0d68adea88..f06816a4a5 100644
+--- a/modules/juce_gui_extra/misc/juce_WebBrowserComponent.h
++++ b/modules/juce_gui_extra/misc/juce_WebBrowserComponent.h
+@@ -216,11 +216,14 @@ public:
+                 return withMember (*this, &WinWebView2::backgroundColour, colour);
+             }
+ 
+-            /** If this is set, the webview is rasterised at the monitor's scale alone.
++            /** If this is set, the page is laid out at the component's own size.
+ 
+                 By default WebView2 multiplies the monitor's DPI scale by the user's Windows text
+                 size (Accessibility > Text size), which makes the page larger than a fixed-size
+-                window. With this option the text size is left out, as it is for JUCE components.
++                window. With this option the webview is rasterised at the physical pixels the
++                component covers per pixel of its own: the monitor's scale and any transform on the
++                component or its parents are taken in, and the text size is left out, as it is for
++                JUCE components. The page's own zoom (Ctrl + wheel, Ctrl + plus/minus) is turned off.
+             */
+             [[nodiscard]] WinWebView2 withTextScaleIgnored() const                   { return withMember (*this, &WinWebView2::ignoreTextScale, true); }
+ 
+diff --git a/modules/juce_gui_extra/native/juce_WebBrowserComponent_windows.cpp b/modules/juce_gui_extra/native/juce_WebBrowserComponent_windows.cpp
+index 00c5118587..dce3b247dd 100644
+--- a/modules/juce_gui_extra/native/juce_WebBrowserComponent_windows.cpp
++++ b/modules/juce_gui_extra/native/juce_WebBrowserComponent_windows.cpp
+@@ -1039,6 +1039,10 @@ private:
+             settings->put_IsStatusBarEnabled (! preferences.getWinWebView2BackendOptions().getIsStatusBarDisabled());
+             settings->put_IsBuiltInErrorPageEnabled (! preferences.getWinWebView2BackendOptions().getIsBuiltInErrorPageDisabled());
+ 
++            // the page is the component's size: Ctrl + wheel and Ctrl + plus/minus do not zoom it
++            if (preferences.getWinWebView2BackendOptions().getIsTextScaleIgnored())
++                settings->put_IsZoomControlEnabled (false);
++
+             if (userAgent.isNotEmpty())
+             {
+                 ComSmartPtr<ICoreWebView2Settings2> settings2;
+@@ -1203,9 +1207,11 @@ private:
+         }
+     }
+ 
+-    // With WinWebView2::withTextScaleIgnored the webview no longer follows the monitor by itself
+-    // (ShouldDetectMonitorScaleChanges is off), so the monitor's scale, without the Windows text
+-    // size, is set here whenever the component moves, resizes or changes scale.
++    // With WinWebView2::withTextScaleIgnored the page is laid out at the component's own size. The
++    // webview no longer follows the monitor by itself (ShouldDetectMonitorScaleChanges is off): its
++    // rasterization scale is set here, whenever the component moves, resizes or changes scale, to the
++    // physical pixels the component covers per pixel of its own. That takes in the monitor's scale and
++    // any transform on the component or its parents, and leaves out the Windows text size.
+     void setRasterizationScale() const
+     {
+         if (webViewController == nullptr || ! preferences.getWinWebView2BackendOptions().getIsTextScaleIgnored())
+@@ -1217,11 +1223,28 @@ private:
+         if (controller3 == nullptr)
+             return;
+ 
+-        auto* hwnd = static_cast<HWND> (getWindowHandle());
+-        const auto dpi = hwnd != nullptr ? GetDpiForWindow (hwnd) : 0u;
++        auto scale = 0.0;
++
++        if (auto* peer = owner.getTopLevelComponent()->getPeer(); peer != nullptr && owner.getWidth() > 0)
++        {
++            auto area = peer->getAreaCoveredBy (owner);
++
++           #if JUCE_WIN_PER_MONITOR_DPI_AWARE
++            area = (area.toDouble() * peer->getPlatformScaleFactor()).toNearestInt();
++           #endif
++
++            scale = (double) area.getWidth() / owner.getWidth();
++        }
++
++        if (scale <= 0.0)
++        {
++            auto* hwnd = static_cast<HWND> (getWindowHandle());
++            const auto dpi = hwnd != nullptr ? GetDpiForWindow (hwnd) : 0u;
++            scale = (double) dpi / USER_DEFAULT_SCREEN_DPI;
++        }
+ 
+-        if (dpi != 0)
+-            controller3->put_RasterizationScale ((double) dpi / USER_DEFAULT_SCREEN_DPI);
++        if (scale > 0.0)
++            controller3->put_RasterizationScale (scale);
+     }
+ 
+     void setControlVisible (bool shouldBeVisible) const
+-- 
+2.36.1.windows.1
+

@@ -1,0 +1,8 @@
+{
+  "generator": "tests/golden/gen-params.mjs",
+  "source": "mix-course src/params.ts (with src/dsp.ts)",
+  "commit": "090a107f26b3fbacf2e519e88c00e4932ef98ffc",
+  "sourceChanged": false,
+  "node": "v20.10.0",
+  "lines": 58666
+}

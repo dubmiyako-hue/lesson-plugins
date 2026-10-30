@@ -1,0 +1,27 @@
+# Writes one ctest entry per doctest test case of EXE into OUT, so that `ctest -j` spreads the cases over the cores.
+# Run after each build of core_tests (POST_BUILD); OUT is read by ctest through TEST_INCLUDE_FILES.
+execute_process(COMMAND "${EXE}" --list-test-cases --no-version
+    OUTPUT_VARIABLE listing RESULT_VARIABLE result)
+if(NOT result EQUAL 0)
+    message(FATAL_ERROR "${EXE} --list-test-cases failed (${result})")
+endif()
+string(REPLACE "\r" "" listing "${listing}")
+string(REPLACE ";" "<semicolon>" listing "${listing}")
+string(REPLACE "\n" ";" lines "${listing}")
+set(entries "")
+set(count 0)
+foreach(line IN LISTS lines)
+    if(line STREQUAL "" OR line MATCHES "^=+$" OR line MATCHES "^\\[doctest\\]")
+        continue()
+    endif()
+    # A name used as a doctest filter must not hold its wildcards or the filter separator.
+    if(line MATCHES "[*?,]|<semicolon>|\\]=\\]")
+        message(FATAL_ERROR "Test case name cannot be used as a filter: ${line}")
+    endif()
+    string(APPEND entries "add_test([=[core: ${line}]=] [=[${EXE}]=] [=[--test-case=${line}]=])\n")
+    math(EXPR count "${count} + 1")
+endforeach()
+if(count EQUAL 0)
+    message(FATAL_ERROR "${EXE} listed no test cases")
+endif()
+file(WRITE "${OUT}" "${entries}")

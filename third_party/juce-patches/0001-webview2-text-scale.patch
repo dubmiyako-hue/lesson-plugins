@@ -1,0 +1,107 @@
+From 9fd7b7064412ccc4661e7f2d405df24094a2c0e2 Mon Sep 17 00:00:00 2001
+From: dubmiyako-hue <dubmiyako@gmail.com>
+Date: Fri, 30 Oct 2026 22:55:41 +0900
+Subject: [PATCH] WebBrowserComponent: WinWebView2::withTextScaleIgnored
+ (SubBass)
+
+Rasterises WebView2 at the monitor's DPI scale alone, leaving out the Windows
+text size, and keeps it in step when the component moves or changes scale.
+---
+ .../misc/juce_WebBrowserComponent.h           | 11 +++++-
+ .../juce_WebBrowserComponent_windows.cpp      | 34 +++++++++++++++++++
+ 2 files changed, 44 insertions(+), 1 deletion(-)
+
+diff --git a/modules/juce_gui_extra/misc/juce_WebBrowserComponent.h b/modules/juce_gui_extra/misc/juce_WebBrowserComponent.h
+index 0ca6079bc7..0d68adea88 100644
+--- a/modules/juce_gui_extra/misc/juce_WebBrowserComponent.h
++++ b/modules/juce_gui_extra/misc/juce_WebBrowserComponent.h
+@@ -216,17 +216,26 @@ public:
+                 return withMember (*this, &WinWebView2::backgroundColour, colour);
+             }
+ 
++            /** If this is set, the webview is rasterised at the monitor's scale alone.
++
++                By default WebView2 multiplies the monitor's DPI scale by the user's Windows text
++                size (Accessibility > Text size), which makes the page larger than a fixed-size
++                window. With this option the text size is left out, as it is for JUCE components.
++            */
++            [[nodiscard]] WinWebView2 withTextScaleIgnored() const                   { return withMember (*this, &WinWebView2::ignoreTextScale, true); }
++
+             //==============================================================================
+             File getDLLLocation() const                          { return dllLocation; }
+             File getUserDataFolder() const                       { return userDataFolder; }
+             bool getIsStatusBarDisabled() const noexcept         { return disableStatusBar; }
+             bool getIsBuiltInErrorPageDisabled() const noexcept  { return disableBuiltInErrorPage; }
+             Colour getBackgroundColour() const                   { return backgroundColour; }
++            bool getIsTextScaleIgnored() const noexcept          { return ignoreTextScale; }
+ 
+         private:
+             //==============================================================================
+             File dllLocation, userDataFolder;
+-            bool disableStatusBar = false, disableBuiltInErrorPage = false;
++            bool disableStatusBar = false, disableBuiltInErrorPage = false, ignoreTextScale = false;
+             Colour backgroundColour;
+         };
+ 
+diff --git a/modules/juce_gui_extra/native/juce_WebBrowserComponent_windows.cpp b/modules/juce_gui_extra/native/juce_WebBrowserComponent_windows.cpp
+index 9caca3066f..00c5118587 100644
+--- a/modules/juce_gui_extra/native/juce_WebBrowserComponent_windows.cpp
++++ b/modules/juce_gui_extra/native/juce_WebBrowserComponent_windows.cpp
+@@ -602,6 +602,8 @@ public:
+     {
+         if (auto* peer = owner.getTopLevelComponent()->getPeer())
+             setControlBounds (peer->getAreaCoveredBy (owner));
++
++        setRasterizationScale();
+     }
+ 
+     void componentPeerChanged() override
+@@ -1014,6 +1016,17 @@ private:
+                                                        (BYTE) bgColour.getBlue() });
+         }
+ 
++        if (preferences.getWinWebView2BackendOptions().getIsTextScaleIgnored())
++        {
++            ComSmartPtr<ICoreWebView2Controller3> controller3;
++            webViewController->QueryInterface (controller3.resetAndGetPointerAddress());
++
++            if (controller3 != nullptr)
++                controller3->put_ShouldDetectMonitorScaleChanges (FALSE);
++
++            setRasterizationScale();
++        }
++
+         ComSmartPtr<ICoreWebView2Settings> settings;
+         webView->get_Settings (settings.resetAndGetPointerAddress());
+ 
+@@ -1190,6 +1203,27 @@ private:
+         }
+     }
+ 
++    // With WinWebView2::withTextScaleIgnored the webview no longer follows the monitor by itself
++    // (ShouldDetectMonitorScaleChanges is off), so the monitor's scale, without the Windows text
++    // size, is set here whenever the component moves, resizes or changes scale.
++    void setRasterizationScale() const
++    {
++        if (webViewController == nullptr || ! preferences.getWinWebView2BackendOptions().getIsTextScaleIgnored())
++            return;
++
++        ComSmartPtr<ICoreWebView2Controller3> controller3;
++        webViewController->QueryInterface (controller3.resetAndGetPointerAddress());
++
++        if (controller3 == nullptr)
++            return;
++
++        auto* hwnd = static_cast<HWND> (getWindowHandle());
++        const auto dpi = hwnd != nullptr ? GetDpiForWindow (hwnd) : 0u;
++
++        if (dpi != 0)
++            controller3->put_RasterizationScale ((double) dpi / USER_DEFAULT_SCREEN_DPI);
++    }
++
+     void setControlVisible (bool shouldBeVisible) const
+     {
+         if (webViewController != nullptr)
+-- 
+2.36.1.windows.1
+

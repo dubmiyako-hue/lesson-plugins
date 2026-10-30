@@ -1,7 +1,7 @@
 # Lesson EQ / Lesson Comp 設計書
 
 - 日付: 2026-10-31
-- 状態: 案（ユーザーの確定待ち）
+- 状態: 確定（2026-10-31、ユーザーの確定）
 - 前提: [requirements.md](requirements.md)（確定済み、AC-01〜AC-23）
 - 根拠: Web アプリ（`D:\work\Claude\mix-course` の `src/dsp.ts`、`src/chain.ts`、`src/compressor.worklet.ts`、`src/params.ts`、`src/character.ts`、`src/ui/`）と、Chrome の実装（Blink の `platform/audio/biquad.cc`、`modules/webaudio/biquad_filter_handler.cc`、`modules/webaudio/realtime_analyser.cc`、2026-10-31 に main から読んだ）
 
@@ -10,6 +10,7 @@
 | 周 | 日付 | 変更 | 理由 |
 | --- | --- | --- | --- |
 | — | 2026-10-31 | 初版 | 工程 2 |
+| 1 | 2026-10-31 | 正規化のゴールデンを `norm.json` から `params.tsv`（タブ区切り、値の文字と JS の丸めも入れる）に替えた | C++ の試験が JSON の読み取りなしで読める（DECISIONS.md） |
 
 ## 1. 信号の流れ
 
@@ -181,7 +182,7 @@ docs/dev-loop/                 要件、設計、記録、レビュー
 | AC-02 | 3 | `validate-vst3` の `-e` | 2 本 |
 | AC-03 | 3 | `validate-pluginval`（周 1 は 5、周 4 は 10） | 2 本 |
 | AC-04 | 1 | `plugin_tests "[params]"` | 要件の表を試験の中に書き写して照らす |
-| AC-05 | 1 | `core_tests "[norm]"` | `tests/golden/norm.json`（Node で `params.ts` を通した値） |
+| AC-05 | 1 | `core_tests "[norm]"`、`plugin_tests "[norm]"` | `tests/golden/params.tsv`（Node で `params.ts` を通した値と文字。`tests/golden/gen-params.mjs` が作る） |
 | AC-06 | 1 | `core_tests "[golden-eq]"` | `tests/golden/eq/`（Edge の `OfflineAudioContext` で Web アプリの `EqFilters` を鳴らしたもの） |
 | AC-07 | 1 | `core_tests "[golden-comp]"` | `tests/golden/comp/`（Node で `CompressorCore` を鳴らしたもの） |
 | AC-08 | 1 | `core_tests "[comp]"` | `tests/dsp.test.ts` のコンプの試験を移す |
