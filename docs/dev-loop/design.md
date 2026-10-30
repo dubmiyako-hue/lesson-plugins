@@ -12,6 +12,7 @@
 | — | 2026-10-31 | 初版 | 工程 2 |
 | 1 | 2026-10-31 | 正規化のゴールデンを `norm.json` から `params.tsv`（タブ区切り、値の文字と JS の丸めも入れる）に替えた | C++ の試験が JSON の読み取りなしで読める（DECISIONS.md） |
 | 2 | 2026-10-31 | `sin`・`cos` も fdlibm を写した。HP・LP の使わない段は 350 Hz に置く。平滑化の収束はサンプルごとに調べる。音の全部を core の `EqEngine`・`CompEngine` に置く。時定数の `exp` も fdlibm（レビュー 02） | ビットまで合わせるため、試験しやすくするため（DECISIONS.md、`reviews/02.md`） |
+| 3 | 2026-10-31 | 窓は L（960×560）、ページは 1 枚（`index.html`）。拡大率は CSS の `zoom` でなく web view の transform。スペクトルの計算と画面への取り出し口は core（`Spectrum`、`Taps`）に置き、取り出しは窓が開いているあいだだけ。FFT の尺度は `|X|/N` と測った。試験の置き場（AC-16・17・18）を実際のものに直した | DECISIONS.md の 2026-10-31 の周 3 の行 |
 
 ## 1. 信号の流れ
 
@@ -103,7 +104,8 @@ AnalyserNode と同じ計算をプラグインのメッセージのスレッド�
 - オーディオスレッドは、入力（pre）とビクアッドの後（post）を、チャンネルの平均（Web Audio のモノへの足し合わせ。ステレオは 0.5·(L+R)）にして、それぞれのリングバッファ（16384 サンプル、単一の書き手と単一の読み手）に書く。
 - 30 Hz のタイマーで、最新の 8192 サンプルに Blackman 窓（α 0.16）をかけて FFT し、`|X|/8192` を前の値と平滑して、dB にして画面へ送る。Web アプリは画面の更新（60 Hz）ごとに平滑 0.8 をかけるので、30 Hz では 0.8² = 0.64 にして、1 秒あたりの減り方を同じにする。
 - 画面へ送るのは 20 kHz・1/24 オクターブ上までのビンの dB（48 kHz で約 3500 個、float の base64）。画面は Web アプリの `spectrum()` をそのまま使って、ピクセルの列ごとに直す。
-- FFT の大きさの尺度（Chrome の FFT の出力の倍率）は、Edge で 1 回測ってそろえる（AC-18）。`getFloatFrequencyData` は 0 から平滑を始めるので、比べるときは両方とも平滑を 0 にして、決まったサインとノイズの 8192 サンプルで比べる。
+- FFT の大きさの尺度（Chrome の FFT の出力の倍率）は、Edge で 1 回測ってそろえる（AC-18）。`getFloatFrequencyData` は 0 から平滑を始めるので、比べるときは両方とも平滑を 0 にして、決まったサインとノイズの 8192 サンプルで比べる。測った結果は `|X|/N`（`2/N` にすると 6.02 dB ずれる）。
+- 計算は core の `lesson::SpectrumAnalyser`（FFT は double）。リングは `lesson::SignalRing`（`core/include/lesson/Taps.h`）。大きさが 0 のビンは −300 dB として送る（Chrome は −Infinity）。画面は Web アプリと同じく −130 dB で切る。
 
 ## 3. パラメータ表
 
@@ -129,7 +131,7 @@ ID・名前・範囲・既定値は要件のとおり。JUCE の型と受け渡�
 | WebView | 画面。Preact。`requestAnimationFrame` で描く |
 
 - オーディオスレッドでは、確保・解放・ロック・I/O・ログをしない。バッファは `prepareToPlay` で最大のブロックの長さに合わせて確保する。
-- 受け渡し: 数値は `std::atomic`（lock-free を `static_assert` で確かめる）。音量の流れは単一の書き手と単一の読み手の FIFO（`juce::AbstractFifo` と固定長の配列）。スペクトルのリングは書く位置を atomic で持つ（読み手はそこから 8192 サンプル前までを読む。上書きに追い越されることはあるが、表示だけなので許す）。
+- 受け渡し: 数値は `std::atomic`（lock-free を `static_assert` で確かめる）。音量の流れは単一の書き手と単一の読み手の FIFO（`lesson::CompPoints`: 固定長の配列と atomic の head・tail。満杯なら新しい点を捨てる）。スペクトルのリングと音量の流れには、窓が開いているあいだだけ書く（`Bridge::start` で開き、`stop` で閉じる）。スペクトルのリングは書く位置を atomic で持つ（読み手はそこから 8192 サンプル前までを読む。上書きに追い越されることはあるが、表示だけなので許す）。
 
 ## 5. 準備とリセット
 
@@ -139,7 +141,8 @@ ID・名前・範囲・既定値は要件のとおり。JUCE の型と受け渡�
 ## 6. 状態の形式
 
 - `AudioProcessorValueTreeState` の状態を XML にして `copyXmlToBinary`。根の要素に `version="1"` を付ける。読むときは、版が無いか 1 なら、そのまま読む（ID で読むので、足したパラメータは初期値になる）。
-- 拡大率・テーマ・説明の欄の表示は、セッションに入れない。`%APPDATA%\PRAYROOM\settings.json` に `{"version":1,"scale":1.0,"theme":"light","lesson":{"hint":true}}` の形で置く。書くときは、知らないキーを残す（ほかの PRAYROOM のプラグインと共用のファイルなので）。
+- 拡大率・テーマ・説明の欄の表示は、セッションに入れない。`%APPDATA%\PRAYROOM\settings.json` に `{"version":1,"scale":1.0,"theme":"light","lesson":{"hint":true}}` の形で置く。書くときは、知らないキーを残す（ほかの PRAYROOM のプラグインと共用のファイルなので）。`version` が無ければ 1 を足す。JSON のオブジェクトでないファイルには書かない。`<file>.tmp` に書いてから置き換える。
+- 開くとき、保存された拡大率がその画面に収まらなければ、収まるうちでそれ以下の最大で開く（ファイルには書き戻さない）。
 
 ## 7. レイテンシー、テール、バイパス
 
@@ -151,15 +154,16 @@ ID・名前・範囲・既定値は要件のとおり。JUCE の型と受け渡�
 ```
 CMakeLists.txt                 JUCE（JUCE-subbass）、core、plugin、tests
 core/                          JUCE に依存しない DSP（lesson::）
-  include/lesson/  WebBiquad.h Eq.h Compressor.h AutoGain.h Smoother.h Params.h Format.h Character.h
+  include/lesson/  WebBiquad.h Eq.h Compressor.h AutoGain.h Smoother.h Params.h Format.h Engine.h Spectrum.h Taps.h
   src/
 plugin/
-  CMakeLists.txt               juce_add_plugin を 2 つ（LessonEQ、LessonComp）
-  common/                      WebEditor、Bridge、UserSettings、Spectrum、embed_web.cmake
+  CMakeLists.txt               juce_add_plugin を 2 つ（LessonEQ、LessonComp）と、ページを埋め込むライブラリ
+  common/                      LessonProcessor、LessonParameters、WebEditor、Bridge、UiSettings、WebAssetTable.h、embed_web.cmake
   eq/                          EqProcessor
   comp/                        CompProcessor
-  web/                         画面のソース（Vite 6＋Preact＋TypeScript、ページは eq.html と comp.html）
-    src/ui/                    Web アプリの src/ui を写して、状態の出どころをプラグインに替えたもの
+  web/                         画面のソース（Vite 6＋Preact＋TypeScript、ページは index.html の 1 枚）
+    src/                       Web アプリの src を写して、状態の出どころをプラグインに替えたもの（写した表は src/COPIED.md）
+    dev/                       偽のプラグイン（fake-juce.ts）。ブラウザだけで画面を開く
     prayroom/                  tools/sync-prayroom.py が作る PRAYROOM の写し
 tests/
   golden/                      ゴールデンの作り方（Node と Edge）と、できたデータ
@@ -171,9 +175,10 @@ docs/dev-loop/                 要件、設計、記録、レビュー
 ```
 
 - 画面は Web アプリのコードを写す（`Eq.tsx`、`Comp.tsx`、`Knob.tsx`、`Hint.tsx`、`Glyph.tsx`、`PluginHeader.tsx`、`hooks.ts`、`params.ts`、`character.ts`、`style.css` の要る部分）。`app.ts` の状態は、プラグインの `Bridge` から来る値に替える。写すのは、リポジトリを分けるため（Web アプリのソースをビルドで直接読まない）。写した元とのずれは AC-16 のゴールデンで見張る。
-- 書体は Web アプリと同じく `@fontsource` のパッケージから読み、`bundle.css` の Google Fonts の `@import` はビルドで外す（Web アプリの `vite.config.ts` と同じ）。ビルドしたページ（`plugin/web/dist/`）を、それぞれのプラグインのバイナリに入れる。
-- 拡大率: ウィンドウを基準の大きさ × 拡大率にし、ページは CSS の `zoom` で伸ばす。ポインターの座標と canvas の解像度が崩れないかを周 3 の最初に WebView2 で測る。崩れるなら、JUCE のパッチで WebView2 の `RasterizationScale` に拡大率を掛ける方に替える（そのときは JUCE の worktree を自分用に作る）。
-- ウィンドウの基準の大きさは M（720×420）を目安に、周 3 で Web アプリの拡大のポップアップの中身が収まる大きさに決める。
+- 書体は Web アプリと同じ書体を、ページで使う文字だけに絞った WOFF（1）で同梱する（`tools/make-fonts.py`。`@fontsource` の woff2 を全部入れると約 7.3 MB になるため）。`bundle.css` の Google Fonts の `@import` はビルドで外す（Web アプリの `vite.config.ts` と同じ）。ビルドしたページ（`plugin/web/dist/`）を、それぞれのプラグインのバイナリに入れる。
+- 拡大率: ウィンドウを基準の大きさ × 拡大率にし、web view は基準の大きさのまま置いて、JUCE の transform で拡大率を掛ける（`JUCE-subbass` のパッチ 0002 が、ページを部品の大きさで組み、窓の倍率で描く）。CSS の `zoom` は使わない。実機（EditorHost、画面の倍率 125 %）で 100・125・150・200 % が文字も線もくっきり描けることを撮って確かめた。
+- ウィンドウの基準の大きさは PRAYROOM の L（960×560）。Web アプリの拡大のポップアップの中身（`<Eq big/>`・`<Comp big/>`）がそのまま収まる。
+- ページは 1 枚で、どちらの画面を出すかは `ready()` の `plugin` で決める。Web アプリの `PluginHeader` は使わない（名前と電源は PRAYROOM の窓のヘッダーが持つ）。
 
 ## 9. 試験計画
 
@@ -191,14 +196,14 @@ docs/dev-loop/                 要件、設計、記録、レビュー
 | AC-10 | 1 | `core_tests "[autogain]"` | `tests/golden/autogain.tsv`（Python の参照、`gen-autogain.py`） |
 | AC-11 | 1 | `core_tests "[smooth]"` | 段の変化とクロスフェード |
 | AC-12 | 1 | `core_tests "[bypass]"` | ノイズ、バイパスを入れて 100 ms 後から |
-| AC-13 | 2 | `rt_alloc_test` | パラメータを動かしながら、処理の呼び出しを数える |
+| AC-13 | 2 | `rt_alloc_test` | パラメータを動かしながら、処理の呼び出しを数える。窓を閉じた状態と開いた状態（取り出し口あり）の両方 |
 | AC-14 | 1 | `plugin_tests "[state]"` | 値をばらばらにして往復 |
 | AC-15 | 1 | `core_tests "[extreme]"` | +24 dBFS、無音、denormal、1 サンプル、192 kHz |
-| AC-16 | 1 | `npm test`（vitest）と `core_tests "[words]"` | `tests/golden/ui.json`（Web アプリのソースから作る） |
-| AC-17 | 5 | `npm test` | 画面のカーブの計算と core の周波数特性（`tests/golden/curve.json`） |
-| AC-18 | 1 | `plugin_tests "[spectrum]"` | 決まりの式と、Edge の `getFloatFrequencyData` を 1 回 |
-| AC-19 | 5 | `validate-vst3-editorhost`、ネットを切って開く | — |
-| AC-20 | 5 | `ui-variant-checker` に撮らせる | テーマ×拡大率×状態 |
+| AC-16 | 1 | `npm run web:test`（`plugin/web/tests/copied.test.ts`） | `tests/golden/ui.json`（Web アプリのソースから作る）。言葉の関数はページの写しを直接試すので、core に言葉は置かない |
+| AC-17 | 5 | `core_tests "[curve]"` | 画面のカーブの計算（ページの `EqFilters` を Edge で動かした `tests/golden/curve/`）と core の周波数特性 |
+| AC-18 | 1 | `core_tests "[spectrum]"` | 決まりの式と、Edge の `getFloatFrequencyData`（`tests/golden/spectrum/`） |
+| AC-19 | 5 | EditorHost で開いて撮る。ページの書体がこの PC に入っていないこと、ビルドしたページに外の URL が無いことを確かめる | — |
+| AC-20 | 5 | `tools/web-shot.mjs`（偽のプラグインのページを headless の Edge で撮る）と、EditorHost の実機の撮影 | テーマ×拡大率×状態 |
 | AC-21 | 5 | `plugin_tests "[bridge]"` | 画面からの呼び出しを模して、ジェスチャーの列を記録 |
 | AC-22 | 5 | `plugin_tests "[settings]"` | 一時フォルダーの settings.json |
 | AC-23 | 6 | 手動確認表（`docs/dev-loop/manual-checks.md`） | ユーザー |
