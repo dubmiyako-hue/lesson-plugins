@@ -21,6 +21,10 @@ public:
 
 private:
     EqEngineSettings settings() const noexcept;
+    void restartTaps() noexcept override {
+        pre_.restart();
+        post_.restart();
+    }
 
     EqEngine engine_;
     std::atomic<double> makeupDb_ { 0.0 };

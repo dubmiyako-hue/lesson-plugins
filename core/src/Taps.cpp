@@ -12,12 +12,17 @@ void SignalRing::push(float x) noexcept {
     written_.store(w + 1, std::memory_order_release);
 }
 
+void SignalRing::restart() noexcept {
+    start_.store(written_.load(std::memory_order_relaxed), std::memory_order_release);
+}
+
 void SignalRing::latest(float* out, int n) const noexcept {
     if (n <= 0) return;
     const std::uint64_t w = written_.load(std::memory_order_acquire);
+    const std::uint64_t s = start_.load(std::memory_order_acquire); // may be newer than w: then nothing is held
     const std::uint64_t want = static_cast<std::uint64_t>(n);
-    // Samples older than the ring holds, or never written (fewer than `n` pushed so far), read as 0.
-    const std::uint64_t held = std::min<std::uint64_t>(w, kSize);
+    // Samples older than the ring holds, written before the last restart, or never written read as 0.
+    const std::uint64_t held = std::min<std::uint64_t>(w > s ? w - s : 0, kSize);
     const std::uint64_t zeros = want > held ? want - held : 0;
     for (std::uint64_t i = 0; i < zeros; ++i) out[i] = 0.0f;
     for (std::uint64_t i = zeros; i < want; ++i) out[i] = data_[(w - want + i) & (kSize - 1)].load(std::memory_order_relaxed);

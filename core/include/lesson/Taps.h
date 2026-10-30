@@ -16,13 +16,17 @@ public:
 
     // Audio thread.
     void push(float x) noexcept;
-    // Message thread: the latest `n` (at most kSize) samples, oldest first. Samples never written read as 0, as an
-    // AnalyserNode's buffer starts silent.
+    // Audio thread (or prepare, which never runs with it): the samples pushed so far read as 0 from now on, as when the
+    // ring is new (the window opened again, or the sound was prepared at another rate).
+    void restart() noexcept;
+    // Message thread: the latest `n` (at most kSize) samples, oldest first. Samples never written, or written before the
+    // last restart, read as 0, as an AnalyserNode's buffer starts silent.
     void latest(float* out, int n) const noexcept;
 
 private:
     std::array<std::atomic<float>, kSize> data_ {};
     std::atomic<std::uint64_t> written_ { 0 }; // samples pushed (never wraps in practice)
+    std::atomic<std::uint64_t> start_ { 0 };   // written_ at the last restart
     static_assert(std::atomic<std::uint64_t>::is_always_lock_free);
 };
 

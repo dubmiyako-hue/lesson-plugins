@@ -16,6 +16,7 @@
 #include <vector>
 
 using namespace lesson::plugin;
+using lesson::CompPoints;
 using lesson::SpectrumAnalyser;
 
 namespace {
@@ -141,6 +142,14 @@ void flow(juce::AudioProcessor& processor, int blocks, int length = 1024) {
             for (int i = 0; i < length; ++i) buffer.setSample(ch, i, noise(random));
         processor.processBlock(buffer, midi);
     }
+}
+
+// One stereo block of silence through processBlock.
+void silence(juce::AudioProcessor& processor, int length) {
+    juce::AudioBuffer<float> buffer(2, length);
+    buffer.clear();
+    juce::MidiBuffer midi;
+    processor.processBlock(buffer, midi);
 }
 
 // ---- setParam ----
@@ -734,4 +743,45 @@ TEST_CASE("[bridge] tick: Lesson Comp's points do not include the blocks that ra
     rig.bridge.tick();
     CHECK(rig.count("tick") == 1);
     CHECK(rig.count("points") == 0);
+}
+
+TEST_CASE("[bridge] tick: Lesson EQ's spectrum after the window opened again holds nothing from before") {
+    for (const int blocksWhileClosed : { 0, 1 }) {
+        INFO("blocks while closed " << blocksWhileClosed);
+        Rig<EqProcessor> rig;
+        rig.processor.prepareToPlay(48000.0, 1024);
+        rig.bridge.start();
+        flow(rig.processor, 16); // noise at 0.5 fills the rings
+        rig.bridge.stop();
+        flow(rig.processor, blocksWhileClosed);
+        rig.bridge.start();
+        silence(rig.processor, 1024);
+        rig.events.clear();
+        rig.bridge.tick();
+        REQUIRE(rig.count("spectrum") == 1);
+        const auto pre = floatsOf(decodeBytes(property(rig.named("spectrum")[0]->payload, "pre")));
+        REQUIRE(!pre.empty());
+        CHECK(std::all_of(pre.begin(), pre.end(), [](float v) { return v == SpectrumAnalyser::kFloorDb; }));
+    }
+}
+
+TEST_CASE("[bridge] tick: Lesson Comp's first point after the window opened again holds nothing from before") {
+    for (const int blocksWhileClosed : { 0, 1 }) {
+        INFO("blocks while closed " << blocksWhileClosed);
+        Rig<CompProcessor> rig;
+        rig.processor.prepareToPlay(48000.0, 1024);
+        rig.bridge.start();
+        flow(rig.processor, 1, 100); // a part of a point, of noise at 0.5
+        rig.bridge.stop();
+        flow(rig.processor, blocksWhileClosed, 100);
+        rig.bridge.start();
+        silence(rig.processor, CompPoints::kSamplesPerPoint);
+        rig.events.clear();
+        rig.bridge.tick();
+        REQUIRE(rig.count("points") == 1);
+        const auto values = floatsOf(decodeBytes(rig.named("points")[0]->payload));
+        REQUIRE(values.size() == 3u);
+        CHECK(values[0] == 0.0f); // the input peak
+        CHECK(values[1] == 0.0f); // the output peak (the GR may still be releasing)
+    }
 }

@@ -20,6 +20,7 @@ public:
 
 private:
     CompEngineSettings settings() const noexcept;
+    void restartTaps() noexcept override { points_.restart(); }
 
     CompEngine engine_;
     std::atomic<double> makeupDb_ { 0.0 };

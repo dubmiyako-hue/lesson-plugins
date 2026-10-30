@@ -405,6 +405,25 @@ TEST_CASE("[taps] SignalRing returns the latest samples oldest first and zeros f
     CHECK(out[1] == 1.0f);
 }
 
+TEST_CASE("[taps] SignalRing restart makes what was pushed before it read as 0") {
+    SignalRing ring;
+    std::vector<float> out(SignalRing::kSize);
+    for (int i = 0; i < 100; ++i) ring.push(9.0f);
+    ring.restart();
+    ring.latest(out.data(), 16);
+    for (int i = 0; i < 16; ++i) CHECK(out[static_cast<size_t>(i)] == 0.0f);
+
+    for (int i = 1; i <= 3; ++i) ring.push(static_cast<float>(i));
+    ring.latest(out.data(), 8);
+    const float expected[8] = { 0, 0, 0, 0, 0, 1, 2, 3 };
+    for (int i = 0; i < 8; ++i) CHECK(out[static_cast<size_t>(i)] == expected[i]);
+
+    // Once the ring has been filled since, the restart no longer shows.
+    for (int i = 0; i < SignalRing::kSize; ++i) ring.push(5.0f);
+    ring.latest(out.data(), SignalRing::kSize);
+    CHECK(std::all_of(out.begin(), out.end(), [](float x) { return x == 5.0f; }));
+}
+
 namespace {
 // Feeds `samples` samples whose peaks are (in, out, gr) at the first sample and 0 elsewhere.
 void feed(CompPoints& points, int samples, float in, float out, double gr) {

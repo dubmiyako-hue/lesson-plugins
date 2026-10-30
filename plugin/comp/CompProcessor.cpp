@@ -21,7 +21,7 @@ void CompProcessor::prepareToPlay(double sampleRate, int) {
     if (!(sampleRate > 0)) sampleRate = 48000.0; // a host that has no rate yet
     engine_.prepare(sampleRate, settings());
     makeupDb_.store(engine_.makeupDb(), std::memory_order_relaxed);
-    points_.restart();
+    restartTaps();
     setPreparedRate(sampleRate);
 }
 

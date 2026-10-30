@@ -55,7 +55,10 @@ public:
     // processBlock calls so far: the screen takes the audio as playing while this moves.
     std::uint64_t blocksProcessed() const noexcept { return blocks_.load(std::memory_order_relaxed); }
     // The window is open: the taps below are written while it is (the Bridge sets it, message thread).
-    void setScreenOpen(bool open) noexcept { screenOpen_.store(open, std::memory_order_relaxed); }
+    void setScreenOpen(bool open) noexcept {
+        if (open) opens_.fetch_add(1, std::memory_order_relaxed);
+        screenOpen_.store(open, std::memory_order_release);
+    }
     // The EQ's spectrum inputs, and the compressor's level points; null where the plug-in has none.
     virtual lesson::SignalRing* spectrumPre() noexcept { return nullptr; }
     virtual lesson::SignalRing* spectrumPost() noexcept { return nullptr; }
@@ -66,11 +69,22 @@ protected:
     float raw(std::size_t index) const noexcept { return raw_[index]->load(std::memory_order_relaxed); }
     // prepareToPlay: the rate it prepared the sound at.
     void setPreparedRate(double rate) noexcept { preparedRate_.store(rate, std::memory_order_relaxed); }
-    // processBlock: counts the call, and says whether the taps are to be written.
+    // processBlock: counts the call, and says whether the taps are to be written. The first block after the window opened
+    // restarts the taps first, so the window gets nothing gathered while it was last open (also when no block ran while
+    // it was closed).
     bool beginBlock() noexcept {
         blocks_.fetch_add(1, std::memory_order_relaxed);
-        return screenOpen_.load(std::memory_order_relaxed);
+        const bool open = screenOpen_.load(std::memory_order_acquire);
+        if (!open) return false;
+        const auto opens = opens_.load(std::memory_order_relaxed);
+        if (opens != tapsOpen_) {
+            restartTaps();
+            tapsOpen_ = opens;
+        }
+        return true;
     }
+    // Audio thread (and prepareToPlay): the taps forget what they hold or are gathering.
+    virtual void restartTaps() noexcept {}
 
 private:
     juce::String name_;
@@ -81,9 +95,11 @@ private:
     std::vector<juce::RangedAudioParameter*> params_; // in the table's order
     std::atomic<std::uint64_t> blocks_ { 0 };
     std::atomic<bool> screenOpen_ { false };
+    std::atomic<std::uint32_t> opens_ { 0 }; // times the window opened
+    std::uint32_t tapsOpen_ = 0;             // audio thread: opens_ when the taps last restarted
     std::atomic<double> preparedRate_ { 48000.0 };
     static_assert(std::atomic<std::uint64_t>::is_always_lock_free && std::atomic<bool>::is_always_lock_free
-                  && std::atomic<double>::is_always_lock_free);
+                  && std::atomic<std::uint32_t>::is_always_lock_free && std::atomic<double>::is_always_lock_free);
 };
 
 } // namespace lesson::plugin
