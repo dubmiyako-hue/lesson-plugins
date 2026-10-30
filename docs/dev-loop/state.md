@@ -2,10 +2,10 @@
 
 ## 現在地
 
-- 工程: 3. 実装（周 2）
-- 周: 2
-- この周の一切れ: DSP（Chrome と同じビクアッドの EQ、CompressorCore の移植、Auto Gain の式、平滑化、バイパス）とゴールデンとの一致
-- 次にすること: fdlibm の写しと WebBiquad、Smoother、Eq、Compressor、AutoGain を core に書き、ゴールデン（Node のコンプ、Edge の EQ）と比べる
+- 工程: 3. 実装（周 3）
+- 周: 3
+- この周の一切れ: UI（PRAYROOM のウィンドウ、EQ とコンプの画面、スペクトルと音量の流れ、札と 2 段の言葉、説明の欄、設定のメニュー）
+- 次にすること: core にスペクトルと音量の流れの取り出し口を作り、`plugin/web` に Web アプリの画面を写して、WebView のエディターでつなぐ
 
 ## 周の予定
 
@@ -21,20 +21,20 @@
 | 番号 | 条件 | 周 | 状態 | 測った値 | ログ |
 | --- | --- | --- | --- | --- | --- |
 | AC-01 | ビルド | 1 | 合格 | `tools\build.cmd Release`・`Debug` とも終了コード 0、`Lesson EQ.vst3`・`Lesson Comp.vst3` が両方にある。Debug でも試験・validator・pluginval（5）が合格 | `.ai-cache/logs/` |
-| AC-02 | validator | 1 | 合格 | `-e` で 2 本とも 537 件合格、失敗 0（Release） | `.ai-cache/validate/*-validator.txt` |
-| AC-03 | pluginval | 1・4 | 保留 | strictness 5 で 2 本とも合格（Release）。strictness 10 は周 4 | `.ai-cache/validate/*-pluginval.txt` |
+| AC-02 | validator | 1 | 合格 | `-e` で 2 本とも 537 件合格、失敗 0（Release）。周 2 の DSP を入れたあとも同じ | `.ai-cache/validate/*-validator.txt` |
+| AC-03 | pluginval | 1・4 | 保留 | strictness 5 で 2 本とも合格（Release。周 2 の DSP を入れたあとも合格）。strictness 10 は周 4 | `.ai-cache/validate/*-pluginval.txt` |
 | AC-04 | パラメータの表 | 1 | 合格 | `plugin_tests "[params]"`: ID・名前・短い名前・並び・範囲・既定値・既定値の文字が要件の表と一致 | `.ai-cache/logs/plugin_tests-rel.txt` |
 | AC-05 | 正規化 | 1 | 合格 | fromNorm の差の最大 3.6e-12（17696 点、刻みと切れ目は完全一致）、toNorm 2.2e-16（14621 点）、値の文字 22475 個一致。JUCE のパラメータは float でちょうど表せる 3227 点・206 点で `Math.fround` と完全一致 | 同上と `core_tests` |
-| AC-06 | EQ の一致 | 2 | 未着手 | | |
-| AC-07 | コンプの一致 | 2 | 未着手 | | |
-| AC-08 | Web アプリの試験の数値 | 2 | 未着手 | | |
-| AC-09 | ブロックの長さ | 2 | 未着手 | | |
-| AC-10 | Auto Gain の式 | 2 | 未着手 | | |
-| AC-11 | 平滑化 | 2 | 未着手 | | |
-| AC-12 | バイパス | 2 | 未着手 | | |
-| AC-13 | リアルタイム安全 | 2 | 未着手 | | |
+| AC-06 | EQ の一致 | 2 | 合格 | Edge 156 の `OfflineAudioContext` の 69 件（44.1・48・96 kHz、モノとステレオ）と、ブロック 128・1・4096 のどれでも差の最大 0。421,888 サンプルが全部ビット単位で一致 | `core_tests "[golden-eq]"` |
+| AC-07 | コンプの一致 | 2 | 合格 | Node の `CompressorCore` の 22 件と、ブロック 128・1・480 のどれでも差の最大 0。529,275 サンプルが全部ビット単位で一致 | `core_tests "[golden-comp]"` |
+| AC-08 | Web アプリの試験の数値 | 2 | 合格 | `tests/dsp.test.ts` のコンプの試験を移したもの（4:1 で GR 6 dB、∞:1、Attack・Release ごとの 6 dB、Threshold の下は素通し）が全部通る | `core_tests "[comp]"` |
+| AC-09 | ブロックの長さ | 2 | 合格 | EQ・コンプのエンジン（Auto Gain・wet・dry 込み）で、ブロック 1・64・128・480・ばらばら（1〜4096）が 4096 の出力とビット単位で一致（3 レート、モノとステレオ、Auto Gain のオン・オフ） | `core_tests "[blocks]"` |
+| AC-10 | Auto Gain の式 | 2 | 合格 | Python の参照 61 行との差の最大 5.9e-5 dB。例（ベル 300 Hz +12 dB で −3.08、HS 8 kHz +6 dB で −2.14、HP 80 Hz 24 dB/oct で +0.20、コンプ −28 dB・4:1 で +10.5）は ±0.01 dB 以内。オフのとき EQ のエンジンは `Eq` だけとビット単位で同じ | `core_tests "[autogain]"`、`"[autogain-off]"` |
+| AC-11 | 平滑化 | 2 | 合格 | `Smoother` は式とビット単位で一致、指数との差は 2^-23/c 以下。EQ の Freq・Gain・Q、HP・LP のクロスフェード、makeup・wet・dry、コンプの Threshold・Ratio は参照との差 1e-6 以下、クロスフェードの重みも 1e-6 以下（出ていくレーンの Freq が動く場合、移っている途中の 2 回目の変更、オフのバンドの Slope の変更を含む）。Attack・Release は平滑化しない。パラメータからエンジンの設定への写しは、既定値以外の値でプロセッサーとエンジンの出力がビット単位で一致（`plugin_tests "[mapping]"`） | `core_tests "[smooth]"` |
+| AC-12 | バイパス | 2 | 合格 | バイパスを入れて 100 ms 後から、出力が入力とビット単位で一致（EQ・コンプ、3 レート、モノとステレオ、Auto Gain のオン・オフ）。バイパスを入れて準備したときは最初のサンプルから一致 | `core_tests "[bypass]"` |
+| AC-13 | リアルタイム安全 | 2 | 合格 | パラメータを動かしながら 3000 ブロック（1〜1024 サンプル）× 2 本 × 3 条件（48 kHz ステレオ、44.1 kHz モノ、192 kHz ステレオ）で、`processBlock` の中の確保・解放 0 回（Release。Debug は条件を広げる前の 48 kHz ステレオで 0 回）。ロックは読んで確かめた | `rt_alloc_test` |
 | AC-14 | 状態の保存 | 1 | 合格 | 乱数の値 20 組 × 2 本で、往復後の値が全部一致（ずれ 0）。`version="1"` あり。状態に無いパラメータは既定値、ほかのプラグインの状態とごみは無視 | `.ai-cache/logs/plugin_tests-rel.txt` |
-| AC-15 | 極端な入力 | 2 | 未着手 | | |
+| AC-15 | 極端な入力 | 2 | 合格 | +24 dBFS のサインとノイズ、無音、denormal、大きな音のあとの無音、ブロック 1・480、44.1〜192 kHz、極端な設定と毎ブロックの設定の跳びで、出力に NaN・Inf なし。Inf・NaN そのものの入力は条件の外（レビュー 02 の 1・2、承認待ち） | `core_tests "[extreme]"` |
 | AC-16 | 画面の言葉 | 3 | 未着手 | | |
 | AC-17 | EQ のカーブ | 3 | 未着手 | | |
 | AC-18 | スペクトル | 3 | 未着手 | | |
@@ -51,6 +51,7 @@
 | 周 | 一切れ | 結果 | 戻った先と理由 | 日付 |
 | --- | --- | --- | --- | --- |
 | 1 | 素通しの 2 本、パラメータの表、値の文字、状態、validator と pluginval（5） | 合格（AC-01・02・04・05・14 合格、AC-03 は strictness 5 まで合格）。レビューは `reviews/01.md` | — | 2026-10-31 |
+| 2 | DSP（ビクアッドの EQ、コンプ、Auto Gain、平滑化、バイパス）とゴールデン | 合格（AC-06〜13・15 合格、AC-02・03 は DSP 入りでも合格）。レビューは `reviews/02.md`。Inf・NaN の入力からの立ち直りは承認待ち（patch あり） | — | 2026-10-31 |
 
 ## 決定の記録
 

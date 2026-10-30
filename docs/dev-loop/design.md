@@ -11,6 +11,7 @@
 | --- | --- | --- | --- |
 | — | 2026-10-31 | 初版 | 工程 2 |
 | 1 | 2026-10-31 | 正規化のゴールデンを `norm.json` から `params.tsv`（タブ区切り、値の文字と JS の丸めも入れる）に替えた | C++ の試験が JSON の読み取りなしで読める（DECISIONS.md） |
+| 2 | 2026-10-31 | `sin`・`cos` も fdlibm を写した。HP・LP の使わない段は 350 Hz に置く。平滑化の収束はサンプルごとに調べる。音の全部を core の `EqEngine`・`CompEngine` に置く。時定数の `exp` も fdlibm（レビュー 02） | ビットまで合わせるため、試験しやすくするため（DECISIONS.md、`reviews/02.md`） |
 
 ## 1. 信号の流れ
 
@@ -62,11 +63,11 @@ Chrome の `Biquad` をそのまま写す。
 - 処理は直接形 I。係数と状態（x1, x2, y1, y2）は double、各サンプルの `y` は float に丸め、状態にもその float を入れる（`float y = b0*x + b1*x1 + b2*x2 - a1*y1 - a2*y2`）。式の足す順番も同じにする。
 - denormal: Chrome はレンダリングの 128 サンプルごとに状態の denormal を 0 にし、レンダリングのスレッドは FTZ・DAZ で動く。プラグインは core の小さな RAII（`lesson::NoDenormals`、MXCSR の FTZ・DAZ を立てる）で常に 0 にする。`processBlock` と単体試験の両方でこれを使う（JUCE の `ScopedNoDenormals` は core から使えないので）。違いが出るのは 1.2e-38 より小さい値だけ。
 - `10^x`: Blink の `pow10` は `fdlibm::expf(float(x · ln10))` で、結果は float の精度になる（シェルフ・peaking の A と、lowpass・highpass の Q）。ここは float の丸めが係数に直に入るので、Chromium の `third_party/fdlibm` の `expf` を写す（Sun の fdlibm の許諾。告知を残す）。
-- sin・cos は Chrome が fdlibm の double、こちらは MSVC の CRT の double。違いは double の最後の 1 ビット程度で、出力では 1e-12 より小さい見込み（測って確かめる）。
+- sin・cos も Chrome と同じく fdlibm の double を写す（周 2 で変えた。CRT とは double の最後の 1 ビットが違いうる）。
 
 ### 2.2 EQ（`Eq`）
 
-- 段の割り当ては `EqFilters.apply` と同じ。HP・LP は 4 段で、オンのときは前から `slope / 12` 段を highpass・lowpass（Q は `butterworthQs(slope / 6)` を dB にしたもの）、残りとオフのときは 0 dB・Q 1 の peaking（素通し）。LS・HS・ベルはオフのとき Gain 0 dB。13 段は常に全部動かす（素通しの段も Chrome と同じ計算をするので、出力のビットまで同じになる）。
+- 段の割り当ては `EqFilters.apply` と同じ。HP・LP は 4 段で、オンのときは前から `slope / 12` 段を highpass・lowpass（Q は `butterworthQs(slope / 6)` を dB にしたもの）、残りとオフのときは 0 dB・Q 1 の peaking（素通し。周波数は BiquadFilterNode の初期値 350 Hz のまま。新しい `EqFilters` に `apply(bands, false)` をかけたときと同じ。鳴っている Web アプリは、オフにした段の周波数を直前の値のまま残すが、素通しの段なので差は 1e-16 程度）。LS・HS・ベルはオフのとき Gain 0 dB。13 段は常に全部動かす（素通しの段も Chrome と同じ計算をするので、出力のビットまで同じになる）。
 - 平滑化: Freq・Gain・Q は、それぞれ `setTargetAtTime(v, t, 0.005)` と同じ式で目標へ近づける（2.5）。平滑化している段だけ、サンプルごとに係数を計算し直す（Chrome もオートメーション中はサンプルごとに計算する）。止まっている段は係数を変えない。
 - HP・LP のオン・オフと Slope（要件の食い違いの表）: バンドごとに 4 段のレーンを 2 本持つ。切り替えのとき、新しい設定のレーン（状態は 0 から）を立ち上げ、10 ms のレイズドコサイン `w = 0.5 − 0.5·cos(π·t / T)` で古いレーンから移る。移り終わったら古いレーンを止める。移っているあいだに次の切り替えが来たら、移り終わってから始める。周波数の平滑化は両方のレーンにかける。
 - Auto Gain の量（2.4）は τ 5 ms で平滑化した float のゲインで、`float(y · makeup)`。続けて `float(· wet)`、`dry` 側は `float(x · dry)`、足して float。Web Audio の GainNode を 2 つ通るのと同じ丸め。
@@ -75,7 +76,7 @@ Chrome の `Biquad` をそのまま写す。
 
 `CompressorCore` を 1 行ずつ写す。
 
-- 検出: 全チャンネルの |x| の最大（float）を 48 サンプルの部分最大にまとめ、`round(0.02·fs / 48)` 個のリングで最大をとる。部分最大は double で持ち、リングは float の配列。
+- 検出: 全チャンネルの |x| の最大（float）を 48 サンプルの部分最大にまとめ、`round(0.02·fs / 48)` 個のリングで最大をとる。部分最大とリングは float（float の最大なので、Web アプリの double と同じ値になる）。
 - `levelDb = 20·log10(max(level, 1e-9))`、`targetGr`（∞:1 は Ratio ≥ 1000）、`coef = target > gr ? att : rel`、`gr = target + coef·(gr − target)`、`g = 10^(−gr/20)`、`x = float(x · g)`。gr は double。
 - パラメータは float に丸める（ワークレットは `Float32Array` で受けるから）。`timeCoef(ms) = ms ≤ 0 ? 0 : exp(−1 / (ms/1000 · fs))`。
 - 平滑化（要件の食い違いの表）: Threshold（dB）と `1/Ratio` を τ 5 ms で動かす（∞:1 は 0）。動いているあいだの式は `over − over · invRatio`。止まったら目標の値に合わせ、Web アプリと同じ式（`over − over / ratio`）に戻す。止まっているときのビットが Web アプリと同じになるように。Attack・Release は平滑化しない。係数はブロックの頭で計算する。
@@ -84,7 +85,7 @@ Chrome の `Biquad` をそのまま写す。
 ### 2.4 Auto Gain（`AutoGain`）
 
 - コンプ: `min(24, targetGr(0, T, R) / 2)`。T と R は float に丸めた目標の値。
-- EQ: 20 Hz〜20 kHz を対数で 2048 等分した区間の中央の周波数 f_i で、`makeup = clamp(−10·log10( Σ |H(f_i)|²·|K(f_i)|² / Σ |K(f_i)|² ), −24, 24)`。H は 13 段の目標の設定の係数（平滑化の途中の値でなく、止まったときの値。レーンの切り替えの途中も新しい設定）、K は `kWeighting(fs)`（Web アプリの係数の式）。2048 点は、100000 点との差が 0.004 dB 以下になる点の数として測って決めた（44.1・48・96 kHz、ベル 20 Hz〜19 kHz・Q 0.3〜12・±18 dB、シェルフ、HP。いちばん厳しいのは 44.1 kHz の 19 kHz・Q 12 のベル）。
+- EQ: 20 Hz〜20 kHz を対数で 2048 等分した区間の中央の周波数 f_i で、`makeup = clamp(−10·log10( Σ |H(f_i)|²·|K(f_i)|² / Σ |K(f_i)|² ), −24, 24)`。H は効いている段（`EqFilters.active` と同じ。オフのバンド、Gain 0 dB のシェルフ・ベル、HP・LP の使わない段は入れない）の目標の設定の係数（平滑化の途中の値でなく、止まったときの値。レーンの切り替えの途中も新しい設定）、K は `kWeighting(fs)`（Web アプリの係数の式）。2048 点は、100000 点との差が 0.004 dB 以下になる点の数として測って決めた（44.1・48・96 kHz、ベル 20 Hz〜19 kHz・Q 0.3〜12・±18 dB、シェルフ、HP。いちばん厳しいのは 44.1 kHz の 19 kHz・Q 12 のベル）。
 - EQ の計算は重い（全段で約 70 万回の演算）ので、オーディオスレッドで少しずつ進める。目標の設定が変わったら計算を始め、入力 1 サンプルにつき 4 点ずつ進める（2048 点は 512 サンプル、48 kHz で約 11 ms）。計算中に設定が変わったら、終わってからもう一度始める。サンプルの数で進むので、ブロックの長さで結果の出る時刻は変わらない。z と |K|² の表は `prepareToPlay` で作る。
 - 量が変わったら、τ 5 ms で新しい量へ近づける（Web アプリの `compMakeup.gain` の `setTargetAtTime`）。Auto Gain のスイッチのオン・オフも同じ（オフは 0 dB）。
 - 最初の量: `prepareToPlay` で、今のパラメータの 2048 点を一度に計算し、平滑化をその値から始める。少しずつ進めるのは、そのあとの変化だけ。設定を止めた試験（AC-06、AC-09、AC-12）の頭で、量が 0 から動いて見えることはない。
@@ -93,7 +94,7 @@ Chrome の `Biquad` をそのまま写す。
 
 ### 2.5 平滑化（`Smoother`）
 
-Chrome の `setTargetAtTime` と同じ（Blink の `audio_param_handler.cc` で確かめた）。値と係数は float。`c = float(1 − exp(−1 / (fs · 0.005)))`、サンプルごとに `v += (target − v) · c`。始めてから 10τ（50 ms）たつか、`|target − v| < 4.54e-5 · |v|`（target が 0 なら `|v| < 4.54e-5`）になったら、target にそろえて止める。止まっている値は目標そのものなので、止まったあとの音は平滑化のない計算と同じになる。
+Chrome の `setTargetAtTime` と同じ（Blink の `audio_param_handler.cc` で確かめた）。値と係数は float。`c = float(1 − exp(−1 / (fs · 0.005)))`（`exp` は Blink の `DiscreteTimeConstantForSampleRate` と同じ fdlibm。コンプの `timeCoef` も V8 の `Math.exp` に合わせて fdlibm）、サンプルごとに `v += (target − v) · c`。始めてから 10τ（50 ms）たつか、`|target − v| < 4.54e-5 · |v|`（target が 0 なら `|v| < 4.54e-5`）になったら、target にそろえて止める。止まっている値は目標そのものなので、止まったあとの音は平滑化のない計算と同じになる。Chrome は収束を 128 サンプルごとに調べ、x86 では 4 サンプルずつまとめて進めるが、こちらはサンプルごとに調べて 1 サンプルずつ進める（違うのは動いているあいだの float の丸めだけ）。float の値は、目標の近くで 1 歩が ulp の半分より小さくなると進まなくなり、10τ で目標にそろう（Chrome も同じ）。
 
 ### 2.6 スペクトル（画面用。音には関係しない）
 
@@ -187,7 +188,7 @@ docs/dev-loop/                 要件、設計、記録、レビュー
 | AC-07 | 1 | `core_tests "[golden-comp]"` | `tests/golden/comp/`（Node で `CompressorCore` を鳴らしたもの） |
 | AC-08 | 1 | `core_tests "[comp]"` | `tests/dsp.test.ts` のコンプの試験を移す |
 | AC-09 | 1 | `core_tests "[blocks]"` | ブロック 1・64・128・480・4096・ばらばら |
-| AC-10 | 1 | `core_tests "[autogain]"` | `tests/golden/autogain.json`（Python の参照） |
+| AC-10 | 1 | `core_tests "[autogain]"` | `tests/golden/autogain.tsv`（Python の参照、`gen-autogain.py`） |
 | AC-11 | 1 | `core_tests "[smooth]"` | 段の変化とクロスフェード |
 | AC-12 | 1 | `core_tests "[bypass]"` | ノイズ、バイパスを入れて 100 ms 後から |
 | AC-13 | 2 | `rt_alloc_test` | パラメータを動かしながら、処理の呼び出しを数える |
@@ -205,7 +206,7 @@ docs/dev-loop/                 要件、設計、記録、レビュー
 ### ゴールデンの作り方
 
 - コンプ: `tests/golden/gen-comp.mjs` が esbuild で Web アプリの `src/dsp.ts` を読み込み、`CompressorCore` を 128 サンプルのブロックで回す。パラメータは `Math.fround` で float に丸めて渡す（ワークレットと同じ）。入力と出力を float32 の生のファイルで書き、条件は `manifest.json` に書く。Web アプリのコミットの番号も残す。同じ入力を 128 以外のブロックの長さ（1 と 1000）でも回し、出力が同じことを生成器の中で確かめる（C++ をホストのいろいろなブロックの長さで 128 のゴールデンと比べてよい根拠）。Node は FTZ・DAZ なしで動くので、入力に denormal を入れず、長さは 10 秒未満にする（GR が double の denormal まで減らないように）。
-- EQ: `tests/golden/gen-eq.mjs` が esbuild で Web アプリの `src/chain.ts` の `EqFilters` を含むページを作り（ワークレットの読み込みは空にする）、小さな HTTP サーバーから headless の Edge に開かせる。ページは `OfflineAudioContext` で鳴らした結果を POST で返す。
+- EQ: `tests/golden/gen-eq.mjs` が esbuild で Web アプリの `src/chain.ts` の `EqFilters` を含むページを作り（ワークレットの読み込みは空にする）、小さな HTTP サーバーから headless の Edge に開かせる。ページは `OfflineAudioContext` で鳴らした結果を POST で返す。入力（インパルスと LCG のノイズ。float でちょうど表せる）は C++ の試験が作り直すので、出力だけを置く。
 - できたデータはリポジトリに入れる（全部で数 MB まで）。作り直すのは Web アプリが変わったときだけ。
 
 ## 10. 決定の記録
