@@ -1,4 +1,5 @@
-// Mono to mono and stereo to stereo only; no latency, no tail; cycle 1 passes the sound through.
+// Mono to mono and stereo to stereo only; no latency, no tail. At the defaults both plug-ins leave a sine as it is: the
+// EQ's stages are 0 dB and its Auto Gain 0 dB, and nothing goes over the comp's 0 dB threshold.
 #include <doctest.h>
 #include <comp/CompProcessor.h>
 #include <eq/EqProcessor.h>

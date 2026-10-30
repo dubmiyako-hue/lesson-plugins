@@ -1,0 +1,4013 @@
+{
+  "generator": "tests/golden/gen-eq.mjs",
+  "source": "mix-course src/chain.ts EqFilters.apply(bands, false), rendered by OfflineAudioContext",
+  "commit": "090a107f26b3fbacf2e519e88c00e4932ef98ffc",
+  "sourceChanged": false,
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0",
+  "input": "channel c: impulse 1 - 0.5c at 0, then 0.25 * LCG noise (seed 99 + c) from frames / 2",
+  "layout": "float32 little endian, planar (channel after channel)",
+  "cases": [
+    {
+      "name": "case-00",
+      "label": "flat",
+      "fs": 44100,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-01",
+      "label": "hp 12",
+      "fs": 44100,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-02",
+      "label": "hp 24",
+      "fs": 44100,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-03",
+      "label": "hp 36",
+      "fs": 44100,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 36
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-04",
+      "label": "hp 48",
+      "fs": 44100,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-05",
+      "label": "lp 18k 12",
+      "fs": 44100,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-06",
+      "label": "lp 5k 24",
+      "fs": 44100,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 5000,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        }
+      ]
+    },
+    {
+      "name": "case-07",
+      "label": "lp 1k 36",
+      "fs": 44100,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 36
+        }
+      ]
+    },
+    {
+      "name": "case-08",
+      "label": "lp 20k 48",
+      "fs": 44100,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20000,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        }
+      ]
+    },
+    {
+      "name": "case-09",
+      "label": "hp 20k 12",
+      "fs": 44100,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 20000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-10",
+      "label": "hp 20 48",
+      "fs": 44100,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 20,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-11",
+      "label": "lp 20 48",
+      "fs": 44100,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        }
+      ]
+    },
+    {
+      "name": "case-12",
+      "label": "ls +12",
+      "fs": 44100,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 12,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-13",
+      "label": "ls 20 -18",
+      "fs": 44100,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 20,
+          "gain": -18,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-14",
+      "label": "hs 20k +18",
+      "fs": 44100,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20000,
+          "gain": 18,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-15",
+      "label": "hs -6",
+      "fs": 44100,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": -6,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-16",
+      "label": "bell 20 q0.3 +18",
+      "fs": 44100,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20,
+          "gain": 18,
+          "q": 0.3,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-17",
+      "label": "bell 20k q12 -18",
+      "fs": 44100,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20000,
+          "gain": -18,
+          "q": 12,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-18",
+      "label": "bell 1k q12 +18",
+      "fs": 44100,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 18,
+          "q": 12,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-19",
+      "label": "bell 4k q0.3 -18",
+      "fs": 44100,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": -18,
+          "q": 0.3,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-20",
+      "label": "all",
+      "fs": 44100,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 30,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        },
+        {
+          "on": true,
+          "freq": 150,
+          "gain": 4.5,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 250,
+          "gain": -3,
+          "q": 2,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1200,
+          "gain": 6,
+          "q": 0.7,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 5000,
+          "gain": -9,
+          "q": 4,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 10000,
+          "gain": 2.5,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 15000,
+          "gain": 0,
+          "q": 1,
+          "slope": 36
+        }
+      ]
+    },
+    {
+      "name": "case-21",
+      "label": "all 2",
+      "fs": 44100,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 200,
+          "gain": -3,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 6,
+          "q": 0.5,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 2500,
+          "gain": -4.5,
+          "q": 8,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 6000,
+          "gain": 4,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 9000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-22",
+      "label": "off with gains",
+      "fs": 44100,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        },
+        {
+          "on": false,
+          "freq": 120,
+          "gain": 12,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 300,
+          "gain": -9,
+          "q": 4,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 8000,
+          "gain": 6,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 36
+        }
+      ]
+    },
+    {
+      "name": "case-23",
+      "label": "flat",
+      "fs": 48000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-24",
+      "label": "hp 12",
+      "fs": 48000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-25",
+      "label": "hp 24",
+      "fs": 48000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-26",
+      "label": "hp 36",
+      "fs": 48000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 36
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-27",
+      "label": "hp 48",
+      "fs": 48000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-28",
+      "label": "lp 18k 12",
+      "fs": 48000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-29",
+      "label": "lp 5k 24",
+      "fs": 48000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 5000,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        }
+      ]
+    },
+    {
+      "name": "case-30",
+      "label": "lp 1k 36",
+      "fs": 48000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 36
+        }
+      ]
+    },
+    {
+      "name": "case-31",
+      "label": "lp 20k 48",
+      "fs": 48000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20000,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        }
+      ]
+    },
+    {
+      "name": "case-32",
+      "label": "hp 20k 12",
+      "fs": 48000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 20000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-33",
+      "label": "hp 20 48",
+      "fs": 48000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 20,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-34",
+      "label": "lp 20 48",
+      "fs": 48000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        }
+      ]
+    },
+    {
+      "name": "case-35",
+      "label": "ls +12",
+      "fs": 48000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 12,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-36",
+      "label": "ls 20 -18",
+      "fs": 48000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 20,
+          "gain": -18,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-37",
+      "label": "hs 20k +18",
+      "fs": 48000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20000,
+          "gain": 18,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-38",
+      "label": "hs -6",
+      "fs": 48000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": -6,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-39",
+      "label": "bell 20 q0.3 +18",
+      "fs": 48000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20,
+          "gain": 18,
+          "q": 0.3,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-40",
+      "label": "bell 20k q12 -18",
+      "fs": 48000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20000,
+          "gain": -18,
+          "q": 12,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-41",
+      "label": "bell 1k q12 +18",
+      "fs": 48000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 18,
+          "q": 12,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-42",
+      "label": "bell 4k q0.3 -18",
+      "fs": 48000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": -18,
+          "q": 0.3,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-43",
+      "label": "all",
+      "fs": 48000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 30,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        },
+        {
+          "on": true,
+          "freq": 150,
+          "gain": 4.5,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 250,
+          "gain": -3,
+          "q": 2,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1200,
+          "gain": 6,
+          "q": 0.7,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 5000,
+          "gain": -9,
+          "q": 4,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 10000,
+          "gain": 2.5,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 15000,
+          "gain": 0,
+          "q": 1,
+          "slope": 36
+        }
+      ]
+    },
+    {
+      "name": "case-44",
+      "label": "all 2",
+      "fs": 48000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 200,
+          "gain": -3,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 6,
+          "q": 0.5,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 2500,
+          "gain": -4.5,
+          "q": 8,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 6000,
+          "gain": 4,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 9000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-45",
+      "label": "off with gains",
+      "fs": 48000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        },
+        {
+          "on": false,
+          "freq": 120,
+          "gain": 12,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 300,
+          "gain": -9,
+          "q": 4,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 8000,
+          "gain": 6,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 36
+        }
+      ]
+    },
+    {
+      "name": "case-46",
+      "label": "flat",
+      "fs": 96000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-47",
+      "label": "hp 12",
+      "fs": 96000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-48",
+      "label": "hp 24",
+      "fs": 96000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-49",
+      "label": "hp 36",
+      "fs": 96000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 36
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-50",
+      "label": "hp 48",
+      "fs": 96000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-51",
+      "label": "lp 18k 12",
+      "fs": 96000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-52",
+      "label": "lp 5k 24",
+      "fs": 96000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 5000,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        }
+      ]
+    },
+    {
+      "name": "case-53",
+      "label": "lp 1k 36",
+      "fs": 96000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 36
+        }
+      ]
+    },
+    {
+      "name": "case-54",
+      "label": "lp 20k 48",
+      "fs": 96000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20000,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        }
+      ]
+    },
+    {
+      "name": "case-55",
+      "label": "hp 20k 12",
+      "fs": 96000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 20000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-56",
+      "label": "hp 20 48",
+      "fs": 96000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 20,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-57",
+      "label": "lp 20 48",
+      "fs": 96000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        }
+      ]
+    },
+    {
+      "name": "case-58",
+      "label": "ls +12",
+      "fs": 96000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 12,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-59",
+      "label": "ls 20 -18",
+      "fs": 96000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 20,
+          "gain": -18,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-60",
+      "label": "hs 20k +18",
+      "fs": 96000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20000,
+          "gain": 18,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-61",
+      "label": "hs -6",
+      "fs": 96000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": -6,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-62",
+      "label": "bell 20 q0.3 +18",
+      "fs": 96000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20,
+          "gain": 18,
+          "q": 0.3,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-63",
+      "label": "bell 20k q12 -18",
+      "fs": 96000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 20000,
+          "gain": -18,
+          "q": 12,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-64",
+      "label": "bell 1k q12 +18",
+      "fs": 96000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 18,
+          "q": 12,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-65",
+      "label": "bell 4k q0.3 -18",
+      "fs": 96000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": -18,
+          "q": 0.3,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 8000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-66",
+      "label": "all",
+      "fs": 96000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 30,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        },
+        {
+          "on": true,
+          "freq": 150,
+          "gain": 4.5,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 250,
+          "gain": -3,
+          "q": 2,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1200,
+          "gain": 6,
+          "q": 0.7,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 5000,
+          "gain": -9,
+          "q": 4,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 10000,
+          "gain": 2.5,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 15000,
+          "gain": 0,
+          "q": 1,
+          "slope": 36
+        }
+      ]
+    },
+    {
+      "name": "case-67",
+      "label": "all 2",
+      "fs": 96000,
+      "channels": 2,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": true,
+          "freq": 120,
+          "gain": 0,
+          "q": 1,
+          "slope": 24
+        },
+        {
+          "on": true,
+          "freq": 200,
+          "gain": -3,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 300,
+          "gain": 6,
+          "q": 0.5,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 2500,
+          "gain": -4.5,
+          "q": 8,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 6000,
+          "gain": 4,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 9000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        }
+      ]
+    },
+    {
+      "name": "case-68",
+      "label": "off with gains",
+      "fs": 96000,
+      "channels": 1,
+      "frames": 4096,
+      "bands": [
+        {
+          "on": false,
+          "freq": 80,
+          "gain": 0,
+          "q": 1,
+          "slope": 48
+        },
+        {
+          "on": false,
+          "freq": 120,
+          "gain": 12,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 300,
+          "gain": -9,
+          "q": 4,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 1000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": true,
+          "freq": 4000,
+          "gain": 0,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 8000,
+          "gain": 6,
+          "q": 1,
+          "slope": 12
+        },
+        {
+          "on": false,
+          "freq": 18000,
+          "gain": 0,
+          "q": 1,
+          "slope": 36
+        }
+      ]
+    }
+  ]
+}

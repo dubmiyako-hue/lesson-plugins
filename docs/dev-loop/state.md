@@ -20,7 +20,7 @@
 
 | 番号 | 条件 | 周 | 状態 | 測った値 | ログ |
 | --- | --- | --- | --- | --- | --- |
-| AC-01 | ビルド | 1 | 合格 | `toolsuild.cmd Release`・`Debug` とも終了コード 0、`Lesson EQ.vst3`・`Lesson Comp.vst3` が両方にある。Debug でも試験・validator・pluginval（5）が合格 | `.ai-cache/logs/` |
+| AC-01 | ビルド | 1 | 合格 | `tools\build.cmd Release`・`Debug` とも終了コード 0、`Lesson EQ.vst3`・`Lesson Comp.vst3` が両方にある。Debug でも試験・validator・pluginval（5）が合格 | `.ai-cache/logs/` |
 | AC-02 | validator | 1 | 合格 | `-e` で 2 本とも 537 件合格、失敗 0（Release） | `.ai-cache/validate/*-validator.txt` |
 | AC-03 | pluginval | 1・4 | 保留 | strictness 5 で 2 本とも合格（Release）。strictness 10 は周 4 | `.ai-cache/validate/*-pluginval.txt` |
 | AC-04 | パラメータの表 | 1 | 合格 | `plugin_tests "[params]"`: ID・名前・短い名前・並び・範囲・既定値・既定値の文字が要件の表と一致 | `.ai-cache/logs/plugin_tests-rel.txt` |
@@ -68,7 +68,7 @@
 
 ## 未解決の問題
 
-- 最初の `toolsuild.cmd Release`（run-check で包んだもの）が、構成のあと何も出さずに終了コード 1 で終わった。同じコマンドをもう一度流すと通り、その後は再現しない。原因は分かっていない（2026-10-31）。
+- 最初の `tools\build.cmd Release`（run-check で包んだもの）が、構成のあと何も出さずに終了コード 1 で終わった。同じコマンドをもう一度流すと通り、その後は再現しない。原因は分かっていない（2026-10-31）。
 
 ## ユーザーの作業待ち
 

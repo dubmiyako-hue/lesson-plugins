@@ -1,0 +1,252 @@
+{
+  "generator": "tests/golden/gen-comp.mjs",
+  "source": "mix-course src/dsp.ts CompressorCore, blocks of 128 samples as src/compressor.worklet.ts",
+  "commit": "090a107f26b3fbacf2e519e88c00e4932ef98ffc",
+  "sourceChanged": false,
+  "node": "v20.10.0",
+  "layout": "float32 little endian, planar (channel after channel)",
+  "cases": [
+    {
+      "name": "case-00",
+      "signal": "steps",
+      "fs": 44100,
+      "channels": 1,
+      "threshold": -20,
+      "ratio": 4,
+      "attack": 10,
+      "release": 100,
+      "frames": 11025
+    },
+    {
+      "name": "case-01",
+      "signal": "steps",
+      "fs": 44100,
+      "channels": 2,
+      "threshold": -12,
+      "ratio": 1000,
+      "attack": 0,
+      "release": 0,
+      "frames": 11025
+    },
+    {
+      "name": "case-02",
+      "signal": "noise",
+      "fs": 44100,
+      "channels": 2,
+      "threshold": -18,
+      "ratio": 2,
+      "attack": 1,
+      "release": 50,
+      "frames": 11025
+    },
+    {
+      "name": "case-03",
+      "signal": "hits",
+      "fs": 44100,
+      "channels": 1,
+      "threshold": -24,
+      "ratio": 8,
+      "attack": 0.10000000149011612,
+      "release": 5,
+      "frames": 11025
+    },
+    {
+      "name": "case-04",
+      "signal": "silenceHit",
+      "fs": 44100,
+      "channels": 2,
+      "threshold": -30,
+      "ratio": 20,
+      "attack": 100,
+      "release": 1000,
+      "frames": 11025
+    },
+    {
+      "name": "case-05",
+      "signal": "steps",
+      "fs": 48000,
+      "channels": 1,
+      "threshold": -20,
+      "ratio": 4,
+      "attack": 10,
+      "release": 100,
+      "frames": 12000
+    },
+    {
+      "name": "case-06",
+      "signal": "steps",
+      "fs": 48000,
+      "channels": 2,
+      "threshold": -12,
+      "ratio": 1000,
+      "attack": 0,
+      "release": 0,
+      "frames": 12000
+    },
+    {
+      "name": "case-07",
+      "signal": "noise",
+      "fs": 48000,
+      "channels": 2,
+      "threshold": -18,
+      "ratio": 2,
+      "attack": 1,
+      "release": 50,
+      "frames": 12000
+    },
+    {
+      "name": "case-08",
+      "signal": "hits",
+      "fs": 48000,
+      "channels": 1,
+      "threshold": -24,
+      "ratio": 8,
+      "attack": 0.10000000149011612,
+      "release": 5,
+      "frames": 12000
+    },
+    {
+      "name": "case-09",
+      "signal": "silenceHit",
+      "fs": 48000,
+      "channels": 2,
+      "threshold": -30,
+      "ratio": 20,
+      "attack": 100,
+      "release": 1000,
+      "frames": 12000
+    },
+    {
+      "name": "case-10",
+      "signal": "steps",
+      "fs": 96000,
+      "channels": 1,
+      "threshold": -20,
+      "ratio": 4,
+      "attack": 10,
+      "release": 100,
+      "frames": 24000
+    },
+    {
+      "name": "case-11",
+      "signal": "steps",
+      "fs": 96000,
+      "channels": 2,
+      "threshold": -12,
+      "ratio": 1000,
+      "attack": 0,
+      "release": 0,
+      "frames": 24000
+    },
+    {
+      "name": "case-12",
+      "signal": "noise",
+      "fs": 96000,
+      "channels": 2,
+      "threshold": -18,
+      "ratio": 2,
+      "attack": 1,
+      "release": 50,
+      "frames": 24000
+    },
+    {
+      "name": "case-13",
+      "signal": "hits",
+      "fs": 96000,
+      "channels": 1,
+      "threshold": -24,
+      "ratio": 8,
+      "attack": 0.10000000149011612,
+      "release": 5,
+      "frames": 24000
+    },
+    {
+      "name": "case-14",
+      "signal": "silenceHit",
+      "fs": 96000,
+      "channels": 2,
+      "threshold": -30,
+      "ratio": 20,
+      "attack": 100,
+      "release": 1000,
+      "frames": 24000
+    },
+    {
+      "name": "case-15",
+      "signal": "steps",
+      "fs": 48000,
+      "channels": 2,
+      "threshold": 0,
+      "ratio": 4,
+      "attack": 10,
+      "release": 100,
+      "frames": 12000
+    },
+    {
+      "name": "case-16",
+      "signal": "steps",
+      "fs": 48000,
+      "channels": 1,
+      "threshold": -60,
+      "ratio": 1,
+      "attack": 10,
+      "release": 100,
+      "frames": 12000
+    },
+    {
+      "name": "case-17",
+      "signal": "noise",
+      "fs": 48000,
+      "channels": 1,
+      "threshold": -40,
+      "ratio": 1000,
+      "attack": 0.10000000149011612,
+      "release": 0,
+      "frames": 12000
+    },
+    {
+      "name": "case-18",
+      "signal": "hits",
+      "fs": 48000,
+      "channels": 2,
+      "threshold": -6,
+      "ratio": 3,
+      "attack": 30,
+      "release": 300,
+      "frames": 12000
+    },
+    {
+      "name": "case-19",
+      "signal": "hits",
+      "fs": 44100,
+      "channels": 2,
+      "threshold": -36,
+      "ratio": 12,
+      "attack": 0,
+      "release": 1000,
+      "frames": 11025
+    },
+    {
+      "name": "case-20",
+      "signal": "steps",
+      "fs": 96000,
+      "channels": 2,
+      "threshold": -48,
+      "ratio": 1.5,
+      "attack": 100,
+      "release": 5,
+      "frames": 24000
+    },
+    {
+      "name": "case-21",
+      "signal": "silenceHit",
+      "fs": 44100,
+      "channels": 1,
+      "threshold": -10,
+      "ratio": 6,
+      "attack": 0,
+      "release": 0,
+      "frames": 11025
+    }
+  ]
+}
