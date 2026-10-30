@@ -74,8 +74,12 @@ void SpectrumAnalyser::analyse(const float* samples, double smoothing) noexcept 
     im_[0] = 0.0;
     const double k = std::clamp(smoothing, 0.0, 1.0);
     for (size_t i = 0; i < static_cast<size_t>(kBins); ++i) {
-        const double scalar = std::hypot(re_[i], im_[i]) * kScale;
-        magnitude_[i] = k * magnitude_[i] + (1 - k) * scalar;
+        // A NaN or an Inf in the input spreads to every bin and would stay in the smoothing for good: such a bin reads as
+        // silent instead, and the analyser shows the input again once the input is finite.
+        double scalar = std::hypot(re_[i], im_[i]) * kScale;
+        if (!std::isfinite(scalar)) scalar = 0.0;
+        const double smoothed = k * magnitude_[i] + (1 - k) * scalar;
+        magnitude_[i] = std::isfinite(smoothed) ? smoothed : 0.0;
     }
 }
 

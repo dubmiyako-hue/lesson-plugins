@@ -199,6 +199,25 @@ TEST_CASE("[spectrum] a bin of magnitude 0 reads the floor") {
     for (int i = 0; i < 16; ++i) CHECK(db[static_cast<size_t>(i)] == SpectrumAnalyser::kFloorDb);
 }
 
+TEST_CASE("[spectrum] a NaN or an Inf in the input does not stay in the smoothing") {
+    const std::vector<float> x = sineAndNoise(48000.0, 1000.0, 0.1f, 9u);
+    for (const float bad : { std::numeric_limits<float>::quiet_NaN(), std::numeric_limits<float>::infinity() }) {
+        SpectrumAnalyser analyser;
+        std::vector<float> db(SpectrumAnalyser::kBins);
+        analyser.analyse(x.data(), 0.64);
+        std::vector<float> spoiled = x;
+        spoiled[1234] = bad;
+        analyser.analyse(spoiled.data(), 0.64);
+        analyser.decibels(db.data(), SpectrumAnalyser::kBins);
+        CHECK(std::all_of(db.begin(), db.end(), [](float v) { return std::isfinite(v); }));
+
+        // The input is finite again: every bin shows it again.
+        analyser.analyse(x.data(), 0.64);
+        analyser.decibels(db.data(), SpectrumAnalyser::kBins);
+        CHECK(std::all_of(db.begin(), db.end(), [](float v) { return std::isfinite(v) && v > SpectrumAnalyser::kFloorDb; }));
+    }
+}
+
 TEST_CASE("[spectrum] binsFor is up to 20 kHz times 2^(1/24) and two more and at most kBins") {
     CHECK(SpectrumAnalyser::binsFor(44100.0) == 3827);
     CHECK(SpectrumAnalyser::binsFor(48000.0) == 3516);
