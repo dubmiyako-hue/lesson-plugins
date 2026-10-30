@@ -91,8 +91,9 @@ export const onChange = (fn: typeof changed) => (changed = fn)
 
 function send(id: string, value: number) {
   if (values[id] === value) return
+  const phase = phaseOf(id) // before the new value: a gesture it ends ends at the value it left
   values[id] = value
-  host().setParam(id, value, phaseOf(id))
+  host().setParam(id, value, phase)
   changed(id, value)
 }
 

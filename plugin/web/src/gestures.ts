@@ -56,8 +56,15 @@ export function within<T>(g: Gesture | null, fn: () => T): T {
   }
 }
 
-// the phase of a change to `id` made now
+// the phase of a change to `id` made now. A parameter is in one gesture at a time: another open gesture that holds it
+// (the wheel's, waiting out its 250 ms, when a drag or a reset comes) ends it first, at the value it left it at.
 export function phaseOf(id: string): Phase {
+  for (const g of open_) {
+    if (g === current || !g.ids.has(id)) continue
+    g.ids.delete(id)
+    sendEnd(id)
+    released([id])
+  }
   if (!current) return 'complete'
   if (current.ids.has(id)) return 'move'
   current.ids.add(id)
