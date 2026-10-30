@@ -22,6 +22,7 @@ void CompProcessor::prepareToPlay(double sampleRate, int) {
     engine_.prepare(sampleRate, settings());
     makeupDb_.store(engine_.makeupDb(), std::memory_order_relaxed);
     points_.restart();
+    setPreparedRate(sampleRate);
 }
 
 void CompProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer&) {

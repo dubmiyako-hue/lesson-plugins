@@ -115,10 +115,7 @@ ScaleState Bridge::scaleState() const {
     return fixed;
 }
 
-double Bridge::sampleRate() const {
-    const auto rate = processor_.getSampleRate();
-    return rate > 0 ? rate : 48000.0; // a host that has not prepared it yet: the plug-in's own default
-}
+double Bridge::sampleRate() const { return processor_.preparedRate(); }
 
 var Bridge::ready() {
     auto* values = new juce::DynamicObject();

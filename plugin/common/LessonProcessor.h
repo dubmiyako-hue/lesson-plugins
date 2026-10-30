@@ -49,6 +49,9 @@ public:
     virtual const char* screenKey() const noexcept = 0;
     // The Auto Gain computed for the settings, also while it is off (dB).
     virtual double makeupDb() const noexcept = 0;
+    // The sample rate the sound was last prepared at (Hz): the rate of what the taps hold. JUCE's getSampleRate() is set
+    // by the host's wrapper, not by prepareToPlay, so a caller that only prepares (a test) would not see it there.
+    double preparedRate() const noexcept { return preparedRate_.load(std::memory_order_relaxed); }
     // processBlock calls so far: the screen takes the audio as playing while this moves.
     std::uint64_t blocksProcessed() const noexcept { return blocks_.load(std::memory_order_relaxed); }
     // The window is open: the taps below are written while it is (the Bridge sets it, message thread).
@@ -61,6 +64,8 @@ public:
 protected:
     // The plain value of the parameter at `index` in the table (atomic; any thread).
     float raw(std::size_t index) const noexcept { return raw_[index]->load(std::memory_order_relaxed); }
+    // prepareToPlay: the rate it prepared the sound at.
+    void setPreparedRate(double rate) noexcept { preparedRate_.store(rate, std::memory_order_relaxed); }
     // processBlock: counts the call, and says whether the taps are to be written.
     bool beginBlock() noexcept {
         blocks_.fetch_add(1, std::memory_order_relaxed);
@@ -76,7 +81,9 @@ private:
     std::vector<juce::RangedAudioParameter*> params_; // in the table's order
     std::atomic<std::uint64_t> blocks_ { 0 };
     std::atomic<bool> screenOpen_ { false };
-    static_assert(std::atomic<std::uint64_t>::is_always_lock_free && std::atomic<bool>::is_always_lock_free);
+    std::atomic<double> preparedRate_ { 48000.0 };
+    static_assert(std::atomic<std::uint64_t>::is_always_lock_free && std::atomic<bool>::is_always_lock_free
+                  && std::atomic<double>::is_always_lock_free);
 };
 
 } // namespace lesson::plugin

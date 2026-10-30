@@ -39,6 +39,7 @@ void EqProcessor::prepareToPlay(double sampleRate, int) {
     if (!(sampleRate > 0)) sampleRate = 48000.0; // a host that has no rate yet
     engine_.prepare(sampleRate, settings());
     makeupDb_.store(engine_.makeupDb(), std::memory_order_relaxed);
+    setPreparedRate(sampleRate);
 }
 
 void EqProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer&) {
