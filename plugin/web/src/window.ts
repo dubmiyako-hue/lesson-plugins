@@ -100,6 +100,12 @@ export function mountWindow({ title, ready, onBypass }: Options) {
   }
 }
 
+// The plug-in has no right-click menu (requirements.md), and WebView2's own (back, reload, save, print) does not open
+// either: JUCE leaves it on.
+export function noContextMenu() {
+  addEventListener('contextmenu', (e) => e.preventDefault())
+}
+
 // PRAYROOM behavior.md (キーボード): a press with the mouse does not take the keyboard (it stays with the host); only Tab
 // brings it to a control, and Esc lets it go. A typed value's field is the one exception while it is open.
 export function keepKeyboardWithHost() {
