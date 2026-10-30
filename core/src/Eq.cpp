@@ -1,4 +1,5 @@
 #include <lesson/Eq.h>
+#include <algorithm>
 #include <cmath>
 #include <numbers>
 
@@ -84,7 +85,7 @@ int eqActiveCoefficients(const EqBands& bands, double sampleRate, std::span<Biqu
 
 void Eq::prepare(double sampleRate, const EqBands& bands) noexcept {
     nyquist_ = nyquistOf(sampleRate);
-    fadeLength_ = static_cast<int>(std::lround(kFadeSeconds * sampleRate));
+    fadeLength_ = std::max(1, static_cast<int>(std::lround(kFadeSeconds * sampleRate)));
     parked_ = parkedStage(nyquist_);
     size_t p = 0;
     size_t q = 0;
@@ -137,7 +138,10 @@ void Eq::setTarget(const EqBands& bands) noexcept {
 
 void Eq::setLane(Lane& lane, BiquadType type, int slope, float freq) noexcept {
     lane.slope = slope;
-    for (int stage = 0; stage < kEqPassStages; ++stage) lane.c[static_cast<size_t>(stage)] = parked_;
+    for (int stage = 0; stage < kEqPassStages; ++stage) {
+        lane.c[static_cast<size_t>(stage)] = parked_;
+        lane.qDb[static_cast<size_t>(stage)] = stage < slope / 12 ? butterworthQDb(slope, stage) : 0.0f;
+    }
     updateLane(lane, type, freq);
     for (auto& channel : lane.s)
         for (BiquadState& s : channel) s.reset();
@@ -146,7 +150,7 @@ void Eq::setLane(Lane& lane, BiquadType type, int slope, float freq) noexcept {
 void Eq::updateLane(Lane& lane, BiquadType type, float freq) noexcept {
     for (int stage = 0; stage < lane.slope / 12; ++stage)
         lane.c[static_cast<size_t>(stage)] =
-            webBiquadCoefficients(type, freq, butterworthQDb(lane.slope, stage), 0.0f, nyquist_);
+            webBiquadCoefficients(type, freq, lane.qDb[static_cast<size_t>(stage)], 0.0f, nyquist_);
 }
 
 void Eq::beginPass(PassBand& band) noexcept {
@@ -206,6 +210,7 @@ float Eq::process(int channel, float x) noexcept {
 }
 
 void Eq::process(float* const* channels, int numChannels, int numSamples) noexcept {
+    numChannels = std::min(numChannels, kMaxChannels);
     for (int i = 0; i < numSamples; ++i) {
         beginSample();
         for (int c = 0; c < numChannels; ++c) channels[c][i] = process(c, channels[c][i]);

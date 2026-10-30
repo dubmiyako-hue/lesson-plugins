@@ -1,4 +1,5 @@
 #include <lesson/Compressor.h>
+#include <lesson/Fdlibm.h>
 #include <lesson/Format.h>
 #include <algorithm>
 #include <cmath>
@@ -11,7 +12,7 @@ double targetGr(double levelDb, double threshold, double ratio) noexcept {
 }
 
 double timeCoef(double ms, double sampleRate) noexcept {
-    return ms <= 0 ? 0 : std::exp(-1 / ((ms / 1000) * sampleRate));
+    return ms <= 0 ? 0 : fdlibm::exp(-1 / ((ms / 1000) * sampleRate)); // V8's Math.exp is fdlibm's
 }
 
 namespace {

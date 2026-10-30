@@ -61,6 +61,7 @@ public:
 private:
     struct Lane {
         int slope = 0; // 0 is off: all four stages pass the signal
+        std::array<float, kEqPassStages> qDb {}; // butterworthQDb of each stage in use, kept so the smoothing need not recompute it
         std::array<BiquadCoefficients, kEqPassStages> c {};
         std::array<std::array<BiquadState, kEqPassStages>, kMaxChannels> s {};
     };

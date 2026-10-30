@@ -1,10 +1,13 @@
 #pragma once
 // AudioParam.setTargetAtTime(target, t, 0.005) as Chrome runs it (Blink's audio_param_timeline.cc): a float value that
-// moves by (target - value) * c each sample, with c = float(1 - exp(-1 / (fs * tau))), and snaps to the target 10 tau
+// moves by (target - value) * c each sample, with c = float(1 - exp(-1 / (fs * tau))) (fdlibm's exp, as Blink's
+// DiscreteTimeConstantForSampleRate), and snaps to the target 10 tau
 // after the start or once it is within exp(-10) of it (relative to the value, or absolute when the target is 0).
 // Chrome checks the snap once per render quantum and steps 4 samples at a time on x86; this checks it every sample and
 // steps one at a time (DECISIONS.md). A stopped value is the target itself, so the sound after a change has settled is
 // the same as without smoothing.
+#include <lesson/Fdlibm.h>
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 
@@ -15,8 +18,8 @@ public:
     static constexpr double kTimeConstant = 0.005;
 
     void prepare(double sampleRate) noexcept {
-        coefficient_ = static_cast<float>(1.0 - std::exp(-1.0 / (sampleRate * kTimeConstant)));
-        limit_ = static_cast<std::int64_t>(std::ceil(10.0 * kTimeConstant * sampleRate));
+        coefficient_ = static_cast<float>(1.0 - fdlibm::exp(-1.0 / (sampleRate * kTimeConstant)));
+        limit_ = std::max<std::int64_t>(1, static_cast<std::int64_t>(std::ceil(10.0 * kTimeConstant * sampleRate)));
     }
     // Jumps to the value (no smoothing), as after prepare or a reset.
     void snap(float value) noexcept {
@@ -58,7 +61,7 @@ private:
     }
 
     float coefficient_ = 1.0f;
-    std::int64_t limit_ = 0;
+    std::int64_t limit_ = 1; // before prepare: a new target is reached in one step
     std::int64_t left_ = 0;
     float value_ = 0.0f;
     float target_ = 0.0f;

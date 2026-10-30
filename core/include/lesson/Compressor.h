@@ -54,7 +54,7 @@ private:
     double attack_ = 0.0;
     double release_ = 0.0;
     double gr_ = 0.0;
-    std::vector<float> ring_;
+    std::vector<float> ring_ { 0.0f }; // one sub-block until prepare
     size_t ringPos_ = 0;
     float ringMax_ = 0.0f;
     float partial_ = 0.0f;
