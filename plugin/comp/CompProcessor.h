@@ -13,14 +13,17 @@ public:
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) override;
     using AudioProcessor::processBlock;
 
+    const char* screenKey() const noexcept override { return "comp"; }
     // The Auto Gain for the settings, also while the switch is off (any thread).
-    double makeupDb() const noexcept { return makeupDb_.load(std::memory_order_relaxed); }
+    double makeupDb() const noexcept override { return makeupDb_.load(std::memory_order_relaxed); }
+    lesson::CompPoints* compPoints() noexcept override { return &points_; }
 
 private:
     CompEngineSettings settings() const noexcept;
 
     CompEngine engine_;
     std::atomic<double> makeupDb_ { 0.0 };
+    lesson::CompPoints points_; // the level history
     static_assert(std::atomic<double>::is_always_lock_free);
 };
 

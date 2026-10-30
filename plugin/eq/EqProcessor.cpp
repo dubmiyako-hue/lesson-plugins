@@ -44,7 +44,10 @@ void EqProcessor::prepareToPlay(double sampleRate, int) {
 void EqProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer&) {
     // The input and output buses have the same channels (isBusesLayoutSupported), so the buffer already holds the input.
     const NoDenormals noDenormals;
-    engine_.process(buffer.getArrayOfWritePointers(), buffer.getNumChannels(), buffer.getNumSamples(), settings());
+    const EqTaps taps { &pre_, &post_ };
+    const bool screen = beginBlock();
+    engine_.process(buffer.getArrayOfWritePointers(), buffer.getNumChannels(), buffer.getNumSamples(), settings(),
+                    screen ? &taps : nullptr);
     makeupDb_.store(engine_.makeupDb(), std::memory_order_relaxed);
 }
 

@@ -2,7 +2,7 @@
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 
-// The page the plug-ins embed (plugin/embed_web.cmake reads dist/). The names carry no hashes, so the same sources give
+// The page the plug-ins embed (plugin/common/embed_web.cmake reads dist/). The names carry no hashes, so the same sources give
 // the same files and the list of embedded files stays put; the paths are relative, as the plug-in serves the page from
 // its resource provider's root. dev/ is a page for the browser alone, with a fake plug-in (npm run web:dev).
 const root = fileURLToPath(new URL('.', import.meta.url))

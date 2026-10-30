@@ -1,6 +1,6 @@
 #include "LessonProcessor.h"
 #include "LessonParameters.h"
-#include "PlaceholderEditor.h"
+#include "WebEditor.h"
 
 namespace lesson::plugin {
 
@@ -12,9 +12,11 @@ LessonProcessor::LessonProcessor(juce::String name, std::span<const ParamSpec> s
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
       name_(std::move(name)), specs_(specs), parameters_(*this, nullptr, stateType, makeLayout(specs)) {
     raw_.reserve(specs.size());
+    params_.reserve(specs.size());
     for (const auto& spec : specs) {
         const auto id = asJuce(spec.id);
         raw_.push_back(parameters_.getRawParameterValue(id));
+        params_.push_back(parameters_.getParameter(id));
         if (spec.id == "bypass") bypass_ = parameters_.getParameter(id);
     }
 }
@@ -30,7 +32,7 @@ juce::AudioProcessorParameter* LessonProcessor::getBypassParameter() const {
 }
 
 juce::AudioProcessorEditor* LessonProcessor::createEditor() {
-    return new PlaceholderEditor(*this);
+    return new WebEditor(*this);
 }
 
 void LessonProcessor::getStateInformation(juce::MemoryBlock& destData) {
