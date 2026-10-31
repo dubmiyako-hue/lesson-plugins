@@ -58,9 +58,9 @@ DAW を閉じてから、次を実行する。管理者の確認が出る。2 �
 tools\install-vst3.cmd
 ```
 
-DAW でプラグインの一覧を読み直すと、「Personal」の下に Lesson EQ と Lesson Comp が出る。外すときは、`C:\Program Files\Common Files\VST3\` の `Lesson EQ.vst3` と `Lesson Comp.vst3` を消す。
+DAW でプラグインの一覧を読み直すと、Lesson EQ と Lesson Comp が出る（作り手の名前は Personal）。Ableton Live 12 では、Settings（Ctrl+,）の Plug-Ins で VST3 のシステムのフォルダを使う切り替えを On にして、Rescan を押す。外すときは、`C:\Program Files\Common Files\VST3\` の `Lesson EQ.vst3` と `Lesson Comp.vst3` を消す。
 
-DAW での確認の手順は `docs/dev-loop/manual-checks.md` にある。
+DAW での確認の手順（Ableton Live 12）は `docs/dev-loop/manual-checks.md` にある。
 
 ## プラグインが書くもの
 
@@ -69,7 +69,7 @@ DAW での確認の手順は `docs/dev-loop/manual-checks.md` にある。
 | `%APPDATA%\PRAYROOM\settings.json` | 窓の拡大率・テーマ（PRAYROOM のプラグインで共用）、説明の欄の表示（`lesson.hint`）。セッションには入らない。知らないキーは消さない。JSON のオブジェクトとして読めないファイルは上書きしない（既定の設定で開き、変えた設定は残らない）。消すと既定に戻る |
 | `%LOCALAPPDATA%\PRAYROOM\Lesson\WebView2` | WebView2 のデータ（2 本で共用） |
 
-つまみの値はセッション（DAW のソング）に入る。
+つまみの値はセッション（Live なら Live Set）に入る。
 
 ## ゴールデンを作り直す
 

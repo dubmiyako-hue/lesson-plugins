@@ -68,6 +68,7 @@
 | 2026-10-31 | 名前は Lesson EQ と Lesson Comp | Primer、Manabi、Starter | ユーザーの選択 | ユーザー |
 | 2026-10-31 | 要件を確定。behavior.md との食い違いは「音としてより良い方で」 | — | ユーザーの指示 | ユーザー |
 | 2026-10-31 | 設計を確定（Chrome と同じビクアッド、CompressorCore の移植、Auto Gain の式、平滑化、HP・LP のクロスフェード） | — | design.md | ユーザー |
+| 2026-10-31 | DAW での手動確認（AC-23）は Ableton Live 12 で行う | Fender Studio Pro | ユーザーの言葉 「確認はliveでやる」（呼び出し元のセッションが伝えた）。Live 12 も VST3 を読むので、「VST3 だけ」はそのまま | ユーザー |
 
 ## 未解決の問題
 
