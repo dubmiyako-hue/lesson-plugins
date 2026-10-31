@@ -4,3 +4,4 @@ node_modules/
 plugin/web/dist/
 __pycache__/
 *.pyc
+/dist/
