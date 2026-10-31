@@ -340,7 +340,9 @@ function EqGraph() {
     if (k === null) return
     selectBand(k)
     gestures.press()
-    if (!set.bands[k].on) gestures.dragged(() => setBand(i, k, { on: true }))
+    // grabbing an off band's point turns it on, but not HP's or LP's: they sit at the graph's
+    // edges, off by default, where a stray click would cut the lows or highs (the user, 2026-10-31)
+    if (!set.bands[k].on && !isCut(k)) gestures.dragged(() => setBand(i, k, { on: true }))
     drag.current = k
     ;(e.currentTarget as Element).setPointerCapture(e.pointerId)
   }
@@ -482,7 +484,15 @@ export function Eq({ big }: { big?: boolean }) {
       </div>
       {/* only the band's own controls: HP and LP have Freq and Slope, shelves Freq and Gain, bells Freq, Gain and Q */}
       <div class="eqknobs">
-        <div class="eqlead" {...hint(bandName(k), 'このバンド（EQ で動かす 1 か所分）のオン・オフ。オフのあいだは、このバンドだけ効かない。グラフの点をつかんでもオンになる。')}>
+        <div
+          class="eqlead"
+          {...hint(
+            bandName(k),
+            cut
+              ? 'このバンド（EQ で動かす 1 か所分）のオン・オフ。オフのあいだは、このバンドだけ効かない。'
+              : 'このバンド（EQ で動かす 1 か所分）のオン・オフ。オフのあいだは、このバンドだけ効かない。グラフの点をつかんでもオンになる。',
+          )}
+        >
           <Toggle
             label={kind === 'bell' ? BANDS[k].name : ''}
             glyph={kind}
