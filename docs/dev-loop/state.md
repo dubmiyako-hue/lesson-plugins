@@ -5,7 +5,7 @@
 - 工程: 7. 仕上げ（周 4）
 - 周: 4
 - この周の一切れ: 仕上げ（pluginval strictness 10、validator `-e`、README、ライセンスの突き合わせ、DAW の確認表）
-- 次にすること: ユーザーが DAW の確認表（`manual-checks.md`、AC-23）を通す
+- 次にすること: ユーザーが Ableton Live 12 で DAW の確認表（`manual-checks.md`、AC-23）を通す
 
 ## 周の予定
 
@@ -42,7 +42,7 @@
 | AC-20 | 画面のバリエーション | 3 | 合格 | 偽のプラグインのページで、2 本 × テーマ 3、EQ のバンドの種類 5、コンプの札あり・なし・括弧・∞:1、音なし、バイパス、96 kHz、説明の欄の出す・出さない、設定のパネル、値の入力を撮って、はみ出し・重なりなし。実機（EditorHost、画面の倍率 125 %）で拡大率 100・125・150・200 % とテーマ 3 つ、説明の欄（コンプの Threshold）が窓の内側に出ることを撮った。ページは拡大率によらず 960×560 で組むので、拡大率はレイアウトを変えない | `.ai-cache/shots/`、`tools/web-shot.mjs` |
 | AC-21 | ジェスチャー | 3 | 合格 | 30 件。begin・move・end・complete がホストのジェスチャーを 1 回ずつ開け閉めする、範囲の外は端、読めない入力は何も変えない、`stop()` が開いたジェスチャーを閉じる。tick のイベント（params、tick、playing、スペクトル、音量の流れの点）。窓を開き直したあとのスペクトルと最初の点に、前に開いていたときのものが入らない（レビュー 03 の 3・4）。ページの側は 5 件: 1 つのパラメータを持つジェスチャーは 1 つだけ（レビュー 03 の 5）、EQ のカーブのドラッグとホイールは別のジェスチャー（レビュー 04 の 1）。グラフのドラッグがポインターの取り消しで終わることは、Edge で偽のプラグインのページを動かすプローブで見た（レビュー 04 の 2。試験は無い） | `plugin_tests "[bridge]"`、`npm run web:test`（`gestures.test.ts`） |
 | AC-22 | 設定のメニューの保存 | 3 | 合格 | 38 件。テーマ・説明の欄・拡大率が一時の settings.json に残り、作り直した `UiSettings` と新しい Bridge の `ready()` に出る。ほかのキーと `version` は残る。壊れたファイル・1 MB 超・オブジェクトでないファイルは書き換えない。設定を変えてもプロセッサーの状態のバイトは変わらない（セッションに入らない）。拡大率は画面に収まるものだけ選べ、保存された拡大率が収まらなければ、収まるうちの最大で開く。本物の `%APPDATA%\PRAYROOM` は試験の前後で無いまま | `plugin_tests "[settings]"` |
-| AC-23 | DAW での手動確認 | 4 | 未着手 | ユーザーの作業。確認表は `manual-checks.md`（25 項目） | |
+| AC-23 | DAW での手動確認 | 4 | 未着手 | ユーザーの作業。Ableton Live 12 で行う（2026-10-31 に Studio Pro から変更）。確認表は `manual-checks.md`（35 項目。28〜34 は、ホストの reset とテールを Live がどう扱うかを書く） | |
 
 状態は、未着手、合格、不合格、保留のどれか。
 
@@ -53,7 +53,7 @@
 | 1 | 素通しの 2 本、パラメータの表、値の文字、状態、validator と pluginval（5） | 合格（AC-01・02・04・05・14 合格、AC-03 は strictness 5 まで合格）。レビューは `reviews/01.md` | — | 2026-10-31 |
 | 2 | DSP（ビクアッドの EQ、コンプ、Auto Gain、平滑化、バイパス）とゴールデン | 合格（AC-06〜13・15 合格、AC-02・03 は DSP 入りでも合格）。レビューは `reviews/02.md`。Inf・NaN の入力からの立ち直りは承認待ちにした（周 4 で承認され、`2108454` で入れた） | — | 2026-10-31 |
 | 3 | UI（PRAYROOM のウィンドウ、EQ とコンプの画面、スペクトルと音量の流れ、札と 2 段の言葉、説明の欄、設定のメニュー） | 合格（AC-13・16〜22 合格）。レビューは `reviews/03.md`（致命的 0、要修正 2、軽微 8。1〜6・9 を直し、7・8・10 は記録だけ）。直したあと ctest 70 件、`npm run web:test` 28 件が通る | — | 2026-10-31 |
-| 4 | 仕上げ | AC-02（validator `-e`）・AC-03（pluginval strictness 10）が 2 本とも合格。README にビルド・試験・入れ方・ライセンスを書いた。依存のライセンス（JUCE は AGPLv3 か商用、VST3 SDK は MIT、fdlibm、書体は OFL、Preact・doctest は MIT）を README の表で突き合わせた。DAW の確認表（AC-23）はユーザーの作業。承認された Inf・NaN からの立ち直りを入れたあと、ctest 72 件（ゴールデンはビット単位のまま）、validator `-e`、pluginval strictness 10 をもう一度通した。レビュー 04（`reviews/04.md`）: 1〜3 を直し（`5f4b372`・`1542c98`・`20aab38`）、4・5 は案（承認待ち）、6・7 は記録だけ。直したあと ctest 74 件、`npm run web:test` 30 件、validator `-e`、pluginval strictness 10 が合格 | — | 2026-10-31 |
+| 4 | 仕上げ | AC-02（validator `-e`）・AC-03（pluginval strictness 10）が 2 本とも合格。README にビルド・試験・入れ方・ライセンスを書いた。依存のライセンス（JUCE は AGPLv3 か商用、VST3 SDK は MIT、fdlibm、書体は OFL、Preact・doctest は MIT）を README の表で突き合わせた。DAW の確認表（AC-23）はユーザーの作業。承認された Inf・NaN からの立ち直りを入れたあと、ctest 72 件（ゴールデンはビット単位のまま）、validator `-e`、pluginval strictness 10 をもう一度通した。レビュー 04（`reviews/04.md`）: 1〜3 を直し（`5f4b372`・`1542c98`・`20aab38`）、4・5 は案にして承認のあと入れ（`328fa26`・`7da723d`。5 は数でないサンプルを検出に入れない案で、上限の案は入れていない）、6・7 は記録だけ。直したあと ctest 74 件、`npm run web:test` 30 件、validator `-e`、pluginval strictness 10 が合格。4・5 を入れたあと（`7da723d`）、ctest 78 件（ゴールデンはビット単位のまま）、`npm run web:test` 30 件、validator `-e` 537 件 ×2、pluginval strictness 10 ×2 が合格。手動確認表を Ableton Live 12 向けに書き直した（35 項目） | — | 2026-10-31 |
 
 ## 決定の記録
 
@@ -77,4 +77,4 @@
 
 ## ユーザーの作業待ち
 
-- AC-23: DAW での手動確認（`docs/dev-loop/manual-checks.md` の 25 項目）。スペクトルと音量の流れの点が動くことは試験と EditorHost の静止画で見ただけで、鳴らしながらは見ていない（項目 3・19）。
+- AC-23: DAW での手動確認（Ableton Live 12、`docs/dev-loop/manual-checks.md` の 35 項目）。スペクトルと音量の流れの点が動くことは試験と EditorHost の静止画で見ただけで、鳴らしながらは見ていない（項目 3・19）。
