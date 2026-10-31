@@ -1,101 +1,128 @@
 # Lesson EQ / Lesson Comp
 
-ミックス練習の Web アプリ（`D:\work\Claude\mix-course`）の EQ とコンプを、Windows の VST3 プラグイン 2 本にしたもの。音は Web アプリと同じ（ゴールデンとの一致を試験で確かめている）。画面は Web アプリの画面を WebView2 で開き、PRAYROOM（自作のデザインシステム。写しは `plugin/web/design-system/`）で描く。
+Windows 用の VST3 エフェクト 2 本、イコライザー（Lesson EQ）とコンプレッサー（Lesson Comp）です。周波数の帯や設定の意味を、画面の言葉で確かめながら使えるように作ってあります。
 
-| プラグイン | 中身 |
+![Lesson EQ](docs/images/lesson-eq.png)
+![Lesson Comp](docs/images/lesson-comp.png)
+
+## 特長
+
+**Lesson EQ**
+
+- 7 バンド: ハイパス、ローシェルフ、ベル 3 本、ハイシェルフ、ローパス。
+- ハイパスとローパスの傾きは 12・24・36・48 dB/oct から選べます。Freq は 20 Hz〜20 kHz、Gain は ±18 dB、ベルの Q は 0.3〜12 です。
+- カーブをドラッグして調整できます。入力と出力のスペクトルが重なって見えます。
+- 周波数の帯に「重さ」「厚み」「胴鳴り」などの言葉が付き、それぞれが何を指すかを説明の欄で読めます。
+- Auto Gain: 設定による音量の変化を打ち消します。
+
+**Lesson Comp**
+
+- Threshold（−60〜0 dB）、Ratio（1:1〜20:1、∞:1）、Attack（0.1〜100 ms）、Release（5〜1000 ms）。Attack と Release は最小で「最速」です。
+- 入出力のグラフ、音量の流れ、ゲインリダクションのメーターが見えます。
+- Ratio、Attack、Release の値に、効き方を表す短い言葉が付きます。
+- Auto Gain。
+
+**共通**
+
+- バイパスは DAW のバイパスと連動します。
+- モノラルとステレオに対応します（コンプはステレオをリンクします）。サンプルレートは 44.1〜192 kHz、レイテンシは 0 です。
+- 画面の拡大率（100〜200 %）とテーマ（light、dark、studio）は、設定のパネルで変えられます。
+
+## インストール
+
+[Releases](https://github.com/dubmiyako-hue/lesson-plugins/releases) から、次のどちらか一方を取ります。
+
+- **`LessonPlugins-<version>-setup.exe`**: 実行すると、2 本を `C:\Program Files\Common Files\VST3\` に入れます。管理者の確認が出ます。
+- **`LessonPlugins-<version>.zip`**: 展開して、中の `install.cmd` を実行します（同じ場所に入ります）。
+
+DAW を閉じてから実行してください。DAW が読み込んでいるプラグインは上書きできません。入れたあと、DAW でプラグインの一覧を読み直します。Ableton Live では、Settings（Ctrl+,）の Plug-Ins で、VST3 のシステムのフォルダを使う切り替えを On にして、Rescan します。
+
+署名をしていないので、Windows が警告を出すことがあります。ファイルの SHA-256 は、Release の `.sha256` で確かめられます。
+
+### アンインストール
+
+exe で入れたときは、Windows の「設定」→「アプリ」から消します。zip で入れたときは、`C:\Program Files\Common Files\VST3\` の `Lesson EQ.vst3` と `Lesson Comp.vst3` を消します。
+
+### 動作条件
+
+- Windows 11（x64）。Windows 10 では確かめていません。
+- Microsoft Edge WebView2 ランタイム（Windows 11 には入っています）。無いときは、音は通りますが、画面に案内が 1 行出るだけです。
+- Microsoft Visual C++ Redistributable 2015-2022（x64）。無いと、DAW がプラグインを読み込めません。
+- VST3 に対応した DAW。
+
+## 設定ファイル
+
+| 場所 | 中身 |
 | --- | --- |
-| Lesson EQ | HP・ローシェルフ・ベル 3 本・ハイシェルフ・LP の 7 バンド。Auto Gain、入力と出力のスペクトル、周波数の帯の言葉 |
-| Lesson Comp | Threshold・Ratio・Attack・Release。Auto Gain、入出力のグラフ、音量の流れ、札と 2 段の言葉 |
+| `%APPDATA%\PRAYROOM\settings.json` | 窓の拡大率とテーマ、説明の欄の表示。消すと既定に戻ります |
+| `%LOCALAPPDATA%\PRAYROOM\Lesson\WebView2` | WebView2 のデータ |
 
-個人の開発で、まだ DAW（Ableton Live 12）での手動確認が終わっていない。ライセンスは AGPLv3（`LICENSE`）。配布する zip と exe のソースはこのリポジトリのタグ（Release の説明に書いてある）で、JUCE 9.0.2 に `third_party/juce-patches/` のパッチを当てたものでビルドする。開発の記録は `docs/dev-loop/`（要件、設計、周の記録、レビュー、DAW での確認表）にある。
-
-## 要るもの
-
-- Windows 11（x64）と WebView2 ランタイム（Windows 11 には入っている。無いときは、プラグインは音を通し、窓には案内の 1 行だけが出る）
-- Visual Studio 18 Insiders の C++（MSVC）。`tools\msvc.cmd` が `vcvars64.bat` を呼ぶ。ほかの版なら `tools\msvc.cmd` と `tools\build.cmd` の `VCVARS` を直す
-- CMake 3.22 以上、Node.js 20 以上
-- JUCE 9.0.2 に `third_party/juce-patches/` の 2 本のパッチを当てたもの。既定の場所は `D:/work/Claude/_sdk/JUCE/JUCE-subbass`（subbass-vst と共用）。作り方は `third_party/juce-patches/README.md`。別の場所なら `cmake -DLESSON_JUCE_DIR=<path>` で渡す
+つまみの値は DAW のセッションに入ります。
 
 ## ビルド
 
-最初に 1 回だけ、Node のパッケージを入れる。
+### 必要なもの
+
+- Visual Studio の C++（MSVC）。`tools\msvc.cmd` と `tools\build.cmd` の `VCVARS` を、自分の `vcvars64.bat` のパスに直します。
+- CMake 3.22 以上、Node.js 20 以上。
+- JUCE 9.0.2 に、`third_party/juce-patches/` の 2 本のパッチを当てたもの（手順は `third_party/juce-patches/README.md`）。置き場所は `cmake -DLESSON_JUCE_DIR=<path>` で渡します。パッチが当たっていないと、CMake が止まります。
+
+### 手順
 
 ```bat
 npm ci
-```
-
-ビルドは次の 1 行。画面（`plugin/web`）をビルドしてから、C++ をビルドする。ビルドした画面はプラグインのバイナリに入る。
-
-```bat
 tools\build.cmd Release
 ```
 
-できるもの（`Debug` なら `build-dbg`）:
+画面（`plugin/web`）をビルドしてから、C++ をビルドします。できるもの:
 
 - `build-rel\plugin\LessonEQ_artefacts\Release\VST3\Lesson EQ.vst3`
 - `build-rel\plugin\LessonComp_artefacts\Release\VST3\Lesson Comp.vst3`
 
-## 試験
+ビルドした 2 本を入れるには `tools\install-vst3.cmd` を使います（`--dry-run` で確かめだけ）。配布物は `python tools\package.py`（zip）と `python tools\package-exe.py`（exe、Inno Setup 6 が要ります）で作ります。
+
+### 試験
 
 ```bat
 cd build-rel
 ctest -j 8
+cd ..
+npm run web:test
 ```
 
-`core_tests`（DSP とゴールデンとの一致）、`plugin_tests`（パラメータ、状態、Bridge、設定）、`rt_alloc_test`（オーディオスレッドで確保しないこと）が走る。画面の言葉が Web アプリと同じことは `npm run web:test` で確かめる。
+- `core_tests`: DSP と、基準データとの一致。
+- `plugin_tests`: パラメータ、状態の保存、画面とのやりとり、設定ファイル。
+- `rt_alloc_test`: オーディオスレッドでメモリを確保しないこと。
+- `web:test`: 画面の言葉と定数。
 
-形式の検証は、Steinberg の validator と pluginval を 2 本に流す（ログは `.ai-cache\validate\`）。2 つ目の引数は pluginval の strictness。
+`tools\validate.cmd Release 10` で、Steinberg の VST3 validator と pluginval（strictness 10）を 2 本に流せます。
 
-```bat
-tools\validate.cmd Release 10
-```
+`tests/golden/` の基準データは、ブラウザの Web Audio などの出力から作ったものです。作り直す手順は、`tests/golden/gen-*` の各ファイルの冒頭にあります。
 
-## インストール
-
-DAW を閉じてから、次を実行する。管理者の確認が出る。2 本を `C:\Program Files\Common Files\VST3\` に写す。`--dry-run` を付けると、写さずに確かめだけをする。
-
-```bat
-tools\install-vst3.cmd
-```
-
-DAW でプラグインの一覧を読み直すと、Lesson EQ と Lesson Comp が出る（作り手の名前は Personal）。Ableton Live 12 では、Settings（Ctrl+,）の Plug-Ins で VST3 のシステムのフォルダを使う切り替えを On にして、Rescan を押す。外すときは、`C:\Program Files\Common Files\VST3\` の `Lesson EQ.vst3` と `Lesson Comp.vst3` を消す。
-
-DAW での確認の手順（Ableton Live 12）は `docs/dev-loop/manual-checks.md` にある。
-
-## プラグインが書くもの
+## リポジトリの構成
 
 | 場所 | 中身 |
 | --- | --- |
-| `%APPDATA%\PRAYROOM\settings.json` | 窓の拡大率・テーマ（PRAYROOM のプラグインで共用）、説明の欄の表示（`lesson.hint`）。セッションには入らない。知らないキーは消さない。JSON のオブジェクトとして読めないファイルは上書きしない（既定の設定で開き、変えた設定は残らない）。消すと既定に戻る |
-| `%LOCALAPPDATA%\PRAYROOM\Lesson\WebView2` | WebView2 のデータ（2 本で共用） |
+| `core/` | DSP（EQ、コンプ、Auto Gain、スペクトル）。JUCE に依存しない C++20 |
+| `plugin/` | JUCE のプラグイン本体（`common`、`eq`、`comp`）と、WebView2 で開く画面（`web`） |
+| `tests/` | 基準データと、C++ の試験 |
+| `tools/` | ビルド、インストール、配布物、検証のスクリプト |
+| `third_party/` | JUCE のパッチ、fdlibm、doctest |
+| `docs/` | 要件と設計のメモ（日本語） |
 
-つまみの値はセッション（Live なら Live Set）に入る。
-
-## ゴールデンを作り直す
-
-Web アプリが変わったときだけ作り直す。作り方はそれぞれのファイルの頭に書いてある。Web アプリは読むだけで、出力はこのリポジトリの `tests/golden/` に置く。
-
-| ファイル | 作るもの | 使うもの |
-| --- | --- | --- |
-| `tests/golden/gen-params.mjs` | パラメータの正規化と値の文字（`params.tsv`） | Node |
-| `tests/golden/gen-eq.mjs` | EQ の出力（`eq/`） | Edge |
-| `tests/golden/gen-comp.mjs` | コンプの出力（`comp/`） | Node |
-| `tests/golden/gen-autogain.py` | EQ の Auto Gain（`autogain.tsv`） | Python |
-| `tests/golden/gen-spectrum.mjs` | スペクトル（`spectrum/`） | Edge |
-| `tests/golden/gen-curve.mjs` | 画面の EQ のカーブ（`curve/`） | Edge |
-| `tests/golden/gen-ui.mjs` | 画面の言葉（`ui.json`） | Node |
+画面の部品とデザインのトークンは、デザインシステム PRAYROOM の写し（`plugin/web/design-system/`）です。`tools/sync-prayroom.py` で更新するので、中は直接編集しません。
 
 ## ライセンス
 
-プラグイン全体は AGPLv3（`LICENSE`）。配布物には下の部品のライセンスを `licenses/` に入れている。
+[GNU Affero General Public License v3.0](LICENSE)。JUCE を AGPLv3 で使っているためです。
 
-| もの | ライセンス | 置き場 |
-| --- | --- | --- |
-| JUCE 9.0.2 | AGPLv3 か、JUCE 9 の EULA（商用ライセンス）の二本立て | JUCE の `LICENSE.md` |
-| VST3 SDK（JUCE に同梱） | MIT（Steinberg、2025） | JUCE の `modules/juce_audio_processors_headless/format_types/VST3_SDK/LICENSE.txt` |
-| fdlibm（`expf`・`exp`・`sin`・`cos` を写したもの） | Sun Microsystems の告知を残す条件で自由 | `third_party/fdlibm/LICENSE` |
-| Zen Kaku Gothic New、IBM Plex Mono（使う文字だけに絞った WOFF） | SIL Open Font License 1.1 | `plugin/web/fonts/OFL-*.txt` |
-| Preact | MIT | `node_modules/preact/LICENSE` |
-| doctest（試験だけ） | MIT | `third_party/doctest/LICENSE.txt` |
+使っているものは次のとおりです。配布物の `licenses/` に、それぞれの全文を入れています。
 
-PRAYROOM のデザインシステムと、写した Web アプリの画面のコードは自分のもの。
+| もの | ライセンス |
+| --- | --- |
+| JUCE 9.0.2 | AGPLv3 か、JUCE の商用ライセンス |
+| VST3 SDK（JUCE に同梱） | MIT |
+| fdlibm（`expf`・`exp`・`sin`・`cos` を写したもの） | Sun Microsystems の告知を残す条件で自由（`third_party/fdlibm/LICENSE`） |
+| Zen Kaku Gothic New、IBM Plex Mono（使う文字だけに絞った WOFF） | SIL Open Font License 1.1（`plugin/web/fonts/OFL-*.txt`） |
+| Preact | MIT |
+| doctest（試験だけ） | MIT（`third_party/doctest/LICENSE.txt`） |
