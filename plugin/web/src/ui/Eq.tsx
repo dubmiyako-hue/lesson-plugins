@@ -355,16 +355,18 @@ function EqGraph() {
     const k = row.findIndex((_, j) => px < tile(row, j, w)[1])
     return { row, k: k < 0 ? row.length - 1 : k }
   }
-  // the Hint of the word, the point or else the graph under the pointer, level with it
+  // the Hint of the word, the point or else the graph under the pointer, level with it, on
+  // the side away from the pointer
   const hintAt = (e: PointerEvent) => {
     const el = c.current!
     const top = el.getBoundingClientRect().top
     const { gh, y } = geo()
+    const px = e.clientX
     const wd = word.current
-    if (wd) return showHint(el, wordHint(wd.row[wd.k]), top + (wd.row === TOP_LABELS ? ROW / 2 : ROW + gh + ROW / 2))
+    if (wd) return showHint(el, wordHint(wd.row[wd.k]), top + (wd.row === TOP_LABELS ? ROW / 2 : ROW + gh + ROW / 2), false, px)
     const k = drag.current ?? hit(e)
-    if (k === null) return showHint(el, GRAPH_HINT, top + ROW + gh / 2)
-    showHint(el, { title: bandName(k), text: `${BAND_TIPS[BANDS[k].kind]} 点をドラッグしても動かせる。` }, top + nodeY(k, y))
+    if (k === null) return showHint(el, GRAPH_HINT, top + ROW + gh / 2, false, px)
+    showHint(el, { title: bandName(k), text: `${BAND_TIPS[BANDS[k].kind]} 点をドラッグしても動かせる。` }, top + nodeY(k, y), false, px)
   }
   const move = (e: PointerEvent) => {
     word.current = wordAt(e)

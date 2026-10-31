@@ -1,8 +1,10 @@
 // PRAYROOM's Hint, one for the page: what the control under the pointer (or reached with
 // Tab) is, floating beside its plugin, level with the control; inside the plugin's left
-// edge when it is open large. A control says what it is with `hint(title, text)` spread
-// on its element; a graph that tells its parts apart marks itself `data-hint-own` and calls
-// showHint itself.
+// edge when it is open large, or its right edge while the pointer (or the control the
+// keyboard reached) is in the left half, so the Hint never covers it (asked for by the
+// user on 2026-10-31; PRAYROOM keeps it at the left edge). A control says what it is with
+// `hint(title, text)` spread on its element; a graph that tells its parts apart marks
+// itself `data-hint-own` and calls showHint itself.
 export type HintText = { title: string; text: string; aside?: string }
 
 let one: ReturnType<typeof window.PRAYROOM.Hint> | null = null
@@ -25,8 +27,9 @@ export function setHintsOn(on: boolean) {
   if (!on) hideHint()
 }
 
-// `keys`: brought up by the keyboard, not the pointer
-export function showHint(from: Element, h: HintText, y?: number, keys = false) {
+// `keys`: brought up by the keyboard, not the pointer. `px`: the pointer's x, which picks the
+// side; without it, the control's middle does
+export function showHint(from: Element, h: HintText, y?: number, keys = false, px?: number) {
   const device = from.closest('.pr-device')
   if (!device || !enabled) return
   keyed = keys
@@ -34,10 +37,20 @@ export function showHint(from: Element, h: HintText, y?: number, keys = false) {
   const box = from.getBoundingClientRect().height ? from : (from.firstElementChild ?? from)
   const r = box.getBoundingClientRect()
   const at = Math.round(y ?? r.top + r.height / 2)
-  const key = `${h.title}\n${h.text}\n${at}`
+  const d = device.getBoundingClientRect()
+  const right = (px ?? r.left + r.width / 2) < d.left + d.width / 2
+  const key = `${h.title}\n${h.text}\n${at}\n${right}`
   if (key === now) return
   now = key
-  get().show(h, { beside: device, y: at, inside: !!from.closest('.pr-scrim') })
+  const one = get()
+  one.show(h, right ? { beside: rightEdge(d, one.el), y: at, inside: true } : { beside: device, y: at, inside: !!from.closest('.pr-scrim') })
+}
+
+// a box PRAYROOM places the Hint inside the left edge of, as far in as puts it inside the
+// plugin's right edge (the same gap, space-2)
+function rightEdge(d: DOMRect, el: HTMLElement) {
+  const gap = parseFloat(getComputedStyle(el).getPropertyValue('--space-2')) || 8
+  return new DOMRect(d.right - el.offsetWidth - 2 * gap, d.top, el.offsetWidth + 2 * gap, d.height)
 }
 
 export function hideHint() {
@@ -73,8 +86,14 @@ export const pluginHints = {
   onPointerOver: (e: PointerEvent) => {
     if ((e.target as Element).closest('[data-hint-own]')) return
     const x = hinted(e.target)
-    if (x) showHint(x.el, x.h)
+    if (x) showHint(x.el, x.h, undefined, false, e.clientX)
     else hideHint()
+  },
+  // across the middle of a wide control (the level history), the shown Hint changes sides
+  onPointerMove: (e: PointerEvent) => {
+    if (!now || keyed || (e.target as Element).closest('[data-hint-own]')) return
+    const x = hinted(e.target)
+    if (x) showHint(x.el, x.h, undefined, false, e.clientX)
   },
   onPointerLeave: hideHint,
   onFocusIn: (e: FocusEvent) => {
