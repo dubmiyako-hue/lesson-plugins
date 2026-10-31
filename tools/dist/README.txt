@@ -28,3 +28,8 @@ Lesson EQ / Lesson Comp  インストール手順
 ■ 注意
   - 署名していないので、Windows が警告を出すことがある。
   - ライセンスは同梱の licenses\ を見る。
+
+ソースコードとライセンス
+- ライセンスは AGPLv3 です（licenses\AGPL-3.0-LICENSE.md）。
+- このバイナリのソースは https://github.com/dubmiyako-hue/lesson-plugins のリリースと同じ名前のタグです。
+- JUCE 9.0.2 に third_party/juce-patches/ のパッチを当てたものでビルドしています。
