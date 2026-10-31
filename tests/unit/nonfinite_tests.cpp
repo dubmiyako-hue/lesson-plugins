@@ -1,5 +1,6 @@
 // Review 02, points 1 and 2 (approved by the user, 2026-10-31): one Inf or NaN in the input does not leave the EQ or the
-// compressor putting out NaN for good.
+// compressor putting out NaN for good. And no sample put out is an Inf or a NaN, also the bad one's and the rest of its
+// block's (the review of fad038f).
 #include <doctest.h>
 #include <lesson/Engine.h>
 #include <lesson/NoDenormals.h>
@@ -58,4 +59,79 @@ TEST_CASE("[nonfinite] the compressor puts out numbers again after one Inf") {
             // 20 ms of hold, then the GR comes back from the largest float's level (about 770 dB) at Release 100 ms
             CHECK(finiteAfter<CompEngine>(s, std::numeric_limits<float>::infinity(), 200));
         }
+}
+
+namespace {
+// One bad sample at 1000 in an 8192-sample block, on the first channel: every sample put out is a number, and the
+// samples before the bad one are the clean run's, bit for bit.
+template <class Engine, class Settings>
+void noNonFiniteOut(const Settings& settings, float bad, int channels) {
+    constexpr int kFrames = 8192;
+    constexpr int kAt = 1000;
+    std::vector<std::vector<float>> clean(static_cast<size_t>(channels));
+    for (int c = 0; c < channels; ++c) clean[static_cast<size_t>(c)] = noise(kFrames, 7u + static_cast<std::uint32_t>(c));
+    std::vector<std::vector<float>> spoiled = clean;
+    spoiled[0][kAt] = bad;
+    std::vector<float*> a;
+    std::vector<float*> b;
+    for (int c = 0; c < channels; ++c) {
+        a.push_back(clean[static_cast<size_t>(c)].data());
+        b.push_back(spoiled[static_cast<size_t>(c)].data());
+    }
+    Engine cleanEngine;
+    Engine spoiledEngine;
+    cleanEngine.prepare(48000, settings);
+    spoiledEngine.prepare(48000, settings);
+    cleanEngine.process(a.data(), channels, kFrames, settings);
+    spoiledEngine.process(b.data(), channels, kFrames, settings);
+    int nonFinite = 0;
+    int differentBefore = 0;
+    for (size_t c = 0; c < spoiled.size(); ++c)
+        for (int i = 0; i < kFrames; ++i) {
+            if (!std::isfinite(spoiled[c][static_cast<size_t>(i)])) ++nonFinite;
+            if (i < kAt && spoiled[c][static_cast<size_t>(i)] != clean[c][static_cast<size_t>(i)]) ++differentBefore;
+        }
+    CHECK_MESSAGE(nonFinite == 0, nonFinite << " samples put out are not numbers");
+    CHECK(differentBefore == 0);
+}
+
+const float kBad[] = { std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(),
+                       std::numeric_limits<float>::quiet_NaN() };
+}
+
+TEST_CASE("[nonfinite] one Inf or NaN in a block puts no Inf or NaN out (Lesson EQ)") {
+    const NoDenormals noDenormals;
+    EqEngineSettings s;
+    s.bands = { EqBandSettings { true, 80, 0, 1, 24 }, { true, 120, 3, 1, 12 }, { true, 300, -4, 2, 12 }, { true, 1000, 6, 1, 12 },
+        { true, 4000, 0, 1, 12 }, { true, 8000, 2, 1, 12 }, { true, 18000, 0, 1, 12 } };
+    for (const bool autoGain : { false, true })
+        for (const bool bypass : { false, true })
+            for (const int channels : { 1, 2 })
+                for (const float bad : kBad) {
+                    s.autoGain = autoGain;
+                    s.bypass = bypass;
+                    CAPTURE(autoGain);
+                    CAPTURE(bypass);
+                    CAPTURE(channels);
+                    CAPTURE(bad);
+                    noNonFiniteOut<EqEngine>(s, bad, channels);
+                }
+}
+
+TEST_CASE("[nonfinite] one Inf or NaN in a block puts no Inf or NaN out (Lesson Comp)") {
+    const NoDenormals noDenormals;
+    CompEngineSettings s;
+    s.comp = { -20.0f, 4.0f, 3.0f, 100.0f };
+    for (const bool autoGain : { false, true })
+        for (const bool bypass : { false, true })
+            for (const int channels : { 1, 2 })
+                for (const float bad : kBad) {
+                    s.autoGain = autoGain;
+                    s.bypass = bypass;
+                    CAPTURE(autoGain);
+                    CAPTURE(bypass);
+                    CAPTURE(channels);
+                    CAPTURE(bad);
+                    noNonFiniteOut<CompEngine>(s, bad, channels);
+                }
 }

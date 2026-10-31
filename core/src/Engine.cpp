@@ -4,6 +4,12 @@
 
 namespace lesson {
 
+namespace {
+// What goes out for a sample that is not a number (an Inf or a NaN in the input, or a filter that overflowed): silence.
+// A finite sample is left as it is, so the sound of finite input does not change.
+float finiteOr0(float x) noexcept { return std::isfinite(x) ? x : 0.0f; }
+}
+
 float gainOfDb(double db) noexcept {
     return static_cast<float>(std::pow(10.0, db / 20));
 }
@@ -70,11 +76,11 @@ void EqEngine::process(float* const* channels, int numChannels, int numSamples, 
         float in[kMaxChannels] {};
         float biquads[kMaxChannels] {};
         for (int c = 0; c < numChannels; ++c) {
-            const float x = channels[c][i];
+            const float x = finiteOr0(channels[c][i]); // an Inf or a NaN does not go into the filters' state
             const float y = eq_.process(c, x);
             in[c] = x;
             biquads[c] = y;
-            channels[c][i] = wetDry_.mix(x, y);
+            channels[c][i] = finiteOr0(wetDry_.mix(x, y));
         }
         if (taps != nullptr && numChannels > 0) {
             // Web Audio's down-mix to mono: the channel itself, or 0.5 (L + R) in float.
@@ -114,7 +120,7 @@ void CompEngine::process(float* const* channels, int numChannels, int numSamples
         wetDry_.beginSample();
         for (int c = 0; c < numChannels; ++c) {
             const float x = channels[c][i];
-            channels[c][i] = wetDry_.mix(x, static_cast<float>(x * g));
+            channels[c][i] = finiteOr0(wetDry_.mix(x, static_cast<float>(x * g)));
         }
     }
 }
