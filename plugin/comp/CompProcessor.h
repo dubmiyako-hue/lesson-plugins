@@ -12,6 +12,7 @@ public:
     void prepareToPlay(double sampleRate, int maximumExpectedSamplesPerBlock) override;
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) override;
     using AudioProcessor::processBlock;
+    void reset() override;
 
     const char* screenKey() const noexcept override { return "comp"; }
     // The Auto Gain for the settings, also while the switch is off (any thread).

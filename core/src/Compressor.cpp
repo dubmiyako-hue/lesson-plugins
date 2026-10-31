@@ -26,18 +26,23 @@ void Compressor::prepare(double sampleRate, const CompSettings& settings) {
     sampleRate_ = sampleRate;
     const double held = ((kHoldMs / 1000) * sampleRate) / kSub;
     ring_.assign(static_cast<size_t>(std::max(1.0, jsRound(held))), 0.0f);
+    reset(settings);
+}
+
+void Compressor::reset(const CompSettings& settings) noexcept {
+    std::fill(ring_.begin(), ring_.end(), 0.0f);
     ringPos_ = 0;
     ringMax_ = 0.0f;
     partial_ = 0.0f;
     partialCount_ = 0;
     gr_ = 0.0;
-    threshold_.prepare(sampleRate);
-    inverseRatio_.prepare(sampleRate);
+    threshold_.prepare(sampleRate_);
+    inverseRatio_.prepare(sampleRate_);
     threshold_.snap(settings.threshold);
     inverseRatio_.snap(inverseOf(settings.ratio));
     ratio_ = settings.ratio;
-    attack_ = timeCoef(settings.attack, sampleRate);
-    release_ = timeCoef(settings.release, sampleRate);
+    attack_ = timeCoef(settings.attack, sampleRate_);
+    release_ = timeCoef(settings.release, sampleRate_);
 }
 
 void Compressor::setTarget(const CompSettings& settings) noexcept {

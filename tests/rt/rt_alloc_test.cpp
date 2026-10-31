@@ -4,7 +4,8 @@
 // Only this thread counts: JUCE's timer thread posts messages (and allocates) whenever it likes.
 // Each plug-in runs mono and stereo at 44.1, 48 and 192 kHz, with its window closed and open (the window's taps: the EQ's
 // spectrum rings, the compressor's points, which this thread drains between blocks as the window's timer would). With the
-// window open the taps must have been fed, so that the run says something about them.
+// window open the taps must have been fed, so that the run says something about them. Now and then the host resets the
+// plug-in between blocks (VST3 setProcessing(false)); the reset is counted too.
 // Only operator new and delete are counted (the core calls nothing else that allocates and takes no lock: read in review
 // 02). Exit code 0 when no block allocated or freed anything.
 #include <comp/CompProcessor.h>
@@ -95,6 +96,7 @@ bool run(const char* name, unsigned seed, double sampleRate, int channels, bool 
             for (int i = 0; i < n; ++i) buffer.setSample(c, i, 0.9f * (2.0f * unit(random) - 1.0f));
         counting = true;
         processor.processBlock(buffer, midi);
+        if (round % 500 == 250) processor.reset(); // not the last block: the taps are fed again after it
         counting = false;
         ++blocks;
         samples += n;

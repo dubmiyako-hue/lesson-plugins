@@ -1,4 +1,4 @@
-add_executable(core_tests main.cpp params_tests.cpp comp_tests.cpp eq_tests.cpp autogain_tests.cpp engine_tests.cpp smooth_tests.cpp taps_tests.cpp spectrum_tests.cpp curve_tests.cpp nonfinite_tests.cpp)
+add_executable(core_tests main.cpp params_tests.cpp comp_tests.cpp eq_tests.cpp autogain_tests.cpp engine_tests.cpp smooth_tests.cpp taps_tests.cpp spectrum_tests.cpp curve_tests.cpp nonfinite_tests.cpp reset_tests.cpp)
 target_include_directories(core_tests PRIVATE "../../third_party/doctest")
 target_link_libraries(core_tests PRIVATE lesson_core)
 target_compile_definitions(core_tests PRIVATE LESSON_GOLDEN_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../golden")

@@ -25,6 +25,15 @@ void CompProcessor::prepareToPlay(double sampleRate, int) {
     setPreparedRate(sampleRate);
 }
 
+// The host's reset (VST3 setProcessing(false): on the UI or the processing thread, never while processBlock runs, and to
+// be a light operation, no allocation): the sound starts afresh at the current settings, as after prepareToPlay, so the
+// next play does not begin with the last one's GR.
+void CompProcessor::reset() {
+    engine_.reset(settings());
+    makeupDb_.store(engine_.makeupDb(), std::memory_order_relaxed);
+    restartTaps();
+}
+
 void CompProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer&) {
     // The input and output buses have the same channels (isBusesLayoutSupported), so the buffer already holds the input.
     const NoDenormals noDenormals;

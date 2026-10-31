@@ -44,6 +44,10 @@ void EqLoudness::prepare(double sampleRate, const EqBands& bands) {
         k2_[n] = magnitudeSquared(k[0], cosw_[n], cos2w_[n]) * magnitudeSquared(k[1], cosw_[n], cos2w_[n]);
         kSum_ += k2_[n];
     }
+    restart(bands);
+}
+
+void EqLoudness::restart(const EqBands& bands) noexcept {
     busy_ = hasPending_ = false;
     result_ = compute(bands);
 }

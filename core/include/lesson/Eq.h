@@ -39,6 +39,17 @@ void eqCoefficients(const EqBands& bands, double sampleRate, std::span<BiquadCoe
 // Only the stages that change the signal (EqFilters.active); returns how many it wrote.
 int eqActiveCoefficients(const EqBands& bands, double sampleRate, std::span<BiquadCoefficients, kEqStages> out) noexcept;
 
+// How long the output of `bands` (the settings themselves, not a change still moving) takes to fall under -120 dBFS after
+// a 0 dBFS input stops: for each stage that changes the signal, the time its slowest pole takes to fall 120 dB plus the
+// stage's largest gain, times kEqTailMargin, summed over the stages (a cascade rings for at most about the sum of its
+// stages' rings). 0 when no stage changes the signal; infinity if a stage does not decay.
+inline constexpr double kEqTailDb = 120.0;
+// Blink rounds each biquad's output to float before it goes back in, which slows a pole near 1: Bell 20 Hz Q 12 +18 dB
+// falls 16.1 dB/s by its coefficients and 15.0 dB/s as run at 192 kHz (16.1 at 44.1 to 96 kHz). The margin is over that
+// (provisional, from the measurements of 2026-10-31).
+inline constexpr double kEqTailMargin = 1.25;
+double eqTailSeconds(const EqBands& bands, double sampleRate) noexcept;
+
 class Eq {
 public:
     static constexpr int kMaxChannels = 2;

@@ -28,6 +28,8 @@ public:
 
     // Builds the tables for the sample rate (allocates) and computes `bands` at once.
     void prepare(double sampleRate, const EqBands& bands);
+    // Drops the running and the waiting computation and computes `bands` at once (no allocation; after prepare).
+    void restart(const EqBands& bands) noexcept;
     double compute(const EqBands& bands) const noexcept;
 
     // Starts computing `bands`; while a computation runs, it is computed after that one.

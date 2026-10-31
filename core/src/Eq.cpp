@@ -1,6 +1,8 @@
 #include <lesson/Eq.h>
 #include <algorithm>
 #include <cmath>
+#include <complex>
+#include <limits>
 #include <numbers>
 
 namespace lesson {
@@ -81,6 +83,37 @@ int eqActiveCoefficients(const EqBands& bands, double sampleRate, std::span<Biqu
         }
     }
     return k;
+}
+
+namespace {
+// |H| of a biquad at `w` radians per sample
+double magnitudeAt(const BiquadCoefficients& c, double w) noexcept {
+    const std::complex<double> z1 = std::polar(1.0, -w);
+    const std::complex<double> z2 = z1 * z1;
+    return std::abs(c.b0 + c.b1 * z1 + c.b2 * z2) / std::abs(1.0 + c.a1 * z1 + c.a2 * z2);
+}
+}
+
+double eqTailSeconds(const EqBands& bands, double sampleRate) noexcept {
+    std::array<BiquadCoefficients, kEqStages> stages;
+    const int count = eqActiveCoefficients(bands, sampleRate, stages);
+    double seconds = 0;
+    for (int k = 0; k < count; ++k) {
+        const BiquadCoefficients& c = stages[static_cast<size_t>(k)];
+        // the poles: a complex pair has the radius sqrt(a2) at the angle acos(-a1 / (2 sqrt(a2))); two real ones, the
+        // larger root's magnitude
+        const double d = c.a1 * c.a1 - 4 * c.a2;
+        const double radius = d < 0 ? std::sqrt(c.a2) : (std::fabs(c.a1) + std::sqrt(d)) / 2;
+        if (!(radius < 1)) return std::numeric_limits<double>::infinity();
+        const double angle = d < 0 ? std::acos(std::clamp(-c.a1 / (2 * std::sqrt(c.a2)), -1.0, 1.0)) : 0.0;
+        // the stage's largest gain: at DC or at Nyquist (the shelves), or at the poles' angle (a bell, a resonant HP or
+        // LP stage)
+        double peak = 1;
+        for (const double w : { 0.0, angle, std::numbers::pi }) peak = std::max(peak, magnitudeAt(c, w));
+        const double dbPerSecond = -20 * std::log10(radius) * sampleRate;
+        seconds += kEqTailMargin * (kEqTailDb + 20 * std::log10(peak)) / dbPerSecond;
+    }
+    return seconds;
 }
 
 void Eq::prepare(double sampleRate, const EqBands& bands) noexcept {

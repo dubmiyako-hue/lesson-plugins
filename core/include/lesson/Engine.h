@@ -55,8 +55,11 @@ class EqEngine {
 public:
     static constexpr int kMaxChannels = Eq::kMaxChannels;
 
-    // Allocates the Auto Gain tables and starts afresh at `settings` (the Auto Gain computed at once).
+    // Allocates the Auto Gain tables and starts afresh at `settings` (reset).
     void prepare(double sampleRate, const EqEngineSettings& settings);
+    // Starts afresh at `settings` at the prepared rate, without allocating: the filters' state 0, the smoothing and the
+    // fades stopped at the settings, the Auto Gain computed at once.
+    void reset(const EqEngineSettings& settings) noexcept;
     // In place. `settings` are this block's; the changes move from its first sample. With `taps`, also writes them
     // (the output is the same with or without).
     void process(float* const* channels, int numChannels, int numSamples, const EqEngineSettings& settings,
@@ -75,6 +78,7 @@ private:
     WetDry wetDry_;
     EqBands requested_ {};
     bool autoGain_ = true;
+    double sampleRate_ = 48000.0;
 };
 
 struct CompEngineSettings {
@@ -87,8 +91,11 @@ class CompEngine {
 public:
     static constexpr int kMaxChannels = 2;
 
-    // Allocates the compressor's ring and starts afresh at `settings`.
+    // Allocates the compressor's ring and starts afresh at `settings` (reset).
     void prepare(double sampleRate, const CompEngineSettings& settings);
+    // Starts afresh at `settings` at the prepared rate, without allocating: GR 0, nothing held, the smoothing stopped at
+    // the settings.
+    void reset(const CompEngineSettings& settings) noexcept;
     // With `points`, also adds each sample to them (the output is the same with or without).
     void process(float* const* channels, int numChannels, int numSamples, const CompEngineSettings& settings,
                  CompPoints* points = nullptr) noexcept;
@@ -105,6 +112,7 @@ private:
     Compressor comp_;
     WetDry wetDry_;
     double makeupDb_ = 0.0;
+    double sampleRate_ = 48000.0;
 };
 
 } // namespace lesson

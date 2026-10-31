@@ -16,8 +16,8 @@ public:
 
     // Audio thread.
     void push(float x) noexcept;
-    // Audio thread (or prepare, which never runs with it): the samples pushed so far read as 0 from now on, as when the
-    // ring is new (the window opened again, or the sound was prepared at another rate).
+    // Audio thread (or prepare and the host's reset, which never run with it): the samples pushed so far read as 0 from
+    // now on, as when the ring is new (the window opened again, the sound was prepared at another rate, or reset).
     void restart() noexcept;
     // Message thread: the latest `n` (at most kSize) samples, oldest first. Samples never written, or written before the
     // last restart, read as 0, as an AnalyserNode's buffer starts silent.
@@ -48,7 +48,7 @@ public:
     // Audio thread, once per sample: the sample's input peak (largest |x| of the channels), its output peak before the
     // makeup, and the GR (dB) after it.
     void add(float inPeak, float outPeak, double gr) noexcept;
-    // Audio thread: forgets what was gathered toward the next point (prepare). Queued points stay.
+    // Audio thread (or prepare and the host's reset): forgets what was gathered toward the next point. Queued points stay.
     void restart() noexcept;
     // Message thread: up to `max` queued points, oldest first, into `out`; returns how many.
     int take(CompPoint* out, int max) noexcept;

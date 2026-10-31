@@ -30,8 +30,10 @@ public:
     static constexpr int kSub = 48;         // samples per sub-block of the hold window
     static constexpr double kHoldMs = 20.0;
 
-    // Allocates the hold ring and starts afresh at `settings`: GR 0, nothing held, no smoothing.
+    // Allocates the hold ring and starts afresh at `settings` (reset).
     void prepare(double sampleRate, const CompSettings& settings);
+    // Starts afresh at `settings` at the prepared rate, without allocating: GR 0, nothing held, no smoothing.
+    void reset(const CompSettings& settings) noexcept;
     // The settings to move to. Attack and Release take effect at once (the worklet reads them per block).
     void setTarget(const CompSettings& settings) noexcept;
     // One sample: `peak` is the largest |x| of the channels; returns the gain to multiply them by.

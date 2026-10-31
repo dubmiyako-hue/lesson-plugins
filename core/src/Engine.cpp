@@ -47,11 +47,17 @@ float WetDry::mix(float dry, float processed) const noexcept {
 }
 
 void EqEngine::prepare(double sampleRate, const EqEngineSettings& settings) {
-    eq_.prepare(sampleRate, settings.bands);
+    sampleRate_ = sampleRate;
     loudness_.prepare(sampleRate, settings.bands);
+    reset(settings);
+}
+
+void EqEngine::reset(const EqEngineSettings& settings) noexcept {
+    eq_.prepare(sampleRate_, settings.bands);
+    loudness_.restart(settings.bands);
     requested_ = settings.bands;
     autoGain_ = settings.autoGain;
-    wetDry_.prepare(sampleRate, autoGain_ ? gainOfDb(loudness_.makeupDb()) : 1.0f, settings.bypass);
+    wetDry_.prepare(sampleRate_, autoGain_ ? gainOfDb(loudness_.makeupDb()) : 1.0f, settings.bypass);
 }
 
 void EqEngine::setTargets(const EqEngineSettings& settings) noexcept {
@@ -92,9 +98,15 @@ void EqEngine::process(float* const* channels, int numChannels, int numSamples, 
 }
 
 void CompEngine::prepare(double sampleRate, const CompEngineSettings& settings) {
+    sampleRate_ = sampleRate;
     comp_.prepare(sampleRate, settings.comp);
+    reset(settings);
+}
+
+void CompEngine::reset(const CompEngineSettings& settings) noexcept {
+    comp_.reset(settings.comp);
     makeupDb_ = compMakeupDb(settings.comp.threshold, settings.comp.ratio);
-    wetDry_.prepare(sampleRate, settings.autoGain ? gainOfDb(makeupDb_) : 1.0f, settings.bypass);
+    wetDry_.prepare(sampleRate_, settings.autoGain ? gainOfDb(makeupDb_) : 1.0f, settings.bypass);
 }
 
 void CompEngine::setTargets(const CompEngineSettings& settings) noexcept {
