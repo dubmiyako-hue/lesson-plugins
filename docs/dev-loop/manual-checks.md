@@ -11,7 +11,7 @@ Ableton Live 12 で、Lesson EQ と Lesson Comp を確かめる。セッショ�
 1. `tools\build.cmd Release` のあと `tools\install-vst3.cmd` で入れる（管理者の確認が出る。Live は閉じておく。開いていると `install-vst3.cmd` が止まって知らせる）。
 2. Live を開き、Ctrl+, で Settings を開く。Plug-Ins のタブで、VST3 のシステムのフォルダを使う切り替え（ヘルプでは Use VST3 Plug-In System Folders。名前は確かめていない）を On にして、Rescan を押す。出てこなければ、Alt を押しながら Rescan を押す（プラグインの一覧を作り直す）。
 3. 音の入ったオーディオのトラックを 1 本用意する（キックの入ったドラムのループとボーカルなど、強弱のあるもの）。項目 8・13・25・32〜34 は Arrangement ビューで行う。
-4. 項目 28〜34 は 20 Hz を +18 dB 上げるので、モニターの音量を下げておく。
+4. 項目 28・29・31〜34 は 20 Hz を +18 dB 上げるので、モニターの音量を下げておく。
 
 ## 確認すること
 
