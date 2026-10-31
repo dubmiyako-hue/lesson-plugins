@@ -5,7 +5,7 @@
 - 工程: 7. 仕上げ（周 4）
 - 周: 4
 - この周の一切れ: 仕上げ（pluginval strictness 10、validator `-e`、README、ライセンスの突き合わせ、DAW の確認表）
-- 次にすること: ユーザーが DAW の確認表（`manual-checks.md`、AC-23）を通す。Inf・NaN の入力からの立ち直り（`.ai-cache/patches/nonfinite-recovery.patch`）の承認を待つ
+- 次にすること: ユーザーが DAW の確認表（`manual-checks.md`、AC-23）を通す
 
 ## 周の予定
 
@@ -21,8 +21,8 @@
 | 番号 | 条件 | 周 | 状態 | 測った値 | ログ |
 | --- | --- | --- | --- | --- | --- |
 | AC-01 | ビルド | 1 | 合格 | `tools\build.cmd Release`・`Debug` とも終了コード 0、`Lesson EQ.vst3`・`Lesson Comp.vst3` が両方にある。Debug でも試験・validator・pluginval（5）が合格 | `.ai-cache/logs/` |
-| AC-02 | validator | 1 | 合格 | `-e` で 2 本とも 537 件合格、失敗 0（Release）。周 2 の DSP、周 3 の画面とレビュー 03 の直しを入れたあとも同じ | `.ai-cache/validate/*-validator.txt` |
-| AC-03 | pluginval | 1・4 | 合格 | strictness 5 で 2 本とも合格（Release。周 2 の DSP を入れたあとも合格）。strictness 10 で 2 本とも合格（周 4。レビュー 03 の直しを入れた Release） | `.ai-cache/validate/*-pluginval.txt` |
+| AC-02 | validator | 1 | 合格 | `-e` で 2 本とも 537 件合格、失敗 0（Release）。周 2 の DSP、周 3 の画面とレビュー 03 の直し、Inf・NaN からの立ち直りを入れたあとも同じ | `.ai-cache/validate/*-validator.txt` |
+| AC-03 | pluginval | 1・4 | 合格 | strictness 5 で 2 本とも合格（Release。周 2 の DSP を入れたあとも合格）。strictness 10 で 2 本とも合格（周 4。レビュー 03 の直しと Inf・NaN からの立ち直りを入れた Release） | `.ai-cache/validate/*-pluginval.txt` |
 | AC-04 | パラメータの表 | 1 | 合格 | `plugin_tests "[params]"`: ID・名前・短い名前・並び・範囲・既定値・既定値の文字が要件の表と一致 | `.ai-cache/logs/plugin_tests-rel.txt` |
 | AC-05 | 正規化 | 1 | 合格 | fromNorm の差の最大 3.6e-12（17696 点、刻みと切れ目は完全一致）、toNorm 2.2e-16（14621 点）、値の文字 22475 個一致。JUCE のパラメータは float でちょうど表せる 3227 点・206 点で `Math.fround` と完全一致 | 同上と `core_tests` |
 | AC-06 | EQ の一致 | 2 | 合格 | Edge 156 の `OfflineAudioContext` の 69 件（44.1・48・96 kHz、モノとステレオ）と、ブロック 128・1・4096 のどれでも差の最大 0。421,888 サンプルが全部ビット単位で一致 | `core_tests "[golden-eq]"` |
@@ -34,7 +34,7 @@
 | AC-12 | バイパス | 2 | 合格 | バイパスを入れて 100 ms 後から、出力が入力とビット単位で一致（EQ・コンプ、3 レート、モノとステレオ、Auto Gain のオン・オフ）。バイパスを入れて準備したときは最初のサンプルから一致 | `core_tests "[bypass]"` |
 | AC-13 | リアルタイム安全 | 2 | 合格 | パラメータを動かしながら 3000 ブロック（1〜1024 サンプル）× 2 本 × 3 条件（48 kHz ステレオ、44.1 kHz モノ、192 kHz ステレオ）で、`processBlock` の中の確保・解放 0 回（Release。Debug は条件を広げる前の 48 kHz ステレオで 0 回）。ロックは読んで確かめた。窓を開いて取り出し口を動かした状態でも、6 条件とも確保・解放 0 回（周 3。取り出し口に書かれたことも確かめる） | `rt_alloc_test` |
 | AC-14 | 状態の保存 | 1 | 合格 | 乱数の値 20 組 × 2 本で、往復後の値が全部一致（ずれ 0）。`version="1"` あり。状態に無いパラメータは既定値、ほかのプラグインの状態とごみは無視 | `.ai-cache/logs/plugin_tests-rel.txt` |
-| AC-15 | 極端な入力 | 2 | 合格 | +24 dBFS のサインとノイズ、無音、denormal、大きな音のあとの無音、ブロック 1・480、44.1〜192 kHz、極端な設定と毎ブロックの設定の跳びで、出力に NaN・Inf なし。Inf・NaN そのものの入力は条件の外（レビュー 02 の 1・2、承認待ち） | `core_tests "[extreme]"` |
+| AC-15 | 極端な入力 | 2 | 合格 | +24 dBFS のサインとノイズ、無音、denormal、大きな音のあとの無音、ブロック 1・480、44.1〜192 kHz、極端な設定と毎ブロックの設定の跳びで、出力に NaN・Inf なし。Inf・NaN そのものの入力のあとも、EQ・コンプとも数を出す状態に戻る（レビュー 02 の 1・2。ユーザーの承認のあと `2108454` で入れた。Web アプリは戻らない） | `core_tests "[extreme]"`、`"[nonfinite]"` |
 | AC-16 | 画面の言葉 | 3 | 合格 | 25 件。言葉の表、画面のソースの日本語の文字列 99 個、characterWords の格子 383,616 点が Web アプリ（090a107）と一致。同梱の書体の文字（`chars.txt`）が画面の文字を全部含む | `npm run web:test`（`plugin/web/tests/copied.test.ts`） |
 | AC-17 | EQ のカーブ | 3 | 合格 | ページの `EqFilters` を Edge 156 で動かした 25 ケース（44.1〜192 kHz、519 点ずつ）と core の \|H\| の差の最大 1.07e-5 dB（基準 0.01 dB、暫定）。場所は 44.1 kHz の LP 20 kHz の 20 kHz | `core_tests "[curve]"` |
 | AC-18 | スペクトル | 3 | 合格 | Edge の `getFloatFrequencyData` の 5 信号（44.1・48・96 kHz）との差の最大 0.00606 dB（基準 0.1 dB、暫定）。尺度は `\|X\|/N`。入力に NaN・Inf が入っても、有限の入力に戻れば全部のビンが戻る（レビュー 03 の 1） | `core_tests "[spectrum]"` |
@@ -51,9 +51,9 @@
 | 周 | 一切れ | 結果 | 戻った先と理由 | 日付 |
 | --- | --- | --- | --- | --- |
 | 1 | 素通しの 2 本、パラメータの表、値の文字、状態、validator と pluginval（5） | 合格（AC-01・02・04・05・14 合格、AC-03 は strictness 5 まで合格）。レビューは `reviews/01.md` | — | 2026-10-31 |
-| 2 | DSP（ビクアッドの EQ、コンプ、Auto Gain、平滑化、バイパス）とゴールデン | 合格（AC-06〜13・15 合格、AC-02・03 は DSP 入りでも合格）。レビューは `reviews/02.md`。Inf・NaN の入力からの立ち直りは承認待ち（patch あり） | — | 2026-10-31 |
+| 2 | DSP（ビクアッドの EQ、コンプ、Auto Gain、平滑化、バイパス）とゴールデン | 合格（AC-06〜13・15 合格、AC-02・03 は DSP 入りでも合格）。レビューは `reviews/02.md`。Inf・NaN の入力からの立ち直りは承認待ちにした（周 4 で承認され、`2108454` で入れた） | — | 2026-10-31 |
 | 3 | UI（PRAYROOM のウィンドウ、EQ とコンプの画面、スペクトルと音量の流れ、札と 2 段の言葉、説明の欄、設定のメニュー） | 合格（AC-13・16〜22 合格）。レビューは `reviews/03.md`（致命的 0、要修正 2、軽微 8。1〜6・9 を直し、7・8・10 は記録だけ）。直したあと ctest 70 件、`npm run web:test` 28 件が通る | — | 2026-10-31 |
-| 4 | 仕上げ | AC-02（validator `-e`）・AC-03（pluginval strictness 10）が 2 本とも合格。README にビルド・試験・入れ方・ライセンスを書いた。依存のライセンス（JUCE は AGPLv3 か商用、VST3 SDK は MIT、fdlibm、書体は OFL、Preact・doctest は MIT）を README の表で突き合わせた。DAW の確認表（AC-23）はユーザーの作業 | — | 2026-10-31 |
+| 4 | 仕上げ | AC-02（validator `-e`）・AC-03（pluginval strictness 10）が 2 本とも合格。README にビルド・試験・入れ方・ライセンスを書いた。依存のライセンス（JUCE は AGPLv3 か商用、VST3 SDK は MIT、fdlibm、書体は OFL、Preact・doctest は MIT）を README の表で突き合わせた。DAW の確認表（AC-23）はユーザーの作業。承認された Inf・NaN からの立ち直りを入れたあと、ctest 72 件（ゴールデンはビット単位のまま）、validator `-e`、pluginval strictness 10 をもう一度通した | — | 2026-10-31 |
 
 ## 決定の記録
 
@@ -76,4 +76,3 @@
 ## ユーザーの作業待ち
 
 - AC-23: DAW での手動確認（`docs/dev-loop/manual-checks.md` の 25 項目）。スペクトルと音量の流れの点が動くことは試験と EditorHost の静止画で見ただけで、鳴らしながらは見ていない（項目 3・19）。
-- 承認待ち: Inf・NaN の入力から音が立ち直る直し（`.ai-cache/patches/nonfinite-recovery.patch`、レビュー 02 の 1・2）。Web アプリと振る舞いが変わるので作業ツリーに入れていない。
