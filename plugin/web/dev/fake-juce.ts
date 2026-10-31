@@ -138,4 +138,9 @@ const click = q.get('click')
 if (click !== null) setTimeout(() => document.querySelector<HTMLElement>(click)?.click(), 300)
 const hover = q.get('hover')
 if (hover !== null)
-  setTimeout(() => document.querySelector(hover)?.dispatchEvent(new PointerEvent('pointerover', { bubbles: true })), 400)
+  setTimeout(() => {
+    // at the element's middle, which picks the Hint's side
+    const el = document.querySelector(hover)
+    const r = el?.getBoundingClientRect()
+    if (r) el!.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 }))
+  }, 400)
