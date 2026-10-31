@@ -10,7 +10,7 @@ Lesson EQ / Lesson Comp  インストール手順
   対象は Windows 64bit の VST3 だけ。
 
 ■ 動作条件
-  - Windows 10 / 11 64bit
+  - Windows 11 64bit（Windows 10 では確かめていません）
   - Microsoft Edge WebView2 ランタイム（Windows 11 は入っている。無いときは、音は通るが、窓に案内の 1 行だけが出る）
   - Microsoft Visual C++ Redistributable 2015-2022 (x64)（無いと DAW がプラグインを読めない）
 
