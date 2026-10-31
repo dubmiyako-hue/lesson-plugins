@@ -15,6 +15,9 @@ inline constexpr double kRatioInfinite = 1000.0;
 double targetGr(double levelDb, double threshold, double ratio) noexcept;
 // One-pole coefficient for a time constant in ms; 0 ms means instant (src/dsp.ts timeCoef).
 double timeCoef(double ms, double sampleRate) noexcept;
+// The detector's input for one sample: the largest |x| of the channels at `i`, leaving out a channel's Inf or NaN (the
+// web app takes them, and its GR turns NaN for good). For finite samples it is the web app's.
+float peakOf(const float* const* channels, int numChannels, int i) noexcept;
 
 struct CompSettings {
     float threshold = 0.0f; // dB
@@ -36,7 +39,8 @@ public:
     void reset(const CompSettings& settings) noexcept;
     // The settings to move to. Attack and Release take effect at once (the worklet reads them per block).
     void setTarget(const CompSettings& settings) noexcept;
-    // One sample: `peak` is the largest |x| of the channels; returns the gain to multiply them by.
+    // One sample: `peak` is the largest |x| of the channels (a channel's Inf or NaN left out, as peakOf does); returns
+    // the gain to multiply them by.
     double gainFor(float peak) noexcept;
     // In place, as CompressorCore.process; returns the largest GR (dB) of the block.
     double process(float* const* channels, int numChannels, int numSamples) noexcept;

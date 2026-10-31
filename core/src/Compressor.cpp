@@ -16,6 +16,15 @@ double timeCoef(double ms, double sampleRate) noexcept {
     return ms <= 0 ? 0 : fdlibm::exp(-1 / ((ms / 1000) * sampleRate)); // V8's Math.exp is fdlibm's
 }
 
+float peakOf(const float* const* channels, int numChannels, int i) noexcept {
+    float peak = 0;
+    for (int c = 0; c < numChannels; ++c) {
+        const float a = std::fabs(channels[c][i]);
+        if (a > peak && a <= std::numeric_limits<float>::max()) peak = a; // a NaN fails `a > peak`, an Inf the second
+    }
+    return peak;
+}
+
 namespace {
 float inverseOf(float ratio) noexcept {
     return ratio >= kRatioInfinite ? 0.0f : static_cast<float>(1.0 / ratio);
@@ -54,8 +63,9 @@ void Compressor::setTarget(const CompSettings& settings) noexcept {
 }
 
 double Compressor::gainFor(float peak) noexcept {
-    // An Inf would make the GR inf - inf = NaN for good (the web app does so): the detector takes the largest float.
-    if (peak > std::numeric_limits<float>::max()) peak = std::numeric_limits<float>::max();
+    // An Inf would make the GR inf - inf = NaN for good (the web app does so), and the largest float in its place would
+    // hold the GR over 500 dB for a second at Release 100 ms: the detector does not hear a sample that is not a number.
+    if (!(peak <= std::numeric_limits<float>::max())) peak = 0.0f;
     if (peak > partial_) partial_ = peak;
     const float level = partial_ > ringMax_ ? partial_ : ringMax_;
     if (++partialCount_ == kSub) pushPartial();
@@ -79,12 +89,7 @@ double Compressor::gainFor(float peak) noexcept {
 double Compressor::process(float* const* channels, int numChannels, int numSamples) noexcept {
     double blockMax = 0;
     for (int i = 0; i < numSamples; ++i) {
-        float peak = 0;
-        for (int c = 0; c < numChannels; ++c) {
-            const float a = std::fabs(channels[c][i]);
-            if (a > peak) peak = a;
-        }
-        const double g = gainFor(peak);
+        const double g = gainFor(peakOf(channels, numChannels, i));
         for (int c = 0; c < numChannels; ++c) channels[c][i] = static_cast<float>(channels[c][i] * g);
         if (gr_ > blockMax) blockMax = gr_;
     }

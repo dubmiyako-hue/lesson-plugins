@@ -1,6 +1,7 @@
 // Review 02, points 1 and 2 (approved by the user, 2026-10-31): one Inf or NaN in the input does not leave the EQ or the
 // compressor putting out NaN for good. And no sample put out is an Inf or a NaN, also the bad one's and the rest of its
-// block's (the review of fad038f).
+// block's (the review of fad038f). The compressor's detector does not hear them (review 04, point 5, approved by
+// the user).
 #include <doctest.h>
 #include <lesson/Engine.h>
 #include <lesson/NoDenormals.h>
@@ -56,8 +57,7 @@ TEST_CASE("[nonfinite] the compressor puts out numbers again after one Inf") {
             s.comp = { -20.0f, ratio, attack, 100.0f };
             CAPTURE(ratio);
             CAPTURE(attack);
-            // 20 ms of hold, then the GR comes back from the largest float's level (about 770 dB) at Release 100 ms
-            CHECK(finiteAfter<CompEngine>(s, std::numeric_limits<float>::infinity(), 200));
+            CHECK(finiteAfter<CompEngine>(s, std::numeric_limits<float>::infinity(), 1));
         }
 }
 
@@ -133,5 +133,61 @@ TEST_CASE("[nonfinite] one Inf or NaN in a block puts no Inf or NaN out (Lesson 
                     CAPTURE(channels);
                     CAPTURE(bad);
                     noNonFiniteOut<CompEngine>(s, bad, channels);
+                }
+}
+
+TEST_CASE("[nonfinite] the compressor's detector does not hear an Inf or a NaN") {
+    // The run with a bad sample is the run with 0 in its place, bit for bit: the bad sample puts out 0 (finiteOr0), and
+    // the GR goes on as if it were silence (one channel bad: the other channel's level).
+    const NoDenormals noDenormals;
+    CompEngineSettings s;
+    s.comp = { -20.0f, 1000.0f, 0.1f, 1000.0f };
+    for (const bool autoGain : { false, true })
+        for (const bool bypass : { false, true })
+            for (const int channels : { 1, 2 })
+                for (const float bad : kBad) {
+                    s.autoGain = autoGain;
+                    s.bypass = bypass;
+                    CAPTURE(autoGain);
+                    CAPTURE(bypass);
+                    CAPTURE(channels);
+                    CAPTURE(bad);
+                    constexpr int kFrames = 8192;
+                    constexpr int kAt = 1000;
+                    std::vector<std::vector<float>> zero(static_cast<size_t>(channels));
+                    for (int c = 0; c < channels; ++c) zero[static_cast<size_t>(c)] = noise(kFrames, 7u + static_cast<std::uint32_t>(c));
+                    zero[0][kAt] = 0.0f;
+                    std::vector<std::vector<float>> spoiled = zero;
+                    spoiled[0][kAt] = bad;
+                    std::vector<float*> a;
+                    std::vector<float*> b;
+                    for (int c = 0; c < channels; ++c) {
+                        a.push_back(zero[static_cast<size_t>(c)].data());
+                        b.push_back(spoiled[static_cast<size_t>(c)].data());
+                    }
+                    CompEngine zeroEngine;
+                    CompEngine spoiledEngine;
+                    zeroEngine.prepare(48000, s);
+                    spoiledEngine.prepare(48000, s);
+                    CompPoints zeroPoints;
+                    CompPoints spoiledPoints;
+                    zeroEngine.process(a.data(), channels, kFrames, s, &zeroPoints);
+                    spoiledEngine.process(b.data(), channels, kFrames, s, &spoiledPoints);
+                    CHECK(zeroEngine.gr() == spoiledEngine.gr());
+                    int different = 0;
+                    for (size_t c = 0; c < zero.size(); ++c)
+                        for (int i = 0; i < kFrames; ++i) different += zero[c][static_cast<size_t>(i)] != spoiled[c][static_cast<size_t>(i)];
+                    CHECK_MESSAGE(different == 0, different << " samples differ from the run with 0 in the bad one's place");
+                    // the screen's points are numbers, and the same
+                    CompPoint p[CompPoints::kCapacity];
+                    CompPoint q[CompPoints::kCapacity];
+                    const int n = zeroPoints.take(p, CompPoints::kCapacity);
+                    REQUIRE(spoiledPoints.take(q, CompPoints::kCapacity) == n);
+                    for (int k = 0; k < n; ++k) {
+                        CHECK(std::isfinite(q[k].in));
+                        CHECK(p[k].in == q[k].in);
+                        CHECK(p[k].out == q[k].out);
+                        CHECK(p[k].gr == q[k].gr);
+                    }
                 }
 }

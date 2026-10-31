@@ -121,11 +121,7 @@ void CompEngine::process(float* const* channels, int numChannels, int numSamples
     numChannels = std::min(numChannels, kMaxChannels);
     setTargets(settings);
     for (int i = 0; i < numSamples; ++i) {
-        float peak = 0;
-        for (int c = 0; c < numChannels; ++c) {
-            const float a = std::fabs(channels[c][i]);
-            if (a > peak) peak = a;
-        }
+        const float peak = peakOf(channels, numChannels, i); // also what the screen's points take: a number
         const double g = comp_.gainFor(peak);
         // The output before the makeup is float(x * g) per channel; rounding is monotonic, so its largest is float(peak * g).
         if (points != nullptr) points->add(peak, static_cast<float>(peak * g), comp_.gr());
