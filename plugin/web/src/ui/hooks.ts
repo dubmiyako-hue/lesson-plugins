@@ -1,6 +1,7 @@
 import type { RefObject } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
-import { state, subscribe } from '../app'
+import { data, player, state, subscribe } from '../app'
+import { createFramePolicy } from '../frames'
 
 // Re-renders the component whenever the app state changes.
 export function useApp() {
@@ -9,12 +10,24 @@ export function useApp() {
   return state
 }
 
-// Runs `fn` every animation frame while mounted.
+// Runs `fn` on the animation frames the screen needs while mounted (src/frames.ts).
+const frames = createFramePolicy({ playing: () => player.playing, hidden: () => document.hidden })
+const invalidate = () => frames.invalidate(performance.now())
+subscribe(invalidate)
+for (const type of ['pointermove', 'pointerdown', 'pointerup', 'pointercancel', 'wheel', 'keydown', 'keyup', 'focusin', 'focusout', 'resize', 'visibilitychange'])
+  addEventListener(type, invalidate, { capture: true, passive: true })
+new MutationObserver(invalidate).observe(document.documentElement, { attributes: true })
+document.fonts?.ready.then(invalidate)
 export function useFrame(fn: () => void) {
   useEffect(() => {
     let id = 0
+    let seen = data.stamp
     const tick = () => {
-      fn()
+      if (data.stamp !== seen) {
+        seen = data.stamp
+        invalidate()
+      }
+      if (frames.shouldDraw(performance.now())) fn()
       id = requestAnimationFrame(tick)
     }
     id = requestAnimationFrame(tick)

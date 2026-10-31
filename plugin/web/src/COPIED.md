@@ -10,7 +10,7 @@ the web app's line endings (CRLF). When the web app changes one of these files, 
 | `character.ts` | none |
 | `dsp.ts` | none |
 | `ui/Glyph.tsx` | none |
-| `ui/hooks.ts` | none |
+| `ui/hooks.ts` | `useFrame` runs `fn` only on the frames `frames.ts` says (while audio plays, shortly after a change, once in 500 ms) |
 | `ui/PluginHeader.tsx` | none (only `AutoGain` is used; the plug-in's window has its own header) |
 | `chain.ts` | `butterworthQs` imported from `./dsp` alone; the worklet loading, `StemChain` and `HISTORY_S` removed (the plug-in has no Web Audio graph) |
 | `ui/Knob.tsx` | gestures (`../gestures`): a drag from press to release, wheel and keys until 250 ms without a step, a reset or a typed value complete; `typeValue`: a click on the value opens a field read by the plug-in's `parseValue` |

@@ -9,6 +9,8 @@ import { floats, host, type Plugin, type Ready, type Spectrum } from './host'
 
 export type { Plugin }
 
+// Counts what the plug-in has sent (spectrum, points; the tick only when it changes something, and that is an emit); the frames check it to know the display may have changed.
+export const data = { stamp: 0 }
 export const TICK_HZ = 30 // how often the plug-in sends its measurements (plugin/common/Bridge.h)
 
 export type State = {
@@ -274,8 +276,14 @@ export async function start(): Promise<Ready> {
     player.playing = t.playing
     if (changed) emit()
   })
-  h.onSpectrum(spectrum)
-  h.onPoints((b64) => player.tracks[0].chain.history?.push(floats(b64)))
+  h.onSpectrum((s) => {
+    data.stamp++
+    spectrum(s)
+  })
+  h.onPoints((b64) => {
+    data.stamp++
+    player.tracks[0].chain.history?.push(floats(b64))
+  })
   addEventListener('pagehide', closeAll)
   return ready
 }
