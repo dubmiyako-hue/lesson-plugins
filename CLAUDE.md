@@ -22,3 +22,8 @@ UI は PRAYROOM のデザインシステムに従う。
 
 - `tools\build.cmd Release`（または `Debug`）。MSVC の環境は `tools\msvc.cmd` が用意する。`.bat`・`.cmd` は Bash から `cmd //c` で呼ぶ。
 - JUCE は `D:/work/Claude/_sdk/JUCE/JUCE-subbass`（JUCE 9.0.2 に WebView2 の文字の拡大のパッチを当てた worktree。subbass-vst と共用）。
+
+## 公開（GitHub）
+
+- リポジトリは公開で、読む人は何も知らない第三者。`README.md` はツールの説明だけを書く（作者の事情、開発の経緯、AI の作業は書かない）。Release の説明も同じ。
+- コミットの 1 行目は英語の命令形で、変えたものを言う（例: `Fix the EQ's Q smoothing at 192 kHz`）。「ユーザーが頼んだ」のような作業の事情は書かない。理由が要るときは本文に書く。
