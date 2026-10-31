@@ -82,6 +82,7 @@ void EqEngine::process(float* const* channels, int numChannels, int numSamples, 
             if (taps->post != nullptr) taps->post->push(numChannels == 1 ? biquads[0] : 0.5f * (biquads[0] + biquads[1]));
         }
     }
+    eq_.recoverFromNonFinite();
 }
 
 void CompEngine::prepare(double sampleRate, const CompEngineSettings& settings) {

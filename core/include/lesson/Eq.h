@@ -53,6 +53,9 @@ public:
     float process(int channel, float x) noexcept;
     // beginSample and process for a whole block, in place.
     void process(float* const* channels, int numChannels, int numSamples) noexcept;
+    // After a block: when an Inf or a NaN came in, every filter's state starts again from 0 (Chrome keeps it, and the EQ
+    // then puts out NaN until it is prepared again). Returns whether it did.
+    bool recoverFromNonFinite() noexcept;
 
     bool settled() const noexcept;
     // The weight of the lane being faded in for HP (0) or LP (1); 1 when no fade runs.

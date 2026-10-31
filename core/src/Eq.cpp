@@ -215,6 +215,25 @@ void Eq::process(float* const* channels, int numChannels, int numSamples) noexce
         beginSample();
         for (int c = 0; c < numChannels; ++c) channels[c][i] = process(c, channels[c][i]);
     }
+    recoverFromNonFinite();
+}
+
+bool Eq::recoverFromNonFinite() noexcept {
+    bool finite = true;
+    for (const PassBand& band : pass_)
+        for (const Lane& lane : band.lanes)
+            for (const auto& channel : lane.s)
+                for (const BiquadState& s : channel) finite = finite && s.finite();
+    for (const ParamBand& band : param_)
+        for (const BiquadState& s : band.s) finite = finite && s.finite();
+    if (finite) return false;
+    for (PassBand& band : pass_)
+        for (Lane& lane : band.lanes)
+            for (auto& channel : lane.s)
+                for (BiquadState& s : channel) s.reset();
+    for (ParamBand& band : param_)
+        for (BiquadState& s : band.s) s.reset();
+    return true;
 }
 
 bool Eq::settled() const noexcept {

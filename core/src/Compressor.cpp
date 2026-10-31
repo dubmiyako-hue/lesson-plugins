@@ -3,6 +3,7 @@
 #include <lesson/Format.h>
 #include <algorithm>
 #include <cmath>
+#include <limits>
 
 namespace lesson {
 
@@ -48,6 +49,8 @@ void Compressor::setTarget(const CompSettings& settings) noexcept {
 }
 
 double Compressor::gainFor(float peak) noexcept {
+    // An Inf would make the GR inf - inf = NaN for good (the web app does so): the detector takes the largest float.
+    if (peak > std::numeric_limits<float>::max()) peak = std::numeric_limits<float>::max();
     if (peak > partial_) partial_ = peak;
     const float level = partial_ > ringMax_ ? partial_ : ringMax_;
     if (++partialCount_ == kSub) pushPartial();

@@ -2,6 +2,7 @@
 // One Web Audio BiquadFilterNode as Chrome computes it (Blink's platform/audio/biquad.cc and
 // modules/webaudio/biquad_filter_handler.cc): the AudioParams are floats, the coefficients and the state doubles, and each
 // output sample is rounded to float.
+#include <cmath>
 
 namespace lesson {
 
@@ -30,6 +31,9 @@ inline double magnitudeSquared(const BiquadCoefficients& c, double cosw, double 
 class BiquadState {
 public:
     void reset() noexcept { x1_ = x2_ = y1_ = y2_ = 0.0; }
+    bool finite() const noexcept {
+        return std::isfinite(x1_) && std::isfinite(x2_) && std::isfinite(y1_) && std::isfinite(y2_);
+    }
 
     // One sample: the sum in Blink's order, rounded to float.
     float process(const BiquadCoefficients& c, float x) noexcept {
