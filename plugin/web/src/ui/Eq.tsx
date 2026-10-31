@@ -1,10 +1,10 @@
-import { useRef } from 'preact/hooks'
+import { useMemo, useRef } from 'preact/hooks'
 import { player, resetBand, selectBand, setBand } from '../app'
 import { BANDS, DEFAULTS, SLOPES, type BandKind } from '../chain'
 import { BAND_PARAMS, clampTo, fmtDb, fmtHz, type BandKey } from '../params'
 import { Glyph, KIND_NAMES } from './Glyph'
 import { Knob, Segmented, Toggle } from './Knob'
-import { closeGesture, closeWhenIdle, openGesture, within, type Gesture } from '../gestures'
+import { graphGestures } from '../gestures'
 import { hideHint, hint, pluginHints, showHint, type HintText } from './Hint'
 import { AutoGain } from './PluginHeader'
 import { css, fitCanvas, useApp, useFrame } from './hooks'
@@ -133,7 +133,7 @@ function EqGraph() {
   const s = useApp()
   const c = useRef<HTMLCanvasElement>(null)
   const drag = useRef<number | null>(null)
-  const gesture = useRef<Gesture | null>(null) // the host's gesture of a drag or of the wheel
+  const gestures = useMemo(graphGestures, []) // the host's gestures of a drag and of the wheel, apart
   const word = useRef<{ row: Word[]; k: number } | null>(null) // the label-row word under the pointer
   const buf = useRef<{ data: Float32Array<ArrayBuffer>; pre: Float32Array; post: Float32Array } | null>(null)
   const i = s.selected
@@ -339,9 +339,8 @@ function EqGraph() {
     const k = hit(e)
     if (k === null) return
     selectBand(k)
-    closeGesture(gesture.current)
-    gesture.current = openGesture()
-    if (!set.bands[k].on) within(gesture.current, () => setBand(i, k, { on: true }))
+    gestures.press()
+    if (!set.bands[k].on) gestures.dragged(() => setBand(i, k, { on: true }))
     drag.current = k
     ;(e.currentTarget as Element).setPointerCapture(e.pointerId)
   }
@@ -374,9 +373,9 @@ function EqGraph() {
     const { w, gh } = geo()
     const { px, py } = at(e)
     const freq = clampTo(BAND_PARAMS.freq, xf(Math.max(0, Math.min(w, px)), w))
-    if (isCut(k)) return within(gesture.current, () => setBand(i, k, { freq }))
+    if (isCut(k)) return gestures.dragged(() => setBand(i, k, { freq }))
     const db = ((ROW + gh / 2 - py) / (gh / 2)) * RANGE
-    within(gesture.current, () => setBand(i, k, { freq, gain: Math.round(clampTo(BAND_PARAMS.gain, db) * 2) / 2 }))
+    gestures.dragged(() => setBand(i, k, { freq, gain: Math.round(clampTo(BAND_PARAMS.gain, db) * 2) / 2 }))
   }
   // wheel over a bell narrows or widens it, as in most EQ plugins
   const wheel = (e: WheelEvent) => {
@@ -384,9 +383,7 @@ function EqGraph() {
     if (k === null || BANDS[k].kind !== 'bell') return
     e.preventDefault()
     selectBand(k)
-    if (!gesture.current || gesture.current.closed) gesture.current = openGesture()
-    closeWhenIdle(gesture.current)
-    within(gesture.current, () => setBand(i, k, { q: clampTo(BAND_PARAMS.q, set.bands[k].q * (e.deltaY < 0 ? 1.1 : 1 / 1.1)) }))
+    gestures.stepped(() => setBand(i, k, { q: clampTo(BAND_PARAMS.q, set.bands[k].q * (e.deltaY < 0 ? 1.1 : 1 / 1.1)) }))
   }
 
   const leave = () => {
@@ -400,8 +397,7 @@ function EqGraph() {
 
   const up = (e: PointerEvent) => {
     drag.current = null
-    closeGesture(gesture.current)
-    gesture.current = null
+    gestures.release()
     move(e)
   }
 

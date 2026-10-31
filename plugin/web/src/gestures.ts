@@ -42,7 +42,32 @@ export function closeGesture(g: Gesture | null) {
 // closes `g` when `ms` pass without another call (the wheel's and the keys' gestures)
 export function closeWhenIdle(g: Gesture, ms = IDLE_MS) {
   clearTimeout(g.timer)
-  g.timer = window.setTimeout(() => closeGesture(g), ms)
+  g.timer = setTimeout(() => closeGesture(g), ms)
+}
+
+// A graph's two gestures, kept apart: a drag from the press to the release (or a cancel), and the wheel's, which closes
+// when IDLE_MS pass without a step. A step while dragging does not close the drag.
+export function graphGestures() {
+  let drag: Gesture | null = null
+  let wheel: Gesture | null = null
+  return {
+    press() {
+      closeGesture(drag)
+      drag = openGesture()
+    },
+    release() {
+      closeGesture(drag)
+      drag = null
+    },
+    dragged<T>(fn: () => T): T {
+      return within(drag, fn)
+    },
+    stepped<T>(fn: () => T): T {
+      if (!wheel || wheel.closed) wheel = openGesture()
+      closeWhenIdle(wheel)
+      return within(wheel, fn)
+    },
+  }
 }
 
 // runs `fn` with its parameter changes belonging to `g`
