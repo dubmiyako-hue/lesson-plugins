@@ -26,6 +26,7 @@ BUNDLES = [
 RECEIVER_FILES = [ROOT / "tools/dist/install.cmd", ROOT / "tools/dist/README.txt"]
 # (source, name inside licenses/)
 LICENSES = [
+    (ROOT / "LICENSE", "AGPL-3.0-LICENSE.md"),
     (JUCE_DIR / "LICENSE.md", "JUCE-LICENSE.md"),
     (JUCE_DIR / "modules/juce_audio_processors_headless/format_types/VST3_SDK/LICENSE.txt", "VST3-SDK-LICENSE.txt"),
     (ROOT / "third_party/fdlibm/LICENSE", "fdlibm-LICENSE.txt"),

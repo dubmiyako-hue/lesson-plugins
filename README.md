@@ -1,13 +1,13 @@
 # Lesson EQ / Lesson Comp
 
-ミックス練習の Web アプリ（`D:\work\Claude\mix-course`）の EQ とコンプを、Windows の VST3 プラグイン 2 本にしたもの。音は Web アプリと同じ（ゴールデンとの一致を試験で確かめている）。画面は Web アプリの画面を WebView2 で開き、PRAYROOM のデザインシステムで描く。
+ミックス練習の Web アプリ（`D:\work\Claude\mix-course`）の EQ とコンプを、Windows の VST3 プラグイン 2 本にしたもの。音は Web アプリと同じ（ゴールデンとの一致を試験で確かめている）。画面は Web アプリの画面を WebView2 で開き、PRAYROOM（自作のデザインシステム。写しは `plugin/web/design-system/`）で描く。
 
 | プラグイン | 中身 |
 | --- | --- |
 | Lesson EQ | HP・ローシェルフ・ベル 3 本・ハイシェルフ・LP の 7 バンド。Auto Gain、入力と出力のスペクトル、周波数の帯の言葉 |
 | Lesson Comp | Threshold・Ratio・Attack・Release。Auto Gain、入出力のグラフ、音量の流れ、札と 2 段の言葉 |
 
-自分用で、配布はしない。開発の記録は `docs/dev-loop/`（要件、設計、周の記録、レビュー、DAW での確認表）にある。
+個人の開発で、まだ DAW（Ableton Live 12）での手動確認が終わっていない。ライセンスは AGPLv3（`LICENSE`）。配布する zip と exe のソースはこのリポジトリのタグ（Release の説明に書いてある）で、JUCE 9.0.2 に `third_party/juce-patches/` のパッチを当てたものでビルドする。開発の記録は `docs/dev-loop/`（要件、設計、周の記録、レビュー、DAW での確認表）にある。
 
 ## 要るもの
 
@@ -87,7 +87,7 @@ Web アプリが変わったときだけ作り直す。作り方はそれぞれ�
 
 ## ライセンス
 
-自分用で配布しないので、下の条件は配布するときに要るもの。
+プラグイン全体は AGPLv3（`LICENSE`）。配布物には下の部品のライセンスを `licenses/` に入れている。
 
 | もの | ライセンス | 置き場 |
 | --- | --- | --- |
