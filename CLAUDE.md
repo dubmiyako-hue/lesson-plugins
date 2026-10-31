@@ -15,7 +15,7 @@ UI は PRAYROOM のデザインシステムに従う。
 
 - 見た目の決まりは `~/.claude/skills/prayroom/README.md`、操作と状態の振る舞いは `~/.claude/skills/prayroom/behavior.md` を読んでから UI を作る。
 - CSS では `tokens.css` のカスタムプロパティ（`var(--surface-000)` など）を使い、値を直接書かない。
-- `plugin/web/prayroom/` は PRAYROOM の写しで、`tools/sync-prayroom.py` で作る。中は手で書き換えない。
+- `plugin/web/design-system/` は PRAYROOM（デザインシステム）の写しで、`tools/sync-prayroom.py` で作る。中は手で書き換えない。
 - 書体（Zen Kaku Gothic New、IBM Plex Mono）の woff2 は同梱する。プラグインはネットにつながなくても動く。
 
 ## ビルド

@@ -7,7 +7,7 @@ import { host as plugin } from '../host'
 import { hint, rehint } from './Hint'
 import { useFrame } from './hooks'
 
-// Preact wrappers around the PRAYROOM components (prayroom/components/bundle.js).
+// Preact wrappers around the PRAYROOM components (design-system/bundle.js).
 // Each one mounts the component once, and remounts it when an option it reads only
 // at creation changes; values that change while it lives are pushed in silently.
 

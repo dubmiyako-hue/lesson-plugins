@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Copy PRAYROOM's tokens.css, bundle.css, bundle.js and index.d.ts into plugin/web/prayroom/.
+"""Copy PRAYROOM's tokens.css, bundle.css, bundle.js and index.d.ts into plugin/web/design-system/.
 
 The source is the copy the web app uses (mix-course/prayroom), so the screen is drawn by the same components as the web
 app's. The files are copied byte for byte, except that the @import of Google Fonts at the top of bundle.css is replaced
@@ -15,7 +15,7 @@ import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
-DST = REPO / "plugin" / "web" / "prayroom"
+DST = REPO / "plugin" / "web" / "design-system"
 
 # (family, weight, file) of plugin/web/fonts/
 FONTS = [

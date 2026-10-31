@@ -174,7 +174,7 @@ plugin/
   web/                         画面のソース（Vite 6＋Preact＋TypeScript、ページは index.html の 1 枚）
     src/                       Web アプリの src を写して、状態の出どころをプラグインに替えたもの（写した表は src/COPIED.md）
     dev/                       偽のプラグイン（fake-juce.ts）。ブラウザだけで画面を開く
-    prayroom/                  tools/sync-prayroom.py が作る PRAYROOM の写し
+    design-system/             tools/sync-prayroom.py が作る PRAYROOM の写し
 tests/
   golden/                      ゴールデンの作り方（Node と Edge）と、できたデータ
   unit/                        core の試験（doctest）

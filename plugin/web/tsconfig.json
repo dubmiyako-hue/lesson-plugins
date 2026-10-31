@@ -16,5 +16,5 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact"
   },
-  "include": ["src", "dev", "tests", "prayroom/index.d.ts"]
+  "include": ["src", "dev", "tests", "design-system/index.d.ts"]
 }

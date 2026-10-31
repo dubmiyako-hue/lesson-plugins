@@ -2,7 +2,7 @@
    plugins section), then the plug-in's own: the window, the settings panel and the typed value's field. */
 
 /* The page's own layout. Colours, spacing, radii and shadows come from
-   prayroom/tokens.css; the controls are PRAYROOM components (bundle.css). */
+   design-system/tokens.css; the controls are PRAYROOM components (bundle.css). */
 
 :root {
   color-scheme: light;

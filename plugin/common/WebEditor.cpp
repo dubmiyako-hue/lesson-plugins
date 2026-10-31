@@ -87,7 +87,7 @@ juce::String WebEditor::fallbackText(const juce::String& pluginName) {
 }
 
 juce::Colour WebEditor::backgroundFor(const juce::String& theme) {
-    // --surface-000 of plugin/web/prayroom/tokens.css as 8-bit sRGB: light oklch(0.985 0.003 255),
+    // --surface-000 of plugin/web/design-system/tokens.css as 8-bit sRGB: light oklch(0.985 0.003 255),
     // dark oklch(0.215 0.006 255), studio oklch(0.209 0 0).
     if (theme == "dark") return juce::Colour(0x18, 0x1A, 0x1C);
     if (theme == "studio") return juce::Colour(0x18, 0x18, 0x18);

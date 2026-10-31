@@ -1,8 +1,8 @@
 // The page of both plug-ins: the plug-in says which it is (ready), and the window shows the web app's EQ or compressor,
 // large. PRAYROOM first (tokens → component styles → components), then the page's own styles.
-import '../prayroom/tokens.css'
-import '../prayroom/bundle.css'
-import '../prayroom/bundle.js'
+import '../design-system/tokens.css'
+import '../design-system/bundle.css'
+import '../design-system/bundle.js'
 import './style.css'
 import { render } from 'preact'
 import { onChange, readout, setBypass, start, state, subscribe } from './app'
