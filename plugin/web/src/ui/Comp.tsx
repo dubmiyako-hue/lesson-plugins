@@ -174,19 +174,13 @@ function CompDisplay() {
     if (drag.current) within(gesture.current, () => setParam(i, 'threshold', Math.round(clampTo(PARAMS.threshold, dbAt(e)) * 2) / 2))
     c.current!.style.cursor = drag.current || onLine(e) ? 'ns-resize' : ''
   }
-  return (
-    <canvas
-      class="compgraph"
-      ref={c}
-      onPointerDown={down}
-      onPointerMove={move}
-      onPointerUp={() => {
-        drag.current = false
-        closeGesture(gesture.current)
-        gesture.current = null
-      }}
-    />
-  )
+  // a release, or a cancel (the browser took the pointer), ends the drag
+  const end = () => {
+    drag.current = false
+    closeGesture(gesture.current)
+    gesture.current = null
+  }
+  return <canvas class="compgraph" ref={c} onPointerDown={down} onPointerMove={move} onPointerUp={end} onPointerCancel={end} />
 }
 
 // Input level against output level: the line bends at the threshold and rises at

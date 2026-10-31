@@ -395,13 +395,29 @@ function EqGraph() {
     return isCut(k) ? `${fmtHz(b.freq)}  ${b.slope} dB/oct` : `${fmtHz(b.freq)}  ${fmtDb(b.gain)}`
   }
 
-  const up = (e: PointerEvent) => {
+  // a release, or a cancel (the browser took the pointer), ends the drag
+  const end = () => {
     drag.current = null
     gestures.release()
+  }
+  const up = (e: PointerEvent) => {
+    end()
     move(e)
   }
 
-  return <canvas class="eqgraph" ref={c} data-hint-own onPointerDown={down} onPointerMove={move} onPointerLeave={leave} onPointerUp={up} onWheel={wheel} />
+  return (
+    <canvas
+      class="eqgraph"
+      ref={c}
+      data-hint-own
+      onPointerDown={down}
+      onPointerMove={move}
+      onPointerLeave={leave}
+      onPointerUp={up}
+      onPointerCancel={end}
+      onWheel={wheel}
+    />
+  )
 }
 
 function BandKnob({ k, big }: { k: BandKey; big?: boolean }) {

@@ -294,6 +294,10 @@ input {
   width: 960px;
   height: 560px;
 }
+/* the Threshold line's drag is the page's, not a touch scroll (the web app has this on .eqgraph only) */
+.compgraph {
+  touch-action: none;
+}
 .pr-window {
   position: relative;
 }
