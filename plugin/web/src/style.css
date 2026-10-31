@@ -246,6 +246,20 @@ input {
   grid-column: span 2;
   display: flex; /* not a line box, whose baseline would set the segments lower than Freq */
 }
+/* Slope a size up from PRAYROOM's segments (asked for by the user on 2026-10-31), its groove
+   centred where a knob would be, as Auto Gain's key is (4px: the groove's inset, 2px a side) */
+.eqslots .slope .pr-seg {
+  margin-top: calc((var(--knob-sm) - var(--space-8) - 4px) / 2);
+}
+.big .eqslots .slope .pr-seg {
+  margin-top: calc((var(--knob-md) - var(--space-8) - 4px) / 2);
+}
+.eqslots .slope .pr-seg__opt {
+  min-height: var(--space-8);
+  padding: 0 var(--space-4);
+  font-size: 13px;
+  line-height: 20px;
+}
 .pr-ctl .unit {
   margin-left: var(--space-1);
   font-family: var(--font-mono);
